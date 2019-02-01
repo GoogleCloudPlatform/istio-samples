@@ -65,7 +65,7 @@ prometheus-7c589d4989-9mgg8              2/2       Running     1          7m
 ```
 git clone https://github.com/GoogleCloudPlatform/istio-samples.git; cd istio-samples/istio-canary-gke;
 ```
-2. Label the default namespace for Istio psidecar auto-injection](https://istio.io/docs/setup/kubernetes/sidecar-injection/):
+2. Label the default namespace for Istio [sidecar auto-injection](https://istio.io/docs/setup/kubernetes/sidecar-injection/):
 
 ```
 kubectl label namespace default istio-injection=enabled
