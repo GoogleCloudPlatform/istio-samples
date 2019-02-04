@@ -7,16 +7,6 @@ In this sample, `productcatalogservice-v2` introduces a 3-second
 view the latency difference between the existing `productcatalog` deployment and the
 slower v2 deployment.
 
-  - [Setup](#setup)
-  - [Deploy the Sample App](#deploy-the-sample-app)
-  - [Deploy ProductCatalog v2](#deploy-productcatalog-v2)
-  - [Observe Latency with Stackdriver](#observe-latency-with-stackdriver)
-  - [Rollback](#rollback)
-  - [Cleanup](#cleanup)
-  - [Learn More](#learn-more)
-
-# Option 1 - Run Demo in Cloud Shell
-
 [Google Cloud Shell](https://cloud.google.com/shell/docs/) is a browser-based terminal that Google provides to interact with your GCP resources. It is backed by a free Compute Engine instance that comes with many useful tools already installed, including everything required to run this demo.
 
 Click the button below to open the demo instructions in your Cloud Shell:
@@ -26,7 +16,13 @@ Click the button below to open the demo instructions in your Cloud Shell:
 If you choose to run this demo without the Cloud Shell prompts, proceed with the
 instructions below.
 
-# Option 2 - Run Demo Manually
+  - [Setup](#setup)
+  - [Deploy the Sample App](#deploy-the-sample-app)
+  - [Deploy ProductCatalog v2](#deploy-productcatalog-v2)
+  - [Observe Latency with Stackdriver](#observe-latency-with-stackdriver)
+  - [Rollback](#rollback)
+  - [Cleanup](#cleanup)
+  - [Learn More](#learn-more)
 
 ## Setup
 
