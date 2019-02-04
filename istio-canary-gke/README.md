@@ -79,6 +79,14 @@ kubectl apply -f ./hipstershop
 
 4. Using `kubectl get pods`, verify that all pods are `Running` and `Ready`.
 
+At this point, ProductCatalog v1 is deployed to the cluster, along with the rest of the
+demo microservices. You can reach the Hipstershop frontend at the `EXTERNAL_IP` address
+output for this command:
+
+```
+kubectl get svc -n istio-system istio-ingressgateway
+```
+
 ## Deploy ProductCatalog v2
 
 1. Create an Istio [DestinationRule](https://istio.io/docs/reference/config/istio.networking.v1alpha3/#DestinationRule) for `productcatalogservice`.
@@ -102,12 +110,7 @@ productcatalogservice-v2-79459dfdff-6qdh4   2/2       Running   0          1m
 kubectl apply -f canary/vs-split-traffic.yaml
 ```
 
-5. In a web browser, navigate to the hipstershop frontend. You can get the `EXTERNAL_IP` address of
-   the frontend by running:
-```
-kubectl get svc -n istio-system istio-ingressgateway
-```
-
+5. In a web browser, navigate again to the hipstershop frontend.
 6. Refresh the homepage a few times. You should notice that periodically, the frontend is
    slower to load. Let's explore ProductCatalog's latency with Stackdriver.
 
@@ -136,7 +139,7 @@ kubectl get svc -n istio-system istio-ingressgateway
 
 ![metrics explorer](screenshots/metrics-explorer.png)
 
-You’ll also notice that other services (such as `frontend`) have a latency spike. This is because the [frontend relies on](https://github.com/GoogleCloudPlatform/microservices-demo#service-architecture) ProductCatalog, for which 25% of requests are routing through the slower `v2` deployment.
+You’ll also notice that other services (such as `frontend`) have an irregular latency spike. This is because the [frontend relies on](https://github.com/GoogleCloudPlatform/microservices-demo#service-architecture) ProductCatalog, for which 25% of requests are routing through the slower `v2` deployment.
 
 ![v2 latency](screenshots/v2-latency.png)
 
