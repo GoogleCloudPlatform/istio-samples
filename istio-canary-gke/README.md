@@ -65,9 +65,9 @@ prometheus-7c589d4989-9mgg8              2/2       Running     1          7m
 
 ## Deploy the Sample App
 
-1. Clone the manifests for this demo.
+1. `cd` into the directory for this demo.
 ```
-git clone https://github.com/GoogleCloudPlatform/istio-samples.git; cd istio-samples/istio-canary-gke;
+cd istio-canary-gke;
 ```
 2. Label the default namespace for Istio [sidecar auto-injection](https://istio.io/docs/setup/kubernetes/sidecar-injection/):
 
