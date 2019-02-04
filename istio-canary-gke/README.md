@@ -15,6 +15,18 @@ slower v2 deployment.
   - [Cleanup](#cleanup)
   - [Learn More](#learn-more)
 
+# Option 1 - Run Demo in Cloud Shell
+
+[Google Cloud Shell](https://cloud.google.com/shell/docs/) is a browser-based terminal that Google provides to interact with your GCP resources. It is backed by a free Compute Engine instance that comes with many useful tools already installed, including everything required to run this demo.
+
+Click the button below to open the demo instructions in your Cloud Shell:
+
+[![Open in Cloud Shell](http://gstatic.com/cloudssh/images/open-btn.svg)](https://console.cloud.google.com/cloudshell/open?git_repo=https%3A%2F%2Fgithub.com%2FGoogleCloudPlatform%2Fistio-samples&page=editor&tutorial=istio-canary-gke/README.md)
+
+If you choose to run this demo without the Cloud Shell prompts, proceed with the
+instructions below.
+
+# Option 2 - Run Demo Manually
 
 ## Setup
 
