@@ -39,7 +39,7 @@ gcloud services enable container.googleapis.com
 
 ```
 gcloud beta container clusters create istio-demo \
-    --addons=Istio --istio-config=auth=MTLS_PERMISSIVE \
+    --addons=Istio \
     --zone=us-central1-f \
     --machine-type=n1-standard-2 \
     --num-nodes=4
