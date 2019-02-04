@@ -9,17 +9,6 @@ In this sample, `productcatalogservice-v2` introduces a 3-second
 view the latency difference between the existing `productcatalog` deployment and the
 slower v2 deployment.
 
-## Run Demo from Cloud Shell
-
-[Google Cloud Shell](https://cloud.google.com/shell/docs/) is a browser-based terminal that Google provides to interact with your GCP resources. It is backed by a free Compute Engine instance that comes with many useful tools already installed, including everything required to run this demo.
-
-Click the button below to open the demo instructions in your Cloud Shell:
-
-[![Open in Cloud Shell](http://gstatic.com/cloudssh/images/open-btn.svg)](https://console.cloud.google.com/cloudshell/open?git_repo=https%3A%2F%2Fgithub.com%2FGoogleCloudPlatform%2Fistio-samples&page=editor&tutorial=istio-canary-gke/README.md)
-
-If you choose to run this demo without the Cloud Shell prompts, proceed with the
-instructions below.
-
   - [Setup](#setup)
   - [Deploy the Sample App](#deploy-the-sample-app)
   - [Deploy ProductCatalog v2](#deploy-productcatalog-v2)
@@ -30,19 +19,22 @@ instructions below.
 
 ## Setup
 
-1. Navigate to the [Google Cloud Console](https://console.cloud.google.com/), and [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) (or navigate to an
-   existing project).
-2. On the top right of the Cloud Console, click "Activate Cloud Shell."
+[Google Cloud Shell](https://cloud.google.com/shell/docs/) is a browser-based terminal that Google provides to interact with your GCP resources. It is backed by a free Compute Engine instance that comes with many useful tools already installed, including everything required to run this demo.
 
-![activate cloud shell](screenshots/activate-shell.png)
+Click the button below to open the demo instructions in your Cloud Shell:
 
-3. Enable the Kubernetes Engine API.
+[![Open in Cloud Shell](http://gstatic.com/cloudssh/images/open-btn.svg)](https://console.cloud.google.com/cloudshell/open?git_repo=https%3A%2F%2Fgithub.com%2FGoogleCloudPlatform%2Fistio-samples&page=editor&tutorial=istio-canary-gke/README.md)
+
+
+## Create a GKE Cluster
+
+1. From Cloud Shell, enable the Kubernetes Engine API.
 
 ```
 gcloud services enable container.googleapis.com
 ```
 
-4. Create a GKE cluster using [Istio on GKE](https://cloud.google.com/istio/docs/istio-on-gke/overview). This add-on will provision
+2. Create a GKE cluster using [Istio on GKE](https://cloud.google.com/istio/docs/istio-on-gke/overview). This add-on will provision
    your GKE cluster with Istio.
 
 ```
@@ -52,7 +44,7 @@ gcloud beta container clusters create istio-demo \
     --machine-type=n1-standard-2 \
     --num-nodes=4
 ```
-5. Once the cluster is ready, ensure that Istio is running:
+3. Once the cluster is ready, ensure that Istio is running:
 
 ```
 $ kubectl get pods -n istio-system
