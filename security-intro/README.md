@@ -31,6 +31,12 @@ Click the button below to open the demo instructions in your Cloud Shell:
 
 [![Open in Cloud Shell](http://gstatic.com/cloudssh/images/open-btn.svg)](https://console.cloud.google.com/cloudshell/open?git_repo=https%3A%2F%2Fgithub.com%2FGoogleCloudPlatform%2Fistio-samples&page=editor&tutorial=security-intro/README.md)
 
+1. Change into the demo directory.
+
+```
+cd security-intro
+```
+
 
 ### Create a GKE Cluster
 
