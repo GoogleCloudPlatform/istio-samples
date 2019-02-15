@@ -348,7 +348,7 @@ authorization policies using a set of familiar, Kubernetes-based RBAC resources.
 To avoid incurring additional costs, delete the GKE cluster created in this demo:
 
 ```
-gcloud container clusters delete istio-security-demo
+gcloud container clusters delete istio-security-demo --zone=us-central1-f
 ```
 
 Or, to keep your GKE cluster with Istio and Hipstershop still installed, delete the Istio security
