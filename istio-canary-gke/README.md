@@ -1,8 +1,11 @@
 # ProductCatalog Canary Deployment (GKE / Istio)
 
+This demo accompanies [a GCP Blog Post](https://cloud.google.com/blog/products/networking/advanced-application-deployments-and-traffic-management-with-istio-on-gke) on managing application deployments with Istio and
+Stackdriver.
+
 ## Introduction
 
-This example demonstrates how to use [Istio’s](https://istio.io/) [Traffic Splitting](https://istio.io/docs/concepts/traffic-management/#splitting-traffic-between-versions) feature to perform a Canary deployment on [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/).
+In this example, we will learn how to use [Istio’s](https://istio.io/) [Traffic Splitting](https://istio.io/docs/concepts/traffic-management/#splitting-traffic-between-versions) feature to perform a Canary deployment on [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/).
 
 In this sample, `productcatalogservice-v2` introduces a 3-second
 [latency](https://github.com/GoogleCloudPlatform/microservices-demo/tree/master/src/productcatalogservice#latency-injection) into all server requests. We’ll show how to use Stackdriver and Istio together to
