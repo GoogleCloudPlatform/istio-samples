@@ -25,7 +25,7 @@ We'll deploy the Hipstershop sample application along with an updated service th
 
 ```
 git clone https://github.com/GoogleCloudPlatform/istio-samples
-cd istio-canary-gke
+cd istio-samples/istio-canary-gke
 ```
 
 ### Create a GKE cluster
