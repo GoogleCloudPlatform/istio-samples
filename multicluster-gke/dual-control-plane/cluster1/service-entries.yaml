@@ -1,0 +1,59 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: frontendservice-entry
+spec:
+  hosts:
+  - frontend.hipster2.global
+  location: MESH_INTERNAL
+  ports:
+  - name: http1
+    number: 80
+    protocol: http
+  resolution: DNS
+  addresses:
+  - 127.255.0.5
+  endpoints:
+  - address: ""
+    ports:
+      http1: 15443
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: productcatalogservice-entry
+spec:
+  hosts:
+  - productcatalogservice.hipster2.global
+  location: MESH_INTERNAL
+  ports:
+  - name: grpc
+    number: 3550
+    protocol: GRPC
+  resolution: DNS
+  addresses:
+  - 127.255.0.6
+  endpoints:
+  - address: ""
+    ports:
+      grpc: 15443
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: cartservice-entry
+spec:
+  hosts:
+  - cartservice.hipster2.global
+  location: MESH_INTERNAL
+  ports:
+  - name: grpc
+    number: 7070
+    protocol: GRPC
+  resolution: DNS
+  addresses:
+  - 127.255.0.7
+  endpoints:
+  - address: ""
+    ports:
+      grpc: 15443

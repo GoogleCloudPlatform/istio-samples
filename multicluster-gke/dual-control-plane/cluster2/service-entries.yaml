@@ -1,0 +1,80 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: adservice-entry
+spec:
+  hosts:
+  - adservice.hipster1.global
+  location: MESH_INTERNAL
+  ports:
+  - name: grpc
+    number: 9555
+    protocol: GRPC
+  resolution: DNS
+  addresses:
+  - 127.255.0.2
+  endpoints:
+  - address: ""
+    ports:
+      grpc: 15443
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: checkoutservice-entry
+spec:
+  hosts:
+  - checkoutservice.hipster1.global
+  location: MESH_INTERNAL
+  ports:
+  - name: grpc
+    number: 5050
+    protocol: GRPC
+  resolution: DNS
+  addresses:
+  - 127.255.0.3
+  endpoints:
+  - address: ""
+    ports:
+      grpc: 15443
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: currencyservice-entry
+spec:
+  hosts:
+  - currencyservice.hipster1.global
+  location: MESH_INTERNAL
+  ports:
+  - name: grpc
+    number: 7000
+    protocol: GRPC
+  resolution: DNS
+  addresses:
+  - 127.255.0.4
+  endpoints:
+  - address: ""
+    ports:
+      grpc: 15443
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: shippingservice-entry
+spec:
+  hosts:
+  - shippingservice.hipster1.global
+  location: MESH_INTERNAL
+  ports:
+  - name: grpc
+    number: 50051
+    protocol: GRPC
+  resolution: DNS
+  addresses:
+  - 127.255.0.8
+  endpoints:
+  - address: ""
+    ports:
+      grpc: 15443
