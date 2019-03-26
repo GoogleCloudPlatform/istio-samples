@@ -44,6 +44,14 @@ export PROJECT2=<your-second-project>
 ./scripts/1-create-gke-clusters.sh
 ```
 
+Then, run:
+
+```
+watch -n 1 gcloud container clusters list
+```
+
+And wait for both clusters to be `RUNNING`.
+
 
 ## 2- Prepare both GKE Clusters
 

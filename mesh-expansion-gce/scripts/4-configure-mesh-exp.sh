@@ -17,6 +17,9 @@
 set -euo pipefail
 log() { echo "$1" >&2; }
 
+# NOTE - if you are on a mac and you don't have gsed, uncomment this line:
+#  brew install gnu-sed 
+ 
 # vars
 PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
 export VM_NAME="istio-gce"

@@ -92,6 +92,7 @@ to Cluster 1.
 ./scripts/6-connect-clusters.sh
 ```
 
+
 ## 7 - Deploy [Hipstershop](https://github.com/GoogleCloudPlatform/microservices-demo)
 
 This script deploys the sample application across both cluster 1 and cluster 2. We have

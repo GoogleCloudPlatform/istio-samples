@@ -37,18 +37,17 @@ log "Pilot: $PILOT_POD_IP"
 log "Istio-Policy (mixer): $POLICY_POD_IP"
 log "Istio-Telemetry (mixer): $TELEMETRY_POD_IP"
 
-HELM_DIR="scripts/installation/helm-remote"
+HELM_DIR="istio-1.1.1/install/kubernetes/helm/istio"
  helm template $HELM_DIR \
   --namespace istio-system --name istio-remote \
   --values $HELM_DIR/values-istio-remote.yaml \
   --set global.remotePilotAddress=${PILOT_POD_IP} \
   --set global.remotePolicyAddress=${POLICY_POD_IP} \
-  --set global.remoteTelemetryAddress=${TELEMETRY_POD_IP} > scripts/installation/istio-remote.yaml
-
+  --set global.remoteTelemetryAddress=${TELEMETRY_POD_IP} > istio-remote.yaml
 
 # Deploy the templated Istio components onto cluster-2
 kubectl config use-context $ctx2
 kubectl create namespace istio-system
-kubectl apply -f scripts/installation/istio-remote.yaml
+kubectl apply -f istio-remote.yaml
 kubectl label namespace default istio-injection=enabled
 

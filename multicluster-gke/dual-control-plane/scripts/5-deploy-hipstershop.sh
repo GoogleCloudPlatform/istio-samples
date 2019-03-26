@@ -60,7 +60,7 @@ gcloud config set project $PROJECT_2
 gcloud container clusters get-credentials $CLUSTER_2 --zone $ZONE
 kubectl config use-context $CTX_2
 pattern='.*- address:.*'
-replace="  - address: "$GWIP2""
+replace="  - address: "$GWIP1""
 gsed -r -i "s|$pattern|$replace|g" cluster2/service-entries.yaml
 kubectl create namespace hipster2
 kubectl label namespace hipster2 istio-injection=enabled

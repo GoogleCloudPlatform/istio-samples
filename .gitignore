@@ -1,3 +1,10 @@
 .DS_Store
 *.pem
 *.env
+istio-1.1.1/
+*.tar.gz
+istio.yaml
+istio-master.yaml
+istio_master.yaml
+istio-remote.yaml
+cluster-2

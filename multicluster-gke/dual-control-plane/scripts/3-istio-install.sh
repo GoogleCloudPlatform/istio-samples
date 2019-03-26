@@ -18,8 +18,8 @@ set -euo pipefail
 log() { echo "$1" >&2; }
 
 install_istio () {
-     helm install istio.io/istio --name istio --namespace istio-system \
-     --values istio-1.1.0-rc.3/install/kubernetes/helm/istio/example-values/values-istio-multicluster-gateways.yaml
+     helm install istio-1.1.1/install/kubernetes/helm/istio --name istio --namespace istio-system \
+     --values istio-1.1.1/install/kubernetes/helm/istio/example-values/values-istio-multicluster-gateways.yaml
 }
 
 # set vars
