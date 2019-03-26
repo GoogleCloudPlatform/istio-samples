@@ -18,16 +18,16 @@ set -euo pipefail
 log() { echo "$1" >&2; }
 
 preinstall_istio () {
-    kubectl apply -f istio-1.1.0-rc.3/install/kubernetes/helm/helm-service-account.yaml
-    helm init --service-account tiller
-    log "sleeping 30 seconds..."; sleep 30;
     kubectl create namespace istio-system
+    kubectl apply -f istio-1.1.1/install/kubernetes/helm/helm-service-account.yaml
+    helm init --service-account tiller
+    log "sleeping 20 seconds while Tiller starts up..."; sleep 20;
     kubectl create secret generic cacerts -n istio-system \
-        --from-file=istio-1.1.0-rc.3/samples/certs/ca-cert.pem \
-        --from-file=istio-1.1.0-rc.3/samples/certs/ca-key.pem \
-        --from-file=istio-1.1.0-rc.3/samples/certs/root-cert.pem \
-        --from-file=istio-1.1.0-rc.3/samples/certs/cert-chain.pem
-    helm install istio.io/istio-init --name istio-init --namespace istio-system
+        --from-file=istio-1.1.1/samples/certs/ca-cert.pem \
+        --from-file=istio-1.1.1/samples/certs/ca-key.pem \
+        --from-file=istio-1.1.1/samples/certs/root-cert.pem \
+        --from-file=istio-1.1.1/samples/certs/cert-chain.pem
+    helm install istio-1.1.1/install/kubernetes/helm/istio-init --name istio-init --namespace istio-system
 }
 
 # set vars
@@ -40,6 +40,12 @@ CTX_1="gke_${PROJECT_1}_${ZONE}_${CLUSTER_1}"
 PROJECT_2="${PROJECT_2:?PROJECT_2 env variable must be specified}"
 CLUSTER_2="dual-cluster2"
 CTX_2="gke_${PROJECT_2}_${ZONE}_${CLUSTER_2}"
+
+# get istio 1.1.1 
+log "Downloading Istio 1.1.1..."
+wget https://github.com/istio/istio/releases/download/1.1.1/istio-1.1.1-linux.tar.gz
+tar -xzf istio-1.1.1-linux.tar.gz
+rm -r istio-1.1.1-linux.tar.gz 
 
 # Cluster 1
 log "Setting up Cluster 1..."

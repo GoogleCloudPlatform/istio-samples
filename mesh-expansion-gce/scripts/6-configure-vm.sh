@@ -19,7 +19,7 @@
 # set vars
 # NOTE - THIS VARIABLE IS AUTO-POPULATED IN ./scripts/4-configure-mesh-exp.sh
 # (where GWIP refers to your GKE cluster's Istio IngressGateway IP address)
-GWIP=""
+GWIP=''
 
 # setup --  install docker
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -31,8 +31,8 @@ sudo apt-get install -y docker-ce
 echo -e "\n$GWIP istio-citadel istio-pilot istio-pilot.istio-system" | \
    sudo tee -a /etc/hosts
 
-# install + run the istio remote
-curl -L https://storage.googleapis.com/istio-release/releases/1.1.0-snapshot.6/deb/istio-sidecar.deb > istio-sidecar.deb
+# install + run the istio remote - version 1.1.1
+curl -L https://storage.googleapis.com/istio-release/releases/1.1.1/deb/istio-sidecar.deb > istio-sidecar.deb
 
 sudo dpkg -i istio-sidecar.deb
 

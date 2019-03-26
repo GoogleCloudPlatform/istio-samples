@@ -37,7 +37,7 @@ gcloud container clusters get-credentials $CLUSTER_NAME --zone $ZONE
 kubectl config use-context $CTX
 
 # register VM with GKE istio
-./scripts/istioctl register $SVC_NAME $GCE_IP "grpc:${PRODUCTCATALOG_PORT}"
+./istio-1.1.1/bin/istioctl register $SVC_NAME $GCE_IP "grpc:${PRODUCTCATALOG_PORT}"
 
 # output result of registration
 kubectl get endpoints $SVC_NAME -o yaml

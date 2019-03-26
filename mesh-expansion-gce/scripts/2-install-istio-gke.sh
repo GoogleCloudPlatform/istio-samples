@@ -32,8 +32,17 @@ kubectl config use-context $CTX
 # set up istio permissions
 kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user="$(gcloud config get-value core/account)"
 
+# get istio 1.1.1 
+log "Downloading Istio 1.1.1..."
+wget https://github.com/istio/istio/releases/download/1.1.1/istio-1.1.1-linux.tar.gz
+tar -xzf istio-1.1.1-linux.tar.gz
+rm -r istio-1.1.1-linux.tar.gz
+
 # install the istio control plane via helm
-for i in scripts/install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
-cat scripts/install/kubernetes/namespace.yaml > scripts/istio.yaml
-helm template scripts/install/kubernetes/helm/istio --name istio --namespace istio-system --set global.meshExpansion.enabled=true >> scripts/istio.yaml
+log "Installing CRDs to the GKE cluster..."
+for i in istio-1.1.1/install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
+cat istio-1.1.1/install/kubernetes/namespace.yaml > scripts/istio.yaml
+helm template istio-1.1.1/install/kubernetes/helm/istio --name istio --namespace istio-system --set global.meshExpansion.enabled=true >> scripts/istio.yaml
 kubectl apply -f scripts/istio.yaml
+
+log "...Success."

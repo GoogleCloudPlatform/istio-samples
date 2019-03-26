@@ -26,7 +26,17 @@ ctx2="gke_${PROJECT_ID}_${cluster2zone}_cluster-2"
 
 kubectl config use-context $ctx1
 
+# get istio 1.1.1 
+log "Downloading Istio 1.1.1..."
+wget https://github.com/istio/istio/releases/download/1.1.1/istio-1.1.1-linux.tar.gz
+tar -xzf istio-1.1.1-linux.tar.gz
+rm -r istio-1.1.1-linux.tar.gz
+
 # Install istio
-# kubectl create namespace istio-system
-#kubectl label namespace default istio-injection=enabled
-kubectl apply -f scripts/installation/istio-ctrl-plane.yaml
+cat istio-1.1.1/install/kubernetes/helm/istio-init/files/crd-* > istio_master.yaml
+helm template istio-1.1.1/install/kubernetes/helm/istio --name istio --namespace istio-system >> istio_master.yaml
+
+kubectl create ns istio-system
+kubectl label namespace default istio-injection=enabled
+kubectl apply -f istio_master.yaml
+
