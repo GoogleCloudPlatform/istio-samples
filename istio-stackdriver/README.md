@@ -41,6 +41,7 @@ gcloud services enable container.googleapis.com
 ```
 gcloud beta container clusters create istio-stackdriver-demo \
     --addons=Istio --istio-config=auth=MTLS_PERMISSIVE \
+    --enable-stackdriver-kubernetes \
     --zone=us-central1-f \
     --machine-type=n1-standard-2 \
     --num-nodes=4
