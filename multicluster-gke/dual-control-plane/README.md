@@ -33,9 +33,9 @@ The Kubernetes DNS server and Istio's CoreDNS know how to work together to resol
 ## Set Env Variables
 
 ```
-export PROJECT1=<your-project1>
+export PROJECT_1=<your-project1>
 
-export PROJECT2=<your-second-project>
+export PROJECT_2=<your-second-project>
 ```
 
 ## 1 - Create Two GKE Clusters
