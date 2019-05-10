@@ -150,7 +150,7 @@ The following script creates the following resources on both GKE clusters:
 Run the script to deploy these resources across both clusters:
 
 ```
-./scripts/5-deploy-hipstershop.sh.
+./scripts/5-deploy-hipstershop.sh
 ```
 
 
