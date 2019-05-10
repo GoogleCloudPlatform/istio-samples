@@ -47,7 +47,7 @@ gcloud container clusters get-credentials $CLUSTER_1 --zone $ZONE
 kubectl config use-context $CTX_1
 pattern='.*- address:.*'
 replace="  - address: "$GWIP2""
-gsed -r -i "s|$pattern|$replace|g" cluster1/service-entries.yaml
+sed -r -i "s|$pattern|$replace|g" cluster1/service-entries.yaml
 kubectl create namespace hipster1
 kubectl label namespace hipster1 istio-injection=enabled
 kubectl apply -n hipster1  -f ./cluster1
@@ -61,7 +61,7 @@ gcloud container clusters get-credentials $CLUSTER_2 --zone $ZONE
 kubectl config use-context $CTX_2
 pattern='.*- address:.*'
 replace="  - address: "$GWIP1""
-gsed -r -i "s|$pattern|$replace|g" cluster2/service-entries.yaml
+sed -r -i "s|$pattern|$replace|g" cluster2/service-entries.yaml
 kubectl create namespace hipster2
 kubectl label namespace hipster2 istio-injection=enabled
 kubectl apply -n hipster2  -f ./cluster2
