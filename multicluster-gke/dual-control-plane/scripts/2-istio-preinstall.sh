@@ -20,8 +20,8 @@ log() { echo "$1" >&2; }
 preinstall_istio () {
     kubectl create namespace istio-system
     kubectl apply -f istio-1.1.1/install/kubernetes/helm/helm-service-account.yaml
-    helm init --service-account tiller
-    log "sleeping 20 seconds while Tiller starts up..."; sleep 20;
+    helm init --wait --service-account tiller
+    
     kubectl create secret generic cacerts -n istio-system \
         --from-file=istio-1.1.1/samples/certs/ca-cert.pem \
         --from-file=istio-1.1.1/samples/certs/ca-key.pem \
