@@ -115,7 +115,7 @@ Log in as `admin/admin`.
 
 View the Service graph for the Default namespace: 
 
-![service-graph](images/default-svc-graph.png)
+![service-graph](screenshots/default-svc-graph.png)
 
 Now imagine that we want to reach HelloService from a workload not in the mesh, and from outside of GKE. 
 
@@ -173,6 +173,7 @@ kubectl get svc -n istio-system istio-ilbgateway
 
 You should see something like: 
 
+```
 NAME               TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                                                                      AGE
 istio-ilbgateway   LoadBalancer   10.67.240.220   10.150.0.7    15011:32390/TCP,15010:32626/TCP,8060:32429/TCP,5353:32066/TCP,80:32624/TCP   39m
 ```
@@ -199,4 +200,9 @@ Hello World! /
 
 Notice that if you try to execute the same `curl` request on your local machine, you will time out -- this because the ILB Gateway is only exposed from within your GCP project's private VPC network. 
 
-🌟 Well done - you just exposed a GKE service via Istio's ILB Gateway! 
+Re-open the Kiali service graph in the browser -- now notice how the ilb-gateway is also now service traffic for `helloserver`. 
+
+![service-graph](screenshots/ilb-graph.png)
+
+
+🌟 **Well done** - you just exposed a GKE service via Istio's ILB Gateway! 
