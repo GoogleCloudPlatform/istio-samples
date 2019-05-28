@@ -93,22 +93,110 @@ Install Istio on the cluster:
 kubectl apply -f istio.yaml
 ```
 
+Run `kubectl get pods -n istio-system`. Notice a pod with the name prefix `istio-ilbgateway`. This is the proxy that will handle our requests from GCE, in just a moment. 
+
 ## 3 - Deploy the HelloServer application 
 
+This will deploy 2 pods to Kubernetes: one is 
 
-## 4- Modify the ILB Gateway's Ports 
+```
+kubectl apply -f ../sample-apps/helloserver/server/server.yaml 
 
+kubectl apply -f ../sample-apps/helloserver/loadgen/loadgen.yaml 
+```
 
-## 5 - Create a GCE VM 
-
-
-## 6 - GCE --> GKE via ILB Gateway 
-
-
-## 7 - Use Kiali to visualize ILB interactions 
+## 4 - Open Kiali in a browser 
 
 ```
 kubectl -n istio-system port-forward $(kubectl -n istio-system get pod -l app=kiali -o jsonpath='{.items[0].metadata.name}') 20001:20001
 ```
 
 Log in as `admin/admin`. 
+
+View the Service graph for the Default namespace: 
+
+![service-graph](images/default-svc-graph.png)
+
+Now imagine that we want to reach HelloService from a workload not in the mesh, and from outside of GKE. 
+
+Right now, HelloServer is not exposed to the Internet -- we have a `ClusterIP` service that allows Istio to track it, and allows the `loadgen` pod to reach it via kubedns (`hellosvc:80`). 
+
+One route to do this is [Mesh Expansion](https://github.com/GoogleCloudPlatform/istio-samples/tree/master/mesh-expansion-gce) which installs Istio on the VM itself, and logically and functionally brings the VM into the service mesh. But if (for administrative, complexity, or other reasons) we want to keep the GCE VM out of the mesh, but also not expose HelloSvc to the public internet, we can use the ILB Gateway to do this.  
+
+## 5 - Create a GCE VM 
+
+First let's create a VM in the same project that will interact with GKE. **Note** how we've created this VM in the same region as the GKE cluster. This (same region) is a prerequisite for GCP resource communication via ILB. Also notice that `--network=default` means we're creating the GCE VM in the same VPC network as the GKE cluster. 
+
+```
+gcloud compute --project=$PROJECT_ID instances create gce-ilb2 --zone=us-east4-a --machine-type=n1-standard-2 --network=default
+```
+
+
+## 6- Modify the ILB Gateway's Ports 
+
+Run this command, and examine the output:
+
+```
+kubectl get svc -n istio-system istio-ilbgateway -o yaml
+``` 
+
+Notice that under the `ports` field, there are four ports defined, all for internal Istio purposes; neither port `80` nor `443` (for HTTP/S) are exposed by default. 
+
+So let's modify the ILB Gateway to additionally accept HTTP traffic on port 80.
+
+**Note** - There is [a limitation of 5 ports](https://cloud.google.com/load-balancing/docs/internal/#forwarding_rule) for a GCP Internal Load Balancer. Outside of Kubernetes, there is an option to enable `all` ports, but you must provide a specific list of ports to expose for a Kubernetes service. 
+
+```
+kubectl apply -f istio/ilb-gateway-modified.yaml 
+```
+
+## 7 - Expose HelloServer via the ILB Gateway  
+
+If we want to send traffic from GCE to GKE, via the Istio ILB Gateway, we will have to expose HelloServer within GCP. This will be the same process as if we were exposing HelloServer to the public internet ([with the IngressGateway](https://istio.io/docs/tasks/traffic-management/ingress/#configuring-ingress-using-an-istio-gateway)). For this, we'll use an Istio `Gateway` resource, along with a `VirtualService`. 
+
+Open `istio/server-ilb.yaml` to examine its contents. 
+
+Apply: 
+```
+kubectl apply -f istio/server-ilb.yaml 
+```
+
+
+## 8 - Send Traffic from GCE --> GKE via ILB Gateway 
+
+Remember that the Istio ILBGateway service is `type=LoadBalancer`. This means it gets an `EXTERNAL_IP`, but only "external" within our region VPC network: 
+
+Run: 
+```
+kubectl get svc -n istio-system istio-ilbgateway
+``` 
+
+You should see something like: 
+
+NAME               TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                                                                      AGE
+istio-ilbgateway   LoadBalancer   10.67.240.220   10.150.0.7    15011:32390/TCP,15010:32626/TCP,8060:32429/TCP,5353:32066/TCP,80:32624/TCP   39m
+```
+
+Copy the `EXTERNAL_IP` to the clipboard. 
+
+SSH into the GCE VM we created earlier: 
+
+```
+gcloud compute ssh --project $PROJECT_ID  --zone "us-east4-a" gce-ilb2 
+```
+
+Try to hit helloserver via the ILB gateway IP, at port 80:
+
+```
+curl http://10.150.0.7:80 
+```
+
+You should see: 
+
+```
+Hello World! /
+```
+
+Notice that if you try to execute the same `curl` request on your local machine, you will time out -- this because the ILB Gateway is only exposed from within your GCP project's private VPC network. 
+
+🌟 Well done - you just exposed a GKE service via Istio's ILB Gateway! 
