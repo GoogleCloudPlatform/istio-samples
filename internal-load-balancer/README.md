@@ -1,6 +1,6 @@
 # Demo: Using a GCP Internal Load Balancer with Istio  
 
-This demo shows how connect a worload running in a GCE Virtual Machine with Istio-enabled workloads on Google Kubernetes Engine, using an internal endpoint that is only accessible within your Virtual Private Network in GCP.  
+This demo shows how connect a workload running in a GCE Virtual Machine with Istio-enabled workloads on Google Kubernetes Engine, using an internal endpoint that is only accessible within your Virtual Private Network in GCP.  
 
 **Note**: [ILB for GKE](https://cloud.google.com/kubernetes-engine/docs/how-to/internal-load-balancing) is currently beta.
 
