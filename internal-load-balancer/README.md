@@ -1,25 +1,22 @@
 # Demo: Using a GCP Internal Load Balancer with Istio  
 
-This demo shows how connect a workload running in a GCE Virtual Machine with Istio-enabled workloads on Google Kubernetes Engine, using an internal endpoint that is only accessible within your Virtual Private Network in GCP.  
+This demo shows how to use an Internal Load Balancer (ILB) to connect Istio workloads running in Google Kubernetes Engine (GKE) with VM-based workloads in Google Compute Engine (GCE). 
 
-**Note**: [ILB for GKE](https://cloud.google.com/kubernetes-engine/docs/how-to/internal-load-balancing) is currently beta.
+**Note**: [ILB for GKE](https://cloud.google.com/kubernetes-engine/docs/how-to/internal-load-balancing) is currently in beta.
 
 ## How It Works 
 
-An Internal Load Balancer (ILB) is a GCP resource that exposes workloads (in GCE or GKE) to within the same region and the same [Virtual Private Cloud](https://cloud.google.com/vpc/) (VPC) network. 
+An [Internal Load Balancer (ILB)](https://cloud.google.com/load-balancing/docs/internal/) is a Google Cloud Platform (GCP) resource that exposes workloads (in GCE or GKE) to other workloads within the same region, and the same [Virtual Private Cloud](https://cloud.google.com/vpc/) (VPC) network. Using an ILB replaces the need to use a GKE external load balancer with a set of firewall rules.  
 
-Using an ILB substitutes having to use a GKE external load balancer with a set of firewall rules.  
+You can [annotate Kubernetes Services](https://cloud.google.com/kubernetes-engine/docs/how-to/internal-load-balancing#overview) directly to provision a GCP ILB, instead of an external network load balancer. However, Istio has its own [ILB Gateway](https://istio.io/docs/reference/config/installation-options/#gateways-options) for exposing Services inside the mesh. 
 
-With Istio, can use the built-in ILB Gateway on install (comparable to the default IngressGateway, but internal) to expose your services to workloads running in GKE and GCE in the same VPC.  
+The value of using the Istio ILB Gateway is that it's highly configurable -- you can, for instance, [define granular traffic rules](https://istio.io/docs/tasks/traffic-management/ingress/) to be applied for a specific service exposed via that ILB Gateway. Using an ILB Gateway replaces the need to use an external `Service type=LoadBalancer` with a set of firewall rules.   
 
-The ILB Gateway itself is an Istio-deployed Envoy proxy that can be [configured with Gateway resources](https://istio.io/docs/tasks/traffic-management/ingress/#configuring-ingress-using-an-istio-gateway) just like the Istio Ingress Gateway. 
+If Istio's ILB Gateway is enabled on install, it is annotated to provision its own ILB inside your GCP project. Note that a GCP Internal Load Balancer [is not a proxy](https://cloud.google.com/load-balancing/docs/internal/#how_ilb_works), but rather a resource that configures GCE instances directly to talk to "backends" within the same VPC network. In this case, the "backend" of the Istio ILB load balancer will be a GKE Instance Group — or, the set of VMs that comprise the GKE cluster. 
 
-In this demo, we'll create the following architecture: 
+In this demo, we will build the following architecture: 
 
 ![arch-diagram](screenshots/architecture.png)
-
-
-Note that a GCP Internal Load Balancer [is not a proxy](https://cloud.google.com/load-balancing/docs/internal/#how_ilb_works), but rather a resource that configures GCE instances directly to talk to "backends" within the same VPC network. In this case, the "backend" of our ILB will be a GKE Instance Group -- or, the set of VMs that comprise the GKE cluster. 
 
 ## Prerequisites 
 
@@ -42,9 +39,14 @@ gcloud container clusters create istio-ilb --project $PROJECT_ID --zone us-east4
 --num-nodes "4" --network "default" --async
 ```
 
-Wait for it to be running. 
+Wait for the cluster to be `RUNNING`, by executing: 
 
-3. **Get credentials,** grant RBAC permissions for Istio.  
+```
+gcloud container clusters list --project $PROJECT_ID
+
+```
+
+3. **Get credentials,** then grant RBAC permissions for Istio.  
 
 ```
 gcloud container clusters get-credentials istio-ilb --zone us-east4-a --project $PROJECT_ID
@@ -58,7 +60,7 @@ kubectl create clusterrolebinding cluster-admin-binding \
 
 1. **Download the Istio 1.1.7 release:** https://github.com/istio/istio/releases 
 
-`cd istio-1.**/` 
+`cd istio-1.1.7/` 
 
 2. **Prepare the cluster for install:** 
 
@@ -74,11 +76,11 @@ helm template istio-1.1.7/install/kubernetes/helm/istio-init --name istio-init -
 kubectl get crds | grep 'istio.io\|certmanager.k8s.io' | wc -l
 ```
 
-Should see `53`. 
+The output of this command should be `53`. 
 
 4. **Generate the Istio installation YAML.**
 
-Note that we're enabling the option to deploy the ILB Gateway. 
+(Note that we're enabling the option to deploy the ILB Gateway.) 
 ```
 helm template ./istio-1.1.7/install/kubernetes/helm/istio --name istio --namespace istio-system \
    --set prometheus.enabled=true \
@@ -90,21 +92,20 @@ helm template ./istio-1.1.7/install/kubernetes/helm/istio --name istio --namespa
    --set gateways.istio-ilbgateway.enabled=true > istio.yaml
 ```
 
-*Optional* - Open `istio.yaml` and search the file for `istio-ilbgateway`. You will find a Kubernetes Service, `istio-ilbgateway`, that is Service type=LoadBalancer, but has the annotation: `cloud.google.com/load-balancer-type: "internal"`. This means that rather than provisioning an external [Network Load Balancer](https://cloud.google.com/load-balancing/docs/network/) for Istio's ILB gateway, GKE will create an [Internal Load Balancer](https://cloud.google.com/load-balancing/docs/internal/) instead.  
-[See the GCP docs](https://cloud.google.com/kubernetes-engine/docs/how-to/internal-load-balancing#create) for more information.
+*Optional* - Open `istio.yaml` and search the file for `istio-ilbgateway`. You will find a Kubernetes Service, `istio-ilbgateway`, that is Service `type=LoadBalancer`, but has the annotation: `cloud.google.com/load-balancer-type: "internal"`. This means that rather than provisioning an external [Network Load Balancer](https://cloud.google.com/load-balancing/docs/network/) for Istio's ILB gateway, GKE will create an [Internal Load Balancer](https://cloud.google.com/load-balancing/docs/internal/) instead. [See the GCP docs](https://cloud.google.com/kubernetes-engine/docs/how-to/internal-load-balancing#create) for more information.
 
-Also note that the Istio ILB Gateway has [more customization options](https://istio.io/docs/reference/config/installation-options/#gateways-options) on install that we aren't using here, that would be useful for production use cases-- for example, autoscaling options, Memory and CPU allocations, and custom cert paths.  
+Also note that the Istio ILB Gateway has [more customization options](https://istio.io/docs/reference/config/installation-options/#gateways-options) on install that we aren't using here, that would be useful for production use cases-- for example, autoscaling options, and memory/CPU allocations. 
 
 5. **Install Istio on the cluster:**
 ```
 kubectl apply -f istio.yaml
 ```
 
-Run `kubectl get pods -n istio-system`. Notice a pod with the name prefix `istio-ilbgateway`. This is the proxy that will handle our requests from GCE, in just a moment. 
+Run `kubectl get pods -n istio-system`. Notice a pod with the name prefix `istio-ilbgateway`. This is the Envoy proxy that will handle our requests from GCE. 
 
 ## 3 - Deploy the HelloServer application 
 
-HelloServer is a Python HTTP server that serves the `GET / ` endpoint, and prints `HelloWorld`. We'll also deploy a loadgen (also Python) that will repeatedly send 10 Requests per Second (RPS) to `helloserver`.  
+HelloServer is a Python HTTP server that serves the `GET / ` endpoint, and prints `HelloWorld`. We'll also deploy a load generator (also Python) that will repeatedly send 10 Requests per Second (RPS) to `helloserver`.  
 
 ```
 kubectl apply -f ../sample-apps/helloserver/server/server.yaml 
@@ -124,29 +125,29 @@ kubectl -n istio-system port-forward $(kubectl -n istio-system get pod -l app=ki
 
 2. **Open the Kiali dashboard in a browser** 
 
-Navigate to http://localhost:20001/kiali. Then, log in as `admin/admin`. 
+Navigate to http://localhost:20001/kiali. Then, log in with the demo credentials: `admin/admin`. 
 
-Then, navigate in the left sidebar to `Graph`, to view the Service Graph for the default namespace. 
+Then, navigate in the left sidebar to `Graph`, and view the Service Graph for the `default` Kubernetes namespace. This is the namespace into which we've deployed the `helloserver` application. 
 
 ![service-graph](screenshots/default-svc-graph.png)
 
-## 5- Modify the ILB Gateway's Ports 
+## 5- Modify ILB Gateway's Ports 
 
-Now imagine that we want to reach HelloService from a workload not in the mesh, and from outside of GKE. 
+Now imagine that we want to reach HelloService from a workload not in the Istio mesh, and from outside of GKE. 
 
-Right now, HelloServer is not exposed to the Internet -- we have a `ClusterIP` service that allows Istio to track it, and allows the `loadgen` pod to reach it via kubedns (`hellosvc:80`). 
+Right now, HelloServer is not exposed to the Internet. We only have a `ClusterIP` service which only exposes HelloServer within the cluster, thus allowing the `loadgen` pod to reach it via kubedns (`hellosvc:80`). 
 
-One route to do this is [Mesh Expansion](https://github.com/GoogleCloudPlatform/istio-samples/tree/master/mesh-expansion-gce) which installs Istio on the VM itself, and logically and functionally brings the VM into the service mesh. But if (for administrative, complexity, or other reasons) we want to keep the GCE VM out of the mesh, but also not expose HelloSvc to the public internet, we can use the ILB Gateway to do this.  
+One route to connect GCE to Istio on GKE is through [Mesh Expansion](https://github.com/GoogleCloudPlatform/istio-samples/tree/master/mesh-expansion-gce). This installs Istio components on the VM itself, and logically and functionally brings the GCE instance into the service mesh. But if (for administrative, complexity, or other reasons) we want to keep the GCE VM out of the mesh, but also not expose HelloSvc to the public internet, we can use the ILB Gateway to connect the GCP infrastructure. 
 
 1. **Return to the command line, and run:**
 
 ```
 kubectl get svc -n istio-system istio-ilbgateway -o yaml
-``` 
+```
 
-Notice that under the `ports` field, there are four ports defined, all for internal Istio purposes; neither port `80` nor `443` (for HTTP/S) are exposed by default. So let's modify the ILB Gateway to additionally accept HTTP traffic on port 80.
+Notice that under the `ports` field, there are four ports defined, all for internal Istio purposes. Neither port `80` nor `443` (for HTTP/S) are exposed by default. So let's modify the ILB Gateway to additionally accept HTTP traffic on port 80.
 
-2. **Modify the ILB Gateway ports:**
+2. **Add port 80 to the ILB gateway service**
 
 ```
 kubectl apply -f istio/ilb-gateway-modified.yaml 
@@ -157,7 +158,7 @@ kubectl apply -f istio/ilb-gateway-modified.yaml
 
 ## 6 - Create a GCE Instance 
 
-Let's create a Virtual Machine in the same project that will interact with GKE. **Note** how we've created this VM in the same region as the GKE cluster. This (same region) is a prerequisite for GCP resource communication via ILB. Also notice that `--network=default` means we're creating the GCE VM in the same VPC network as the GKE cluster. 
+Now, we'll create a GCE Instance in the same project. **Note**: we will create this VM in the same region as the GKE cluster. This is a prerequisite for GCP resource communication via ILB. Also notice that `--network=default` means we're creating the GCE VM in the same VPC network as the GKE cluster, which is also using the `default` network. 
 
 ```
 gcloud compute --project=$PROJECT_ID instances create gce-ilb --zone=us-east4-a --machine-type=n1-standard-2 --network=default
@@ -173,14 +174,14 @@ kubectl apply -f istio/server-ilb.yaml
 ```
 
 
-## 8 - Send Traffic from GCE --> GKE via ILB Gateway 
+## 8 - Send Traffic from GCE to GKE via ILB Gateway 
 
-Remember that the Istio ILBGateway service is `type=LoadBalancer`. This means it gets an `EXTERNAL_IP`, but only "external" within our region VPC network: 
+Because the Istio ILBGateway service is `type=LoadBalancer`, it gets an `EXTERNAL_IP`, but only "external" within our regional VPC network: 
 
 1. **Get the EXTERNAL_IP for istio-ilbgateway:**
 ```
 kubectl get svc -n istio-system istio-ilbgateway
-``` 
+```
 
 You should see something like: 
 
@@ -200,7 +201,7 @@ gcloud compute ssh --project $PROJECT_ID  --zone "us-east4-a" gce-ilb
 3. **Reach helloserver via the ILB gateway IP, at port 80:**
 
 ```
-curl http://10.150.0.7:80 
+curl http://<EXTERNAL_IP>:80 
 ```
 
 You should see: 
@@ -209,11 +210,13 @@ You should see:
 Hello World! /
 ```
 
+This request just went from your GCE instance, to the Istio ILB Gateway, then to the `helloserver` Service inside the Istio mesh. 
+
 Notice that if you try to execute the same `curl` request on your local machine, you will time out -- this because the ILB Gateway is only exposed from within your GCP project's private VPC network. 
 
 ## 9 - Observe changes to the service graph
 
-Re-open the Kiali service graph in the browser -- now notice how the ilb-gateway is also now service traffic for `helloserver`. 
+Re-open the Kiali service graph in the browser -- now notice how the ilb-gateway is also now serving traffic for `helloserver`. 
 
 ![service-graph](screenshots/ilb-graph.png)
 
