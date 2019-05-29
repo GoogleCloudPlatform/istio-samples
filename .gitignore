@@ -1,7 +1,7 @@
 .DS_Store
 *.pem
 *.env
-istio-1.1.1/
+istio-1.*
 *.tar.gz
 istio.yaml
 istio-master.yaml
