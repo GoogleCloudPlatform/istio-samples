@@ -1,4 +1,4 @@
-# istio-samples
+# ⛵️ istio-samples
 
 This repository contains Google Cloud Platform demos and sample code for [Istio](https://istio.io/).
 
@@ -18,7 +18,7 @@ A deep-dive on how to use Stackdriver to monitor Istio services' health, analyze
 
 ### [Integrating a Google Compute Engine VM with Istio](/mesh-expansion-gce)
 
-Demonstrates how to incorporate a workload running in Google Compute Engine into an Istio service mesh running in GKE. 
+Demonstrates how to do Istio Mesh Expansion: the process of incorporating a GCE-based workload into an Istio mesh running in GKE.  
 
 ### [Multicluster Istio- Single Control Plane](/multicluster-gke/single-control-plane)
 
