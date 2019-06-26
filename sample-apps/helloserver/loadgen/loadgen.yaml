@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# [START loadgen_deployment]
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -44,16 +45,19 @@ spec:
           limits:
             cpu: 500m
             memory: 512Mi
+# [END loadgen_deployment]
 ---
+# [START loadgen_service]
 apiVersion: v1
 kind: Service
 metadata:
   name: loadgensvc
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: loadgenerator
   ports:
   - name: http
     port: 80
     targetPort: 8080
+# [END loadgen_service]
