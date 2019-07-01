@@ -14,34 +14,33 @@
 
 # https://docs.docker.com/engine/reference/builder/
 
-FROM gcr.io/gcp-runtimes/go1-builder:1.12 as build
+FROM gcr.io/cloud-builders/go as build
 
 ENV GOPATH /go
-ENV GOROOT /usr/local/go
-ENV PATH ${GOROOT}/bin:${PATH}
+ENV GO111MODULE on
 
-WORKDIR /src
+WORKDIR ${GOPATH}/src
 
-RUN echo 'nobody:x:65534:' > /src/group.nobody && \
-    echo 'nobody:x:65534:65534::/:' > /src/passwd.nobody
+RUN echo 'nobody:x:65534:' > /group.nobody && \
+    echo 'nobody:x:65534:65534::/:' > /passwd.nobody
 
-RUN curl -Lo /bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.3.0/grpc_health_probe-linux-amd64 && \
+RUN wget -O /bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.3.0/grpc_health_probe-linux-amd64 && \
     chmod +x /bin/grpc_health_probe
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y git
-
-COPY go.mod go.sum /src/
+COPY go.mod go.sum ./
 
 RUN go mod download
 
-COPY server.go /src/
+COPY server.go ./
 
-RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go install -installsuffix "static" server.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go install -installsuffix "static" .
+
+# https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
 
 FROM gcr.io/distroless/static
 
-COPY --from=build /src/group.nobody /etc/group
-COPY --from=build /src/passwd.nobody /etc/passwd
+COPY --from=build /group.nobody /etc/group
+COPY --from=build /passwd.nobody /etc/passwd
 USER nobody:nobody
 
 COPY --from=build /bin/grpc_health_probe /bin/grpc_health_probe
