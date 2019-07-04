@@ -14,7 +14,7 @@ spec:
   addresses:
   - 127.255.0.5
   endpoints:
-  - address: 35.226.79.23
+  - address: 35.222.46.19
     ports:
       http1: 15443
 ---
@@ -34,7 +34,7 @@ spec:
   addresses:
   - 127.255.0.6
   endpoints:
-  - address: 35.226.79.23
+  - address: 35.222.46.19
     ports:
       grpc: 15443
 ---
@@ -54,6 +54,6 @@ spec:
   addresses:
   - 127.255.0.7
   endpoints:
-  - address: 35.226.79.23
+  - address: 35.222.46.19
     ports:
       grpc: 15443

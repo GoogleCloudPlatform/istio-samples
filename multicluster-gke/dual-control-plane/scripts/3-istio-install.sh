@@ -18,12 +18,13 @@ set -euo pipefail
 log() { echo "$1" >&2; }
 
 install_istio () {
-     helm install istio-1.1.1/install/kubernetes/helm/istio --name istio --namespace istio-system \
-     --values istio-1.1.1/install/kubernetes/helm/istio/example-values/values-istio-multicluster-gateways.yaml
+     helm install istio-${ISTIO_VERSION}/install/kubernetes/helm/istio --name istio --namespace istio-system \
+     --values istio-${ISTIO_VERSION}/install/kubernetes/helm/istio/example-values/values-istio-multicluster-gateways.yaml
 }
 
 # set vars
 ZONE="us-central1-b"
+ISTIO_VERSION=${ISTIO_VERSION:=1.2.2}
 
 PROJECT_1="${PROJECT_1:?PROJECT_1 env variable must be specified}"
 CLUSTER_1="dual-cluster1"
@@ -34,7 +35,7 @@ CLUSTER_2="dual-cluster2"
 CTX_2="gke_${PROJECT_2}_${ZONE}_${CLUSTER_2}"
 
 # Cluster 1
-log "Installing Istio on Cluster 1..."
+log "Installing Istio ${ISTIO_VERSION} on Cluster 1..."
 gcloud config set project $PROJECT_1
 gcloud container clusters get-credentials $CLUSTER_1 --zone $ZONE
 kubectl config use-context $CTX_1
@@ -43,7 +44,7 @@ log "...done with cluster 1."
 
 
 # Cluster 2
-log "Installing Istio on Cluster 2..."
+log "Installing Istio ${ISTIO_VERSION} on Cluster 2..."
 gcloud config set project $PROJECT_2
 gcloud container clusters get-credentials $CLUSTER_2 --zone $ZONE
 kubectl config use-context $CTX_2

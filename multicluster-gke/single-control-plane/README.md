@@ -35,17 +35,7 @@ Then, run:
 watch -n 1 gcloud container clusters list
 ```
 
-And wait for both clusters to be `RUNNING`. You should see:
-
-```
-NAME             LOCATION       MASTER_VERSION  MASTER_IP       MACHINE_TYPE   NODE_VERSION  NUM_NODES
-  STATUS
-cluster-1        us-east1-b     1.11.7-gke.4    <IP>    n1-standard-2  1.11.7-gke.4  4
-  RUNNING
-cluster-2        us-central1-b  1.11.7-gke.4    <IP>  n1-standard-2  1.11.7-gke.4  4
-  RUNNING
-```
-
+Wait for both clusters to be `RUNNING`.
 
 ## 2 - Connect to clusters
 
@@ -83,7 +73,7 @@ Now we'll install the remote Istio components (Citadel's node-agent, and an Envo
 ```
 
 
-## 6 - Connect Cluster 2 Istio to Cluster 1
+## 6 - Connect Cluster 2 to Cluster 1
 
 This step generates a [Kubeconfig](https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/#define-clusters-users-and-contexts) file for the remote Cluster 2, then adds it as a [Secret](https://kubernetes.io/docs/concepts/configuration/secret/)
 to Cluster 1.
@@ -119,10 +109,10 @@ You can verify that the deployment was successful using 3 methods:
 
 ```
 PROXY                                                  CDS        LDS        EDS               RDS          PILOT                            VERSION
-adservice-6cd6965787-djp8r.default                     SYNCED     SYNCED     SYNCED (50%)      SYNCED       istio-pilot-7d7c547f8b-9jh24     1.1.0
-cartservice-57c6949b9-qbfqx.default                    SYNCED     SYNCED     SYNCED (50%)      SYNCED       istio-pilot-7d7c547f8b-9jh24     1.1.0
-checkoutservice-6848667dd7-b4qf6.default               SYNCED     SYNCED     SYNCED (50%)      SYNCED       istio-pilot-7d7c547f8b-9jh24     1.1.0
-currencyservice-668f49f985-lbcfh.default               SYNCED     SYNCED     SYNCED (50%)      SYNCED       istio-pilot-7d7c547f8b-9jh24     1.1.0
+adservice-6cd6965787-djp8r.default                     SYNCED     SYNCED     SYNCED (50%)      SYNCED       istio-pilot-7d7c547f8b-9jh24     1.1.1
+cartservice-57c6949b9-qbfqx.default                    SYNCED     SYNCED     SYNCED (50%)      SYNCED       istio-pilot-7d7c547f8b-9jh24     1.1.1
+checkoutservice-6848667dd7-b4qf6.default               SYNCED     SYNCED     SYNCED (50%)      SYNCED       istio-pilot-7d7c547f8b-9jh24     1.1.1
+currencyservice-668f49f985-lbcfh.default               SYNCED     SYNCED     SYNCED (50%)      SYNCED       istio-pilot-7d7c547f8b-9jh24     1.1.1
 ```
 
 3) open Hipstershop in the browser by getting the Istio `IngressGateway`'s `EXTERNAL_IP`:

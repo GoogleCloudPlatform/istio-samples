@@ -19,19 +19,20 @@ log() { echo "$1" >&2; }
 
 preinstall_istio () {
     kubectl create namespace istio-system
-    kubectl apply -f istio-1.1.1/install/kubernetes/helm/helm-service-account.yaml
+    kubectl apply -f istio-${ISTIO_VERSION}/install/kubernetes/helm/helm-service-account.yaml
     helm init --wait --service-account tiller
-    
+
     kubectl create secret generic cacerts -n istio-system \
-        --from-file=istio-1.1.1/samples/certs/ca-cert.pem \
-        --from-file=istio-1.1.1/samples/certs/ca-key.pem \
-        --from-file=istio-1.1.1/samples/certs/root-cert.pem \
-        --from-file=istio-1.1.1/samples/certs/cert-chain.pem
-    helm install istio-1.1.1/install/kubernetes/helm/istio-init --name istio-init --namespace istio-system
+        --from-file=istio-${ISTIO_VERSION}/samples/certs/ca-cert.pem \
+        --from-file=istio-${ISTIO_VERSION}/samples/certs/ca-key.pem \
+        --from-file=istio-${ISTIO_VERSION}/samples/certs/root-cert.pem \
+        --from-file=istio-${ISTIO_VERSION}/samples/certs/cert-chain.pem
+    helm install istio-${ISTIO_VERSION}/install/kubernetes/helm/istio-init --name istio-init --namespace istio-system
 }
 
 # set vars
 ZONE="us-central1-b"
+ISTIO_VERSION=${ISTIO_VERSION:=1.2.2}
 
 PROJECT_1="${PROJECT_1:?PROJECT_1 env variable must be specified}"
 CLUSTER_1="dual-cluster1"
@@ -41,11 +42,8 @@ PROJECT_2="${PROJECT_2:?PROJECT_2 env variable must be specified}"
 CLUSTER_2="dual-cluster2"
 CTX_2="gke_${PROJECT_2}_${ZONE}_${CLUSTER_2}"
 
-# get istio 1.1.1 
-log "Downloading Istio 1.1.1..."
-wget https://github.com/istio/istio/releases/download/1.1.1/istio-1.1.1-linux.tar.gz
-tar -xzf istio-1.1.1-linux.tar.gz
-rm -r istio-1.1.1-linux.tar.gz 
+log "Downloading Istio ${ISTIO_VERSION}..."
+curl -L https://git.io/getLatestIstio | ISTIO_VERSION=$ISTIO_VERSION sh -
 
 # Cluster 1
 log "Setting up Cluster 1..."

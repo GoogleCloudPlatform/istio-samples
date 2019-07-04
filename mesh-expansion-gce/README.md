@@ -34,7 +34,7 @@ export PROJECT_ID=<your-project-id>
 
 ## 1- Create a GKE Cluster
 
-Create a 4-node GKE cluster named `mesh-expansion`:
+Create a 4-node GKE cluster named `mesh-exp-gke`:
 
 ```
 ./scripts/1-create-gke.sh
@@ -46,7 +46,21 @@ Wait for the GKE cluster to be `RUNNING` -
 gcloud container clusters list
 ```
 
+Connect to the cluster:
+
+```
+gcloud container clusters get-credentials mesh-exp-gke --zone us-central1-b --project $PROJECT_ID
+```
+
 ## 2- Install Istio on GKE
+
+*Optional*: Set [Istio Version](https://github.com/istio/istio/releases):
+
+```
+ISTIO_VERSION=<version>
+```
+
+Install Istio on the cluster:
 
 ```
 ./scripts/2-install-istio-gke.sh
@@ -120,10 +134,10 @@ chmod +x ./6-configure-vm.sh; ./6-configure-vm.sh
 
 This script:
 - installs Docker on the VM
-- downloads the Istio binary
+- downloads the Istio remote binary
 - runs the Istio remote components (`pilot-agent` and `node-agent`)
 - configures the Istio remote to "call home" to Istio running on your GKE cluster
-- runs ProductCatalog inside a plain Docker container.
+- runs ProductCatalog inside a Docker container.
 
 When the script runs successfully, you should be able to run:
 

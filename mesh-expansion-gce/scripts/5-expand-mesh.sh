@@ -19,6 +19,7 @@ log() { echo "$1" >&2; }
 
 # set vars
 PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
+ISTIO_VERSION=${ISTIO_VERSION:=1.2.2}
 ZONE="us-central1-b"
 CLUSTER_NAME="mesh-exp-gke"
 CTX="gke_${PROJECT_ID}_${ZONE}_${CLUSTER_NAME}"
@@ -37,7 +38,7 @@ gcloud container clusters get-credentials $CLUSTER_NAME --zone $ZONE
 kubectl config use-context $CTX
 
 # register VM with GKE istio
-./istio-1.1.1/bin/istioctl register $SVC_NAME $GCE_IP "grpc:${PRODUCTCATALOG_PORT}"
+./istio-${ISTIO_VERSION}/bin/istioctl register $SVC_NAME $GCE_IP "grpc:${PRODUCTCATALOG_PORT}"
 
 # output result of registration
 kubectl get endpoints $SVC_NAME -o yaml
