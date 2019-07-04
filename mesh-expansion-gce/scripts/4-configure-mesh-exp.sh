@@ -18,8 +18,8 @@ set -euo pipefail
 log() { echo "$1" >&2; }
 
 # NOTE - if you are on a mac and you don't have gsed, uncomment this line:
-#  brew install gnu-sed 
- 
+#  brew install gnu-sed
+
 # vars
 PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
 export VM_NAME="istio-gce"
@@ -34,8 +34,7 @@ gcloud container clusters get-credentials $CLUSTER_NAME --zone $ZONE
 kubectl config use-context $CTX
 
 # generate cluster.env from the GKE cluster
-GWIP=$(kubectl get -n istio-system service istio-ingressgateway \
-         -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+GWIP=$(kubectl get -n istio-system service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
 ISTIO_SERVICE_CIDR=$(gcloud container clusters describe ${CLUSTER_NAME?} \
                        --zone ${ZONE?} --project ${PROJECT_ID?} \

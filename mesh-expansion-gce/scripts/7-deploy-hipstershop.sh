@@ -30,7 +30,7 @@ gcloud container clusters get-credentials $CLUSTER_NAME --zone $ZONE
 kubectl config use-context $CTX
 
 # enable sidecar proxy injection on the default k8s namespace
-kubectl label namespace default istio-injection=enabled
+kubectl label namespace default istio-injection=enabled --overwrite
 
-# deploy hipstershop (istio + k8s manifests, w/o productcatalog)
+# deploy sample app to GKE
 kubectl apply -f scripts/hipstershop-gke
