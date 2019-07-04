@@ -62,7 +62,7 @@ Definitions (CRDs).
 ./scripts/2-istio-preinstall.sh
 ```
 
-Once the script finishes, verify (in both projects) that there are `53` Istio CRDs ready:
+Once the script finishes, verify (in both projects) that there are `23` Istio CRDs ready (or `53`, if using Istio 1.1):
 
 ```
 kubectl get crds | grep 'istio.io\|certmanager.k8s.io' | wc -l
@@ -77,18 +77,20 @@ kubectl get crds | grep 'istio.io\|certmanager.k8s.io' | wc -l
 Wait for all Istio pods to be `RUNNING` and `READY`:
 
 ```
-NAME                                      READY   STATUS      RESTARTS   AGE
-istio-citadel-5595c6cd97-7rpvk            1/1     Running     0          4m
-istio-galley-8549ffc49c-7g6cx             1/1     Running     0          4m
-istio-ingressgateway-54b5786cb7-5xhk6     1/1     Running     0          4m
-istio-init-crd-10-msh2n                   0/1     Completed   0          11m
-istio-init-crd-11-rzdr6                   0/1     Completed   0          11m
-istio-pilot-774d5b7b7c-qwwtl              2/2     Running     0          4m
-istio-policy-7844f7b55c-s8tpp             2/2     Running     3          4m
-istio-sidecar-injector-744f68bf5f-p226d   1/1     Running     0          4m
-istio-telemetry-59b8dcbcff-7wg7r          2/2     Running     3          4m
-istiocoredns-79b7b888dc-vxlcn             2/2     Running     0          4m
-prometheus-89bc5668c-jzl9s                1/1     Running     0          4m
+NAME                                     READY   STATUS      RESTARTS   AGE
+istio-citadel-5f5f589d85-ngwzx           1/1     Running     0          2m10s
+istio-egressgateway-586b67d9f9-rvgdl     1/1     Running     0          2m10s
+istio-galley-69dddcdb6d-ftc9k            1/1     Running     0          2m10s
+istio-ingressgateway-6cb57df9d5-s82ml    1/1     Running     0          2m10s
+istio-init-crd-10-44ftr                  0/1     Completed   0          3m41s
+istio-init-crd-11-bbf6m                  0/1     Completed   0          3m41s
+istio-init-crd-12-gd2fc                  0/1     Completed   0          3m41s
+istio-pilot-55b94698c4-5s8l4             2/2     Running     0          2m10s
+istio-policy-68b4bf556d-9l7sj            2/2     Running     2          2m10s
+istio-sidecar-injector-68bf9645b-2qfrv   1/1     Running     0          2m10s
+istio-telemetry-659fc8767d-4qt9h         2/2     Running     2          2m10s
+istiocoredns-586757d55d-bjzz9            2/2     Running     0          2m10s
+prometheus-5b48f5d49-pdsts               1/1     Running     0          2m10s
 ```
 
 ## 4 - Configure KubeDNS to talk to Istio's CoreDNS
