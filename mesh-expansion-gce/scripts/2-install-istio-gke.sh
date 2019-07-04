@@ -19,6 +19,7 @@ log() { echo "$1" >&2; }
 
 # set vars
 PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
+ISTIO_VERSION=${ISTIO_VERSION:=1.2.2}
 ZONE="us-central1-b"
 CLUSTER_NAME="mesh-exp-gke"
 CTX="gke_${PROJECT_ID}_${ZONE}_${CLUSTER_NAME}"
@@ -32,17 +33,15 @@ kubectl config use-context $CTX
 # set up istio permissions
 kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user="$(gcloud config get-value core/account)"
 
-# get istio 1.1.1 
-log "Downloading Istio 1.1.1..."
-wget https://github.com/istio/istio/releases/download/1.1.1/istio-1.1.1-linux.tar.gz
-tar -xzf istio-1.1.1-linux.tar.gz
-rm -r istio-1.1.1-linux.tar.gz
+# get latest Istio
+log "Downloading Istio ${ISTIO_VERSION}..."
+curl -L https://git.io/getLatestIstio | ISTIO_VERSION=$ISTIO_VERSION sh -
 
 # install the istio control plane via helm
 log "Installing CRDs to the GKE cluster..."
-for i in istio-1.1.1/install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
-cat istio-1.1.1/install/kubernetes/namespace.yaml > scripts/istio.yaml
-helm template istio-1.1.1/install/kubernetes/helm/istio --name istio --namespace istio-system --set global.meshExpansion.enabled=true >> scripts/istio.yaml
+for i in istio-${ISTIO_VERSION}/install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
+cat istio-${ISTIO_VERSION}/install/kubernetes/namespace.yaml > scripts/istio.yaml
+helm template istio-${ISTIO_VERSION}/install/kubernetes/helm/istio --name istio --namespace istio-system --set global.meshExpansion.enabled=true >> scripts/istio.yaml
 kubectl apply -f scripts/istio.yaml
 
 log "...Success."
