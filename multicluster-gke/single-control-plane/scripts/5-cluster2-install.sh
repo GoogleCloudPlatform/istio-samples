@@ -18,6 +18,7 @@ set -euo pipefail
 log() { echo "$1" >&2; }
 
 PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
+ISTIO_VERSION=${ISTIO_VERSION:=1.2.2}
 cluster1zone="us-east1-b"
 cluster2zone="us-central1-b"
 
@@ -37,7 +38,7 @@ log "Pilot: $PILOT_POD_IP"
 log "Istio-Policy (mixer): $POLICY_POD_IP"
 log "Istio-Telemetry (mixer): $TELEMETRY_POD_IP"
 
-HELM_DIR="istio-1.1.1/install/kubernetes/helm/istio"
+HELM_DIR="istio-${ISTIO_VERSION}/install/kubernetes/helm/istio"
  helm template $HELM_DIR \
   --namespace istio-system --name istio-remote \
   --values $HELM_DIR/values-istio-remote.yaml \
