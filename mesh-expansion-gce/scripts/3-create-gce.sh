@@ -44,5 +44,5 @@ gcloud config set project $PROJECT_ID
 gcloud compute --project=$PROJECT_ID instances create $GCE_INSTANCE_NAME --zone=$ZONE \
 --machine-type=n1-standard-2 --subnet=default --network-tier=PREMIUM --maintenance-policy=MIGRATE \
 --image=ubuntu-1604-xenial-v20190628 --image-project=ubuntu-os-cloud --boot-disk-size=10GB \
---boot-disk-type=pd-standard --boot-disk-device-name=$GCE_INSTANCE_NAME -tags="istio-gce"
+--boot-disk-type=pd-standard --boot-disk-device-name=$GCE_INSTANCE_NAME --tags="istio-gce"
 
