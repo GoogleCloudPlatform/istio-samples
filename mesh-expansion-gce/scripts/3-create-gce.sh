@@ -25,14 +25,24 @@ CTX="gke_${PROJECT_ID}_${ZONE}_${CLUSTER_NAME}"
 
 GCE_INSTANCE_NAME="istio-gce"
 
+# allow traffic from K8s cluster to VM service
+export K8S_POD_CIDR=$(gcloud container clusters describe ${CLUSTER_NAME?} --zone ${ZONE?} --format=json | jq -r '.clusterIpv4Cidr')
+
+gcloud compute firewall-rules create k8s-to-istio-gce \
+--description="Allow k8s pods CIDR to istio-gce instance" \
+--source-ranges=$K8S_POD_CIDR \
+--target-tags="istio-gce" \
+--action=ALLOW \
+--rules=tcp:3550
+
+# allow ssh to the VM
+gcloud compute firewall-rules create default-allow-ssh --allow tcp:22
 
 # Create GCE VM
 gcloud config set project $PROJECT_ID
 
 gcloud compute --project=$PROJECT_ID instances create $GCE_INSTANCE_NAME --zone=$ZONE \
 --machine-type=n1-standard-2 --subnet=default --network-tier=PREMIUM --maintenance-policy=MIGRATE \
---image=ubuntu-1604-lts-drawfork-v20181102 --image-project=eip-images --boot-disk-size=10GB \
---boot-disk-type=pd-standard --boot-disk-device-name=$GCE_INSTANCE_NAME
+--image=ubuntu-1604-xenial-v20190628 --image-project=ubuntu-os-cloud --boot-disk-size=10GB \
+--boot-disk-type=pd-standard --boot-disk-device-name=$GCE_INSTANCE_NAME --tags="istio-gce"
 
-# allow ssh (for later)
-gcloud compute firewall-rules create default-allow-ssh --allow tcp:22
