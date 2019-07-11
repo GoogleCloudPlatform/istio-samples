@@ -21,7 +21,7 @@ ISTIO_VERSION=${ISTIO_VERSION:=1.2.2}
 
 # NOTE - THIS VARIABLE IS AUTO-POPULATED IN ./scripts/4-configure-mesh-exp.sh
 # (where GWIP refers to your GKE cluster's Istio IngressGateway IP address)
-GWIP=""
+GWIP='34.67.74.47'
 
 # setup --  install docker
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
