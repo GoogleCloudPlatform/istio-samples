@@ -1,5 +1,11 @@
 # Configuring Stackdriver Monitoring for Open Source Istio
 
+- [Background](#background)
+- [Stackdriver Adapter](#stackdriver-adapter)
+- [Stackdriver Metrics](#stackdriver-metrics)
+- [Usage](#usage)
+- [Customizations](#customizations)
+
 ## Background
 
 Per the [Istio](https://istio.io) concept documentation on [Observability](https://istio.io/docs/concepts/observability/):
@@ -52,6 +58,10 @@ After a few minutes, the `loadgenerator` built-in to Hipster Shop will have gene
 
 For further exploration, refer to [Istio and Stackdriver Monitoring](https://github.com/GoogleCloudPlatform/istio-samples/tree/master/istio-stackdriver#monitoring) to create example dashboards.
 
-## Cleanup
+### Step 6: Cleanup
 
 `gcloud container clusters delete [CLUSTER-NAME]`
+
+## Customizations
+
+If you need to make any customizations to [istio-stackdriver-metrics](istio-stackdriver-metrics.yaml), you can generate your own manifest as described in the [README](https://github.com/istio/istio/tree/master/mixer/adapter/stackdriver) for the Istio Stackdriver adapter.
