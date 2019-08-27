@@ -125,8 +125,6 @@ spec:
   - "accounts.google.com" # Used to get token
   - "*.googleapis.com"
   - "*.githubusercontent.com" # used to demo Istio's Origin auth feature / test JWT 
-  addresses:
-  - "169.254.169.254" # GCE metadata server
   ports:
   - number: 80
     protocol: HTTP
