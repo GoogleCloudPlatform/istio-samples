@@ -120,11 +120,12 @@ metadata:
   name: whitelist-egress-googleapis
 spec:
   hosts:
-  - "169.254.169.254" # GCE metadata server
   - "metadata.google" # GCE metadata server
   - "metadata.google.internal" # GCE metadata server
   - "accounts.google.com" # Used to get token
   - "*.googleapis.com"
+  addresses:
+  - "169.254.169.254" # GCE metadata server
   ports:
   - number: 80
     protocol: HTTP
@@ -133,3 +134,4 @@ spec:
     protocol: HTTPS
     name: https
 ---
+
