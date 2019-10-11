@@ -19,7 +19,7 @@ log() { echo "$1" >&2; }
 
 # set vars
 PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
-ISTIO_VERSION=${ISTIO_VERSION:=1.2.2}
+ISTIO_VERSION=${ISTIO_VERSION:=1.3.2}
 ZONE="us-central1-b"
 CLUSTER_NAME="mesh-exp-gke"
 CTX="gke_${PROJECT_ID}_${ZONE}_${CLUSTER_NAME}"
@@ -50,17 +50,18 @@ kind: ServiceEntry
 metadata:
   name: ${SVC_NAME}
 spec:
-   hosts:
-   - ${SVC_NAME}.vm.svc.cluster.local
-   ports:
-   - number: 3550
-     name: grpc
-     protocol: GRPC
-   resolution: STATIC
-   endpoints:
-    - address: ${GCE_IP}
-      ports:
-        grpc: 3550
-      labels:
-        app: ${SVC_NAME}
+  hosts:
+  - ${SVC_NAME}.default.svc.cluster.local
+  location: MESH_INTERNAL
+  ports:
+  - number: 3550
+    name: grpc
+    protocol: GRPC
+  resolution: STATIC
+  endpoints:
+  - address: ${GCE_IP}
+    ports:
+      grpc: 3550
+    labels:
+      app: ${SVC_NAME}
 EOF

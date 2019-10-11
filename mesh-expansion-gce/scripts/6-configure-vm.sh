@@ -17,11 +17,11 @@
 # NOTE - THIS SCRIPT SHOULD RUN ON THE GCE INSTANCE, NOT ON YOUR HOST / IN K8s
 
 # set vars
-ISTIO_VERSION=${ISTIO_VERSION:=1.2.2}
+ISTIO_VERSION=${ISTIO_VERSION:=1.3.2}
 
 # NOTE - THIS VARIABLE IS AUTO-POPULATED IN ./scripts/4-configure-mesh-exp.sh
 # (where GWIP refers to your GKE cluster's Istio IngressGateway IP address)
-GWIP=""
+GWIP='104.154.173.198'
 
 # setup --  install docker
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -51,5 +51,5 @@ sudo systemctl start istio
 
 
 # run productcatalog service
-sudo docker run -d -p 3550:3550 gcr.io/google-samples/microservices-demo/productcatalogservice:v0.1.1
+sudo docker run -d -p 3550:3550 gcr.io/google-samples/microservices-demo/productcatalogservice:v0.1.2
 
