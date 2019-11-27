@@ -21,10 +21,7 @@ ENV GO111MODULE on
 
 WORKDIR ${GOPATH}/src
 
-RUN echo 'nobody:x:65534:' > /group.nobody && \
-    echo 'nobody:x:65534:65534::/:' > /passwd.nobody
-
-RUN wget -O /bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.3.0/grpc_health_probe-linux-amd64 && \
+RUN wget -O /bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.3.1/grpc_health_probe-linux-amd64 && \
     chmod +x /bin/grpc_health_probe
 
 COPY go.mod go.sum ./
@@ -37,11 +34,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go install -installsuffix "static" .
 
 # https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
 
-FROM gcr.io/distroless/static
-
-COPY --from=build /group.nobody /etc/group
-COPY --from=build /passwd.nobody /etc/passwd
-USER nobody:nobody
+FROM gcr.io/distroless/static:nonroot
 
 COPY --from=build /bin/grpc_health_probe /bin/grpc_health_probe
 COPY --from=build /go/bin/server /bin/greeter-server

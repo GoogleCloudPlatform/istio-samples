@@ -21,9 +21,6 @@ ENV GO111MODULE on
 
 WORKDIR ${GOPATH}/src
 
-RUN echo 'nobody:x:65534:' > /group.nobody && \
-    echo 'nobody:x:65534:65534::/:' > /passwd.nobody
-
 COPY go.mod go.sum ./
 
 RUN go mod download
@@ -34,11 +31,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go install -installsuffix "static" .
 
 # https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
 
-FROM gcr.io/distroless/static
-
-COPY --from=build /group.nobody /etc/group
-COPY --from=build /passwd.nobody /etc/passwd
-USER nobody:nobody
+FROM gcr.io/distroless/static:nonroot
 
 COPY --from=build /go/bin/client /bin/greeter-client
 
