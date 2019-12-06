@@ -13,10 +13,13 @@
 
 ## Introduction
 
-This sample demonstrates how to configure an HTTP(S) Load Balancer, combined with an GCP static IP, to route client requests to the closest Istio cluster. We will end up with the following setup:
+Managing external Ingress traffic for GKE clusters is a common use case. If you are running the same services across multiple GKE clusters/regions, [you can use a GCP HTTP(S) Load Balancer](https://cloud.google.com/kubernetes-engine/docs/how-to/multi-cluster-ingress), configured with a global anycast IP, combined with Ingress resources for your services, to route client traffic to the closest GKE cluster.
+
+But what if you've installed Istio on your clusters, and want to leverage the policy logic of Istio `Gateways` and `VirtualServices`? This sample demonstrates how to use the [`kubemci`](https://github.com/GoogleCloudPlatform/k8s-multicluster-ingress) tool to map a global Anycast IP to multiple Istio IngressGateways, running in three separate clusters/regions. In the end, we will show how to route client requests to the closest instance of a service, which is replicated across three clusters.
+
 ![arch](images/architecture.png)
 
-`ZonePrinter` is the sample app, fronted by three Istio IngressGateways running in three clusters. See the accompanying [blog post](https://askmeegs.dev/posts/istio-multicluster-ingress) for more background.
+Here, [`ZonePrinter`](https://github.com/GoogleCloudPlatform/k8s-multicluster-ingress/tree/master/examples/zone-printer) is the sample app, fronted by three Istio IngressGateways running in three clusters.
 
 ## Prerequistes
 
@@ -135,9 +138,9 @@ Load balancer zoneprinter-ingress has IPAddress <ip> and is spread across 3 clus
 
 ## Test Geo-Aware Load Balancing
 
-Now that we've configure multicluster ingress for a global anycast IP, we should be able to access the global IP from clients around the world,and be routed to the ZonePrinter running in the closest GKE cluster.
+Now that we've configure multicluster ingress for a global anycast IP, we should be able to access the global IP from clients around the world, and be routed to the ZonePrinter running in the closest GKE cluster.
 
-For instance, from a laptop connected to a network on the East Coast, we can see that we're navigated to the ZonePrinter running in the `us-east4-a` cluster:
+For instance, from a laptop connected to a network on the East Coast, we're redirected to the `us-east4` cluster:
 
 ```
 mokeefe@laptop:~$ curl  34.102.158.9
@@ -169,7 +172,7 @@ mokeefe@oregon-client:~$  curl 34.102.158.9
                 <h1>us-west2-a!</h1>
 ```
 
-🎊 Well done! You just set up geo-aware load balancing for Istio services running in three GKE clusters, across three regions.
+🎊 Well done! You just set up geo-aware load balancing for Istio services running across three regions.
 
 ## Cleanup
 
