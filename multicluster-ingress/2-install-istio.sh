@@ -62,6 +62,6 @@ for svc in "${CLUSTERS[@]}" ; do
     kubectx ${NAME}=${LONG_CTX}
 
     # install istio on each cluster
-    # install_istio $NAME
+    install_istio $NAME
 done
 
