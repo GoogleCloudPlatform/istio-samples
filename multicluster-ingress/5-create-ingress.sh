@@ -14,15 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 source ./common.sh
 
-# log "Installing kubemci..."
-# wget https://storage.googleapis.com/kubemci-release/release/latest/bin/darwin/amd64/kubemci
-# sudo mv ./kubemci /usr/local/bin
-# gcloud compute addresses create --global zoneprinter-ip
-
-log "Creating multicluster ingress..."
+log "Adding health check and updating the IngressGateway..."
 for svc in "${CLUSTERS[@]}" ; do
     CTX="${svc%%:*}"
     kubectx $CTX
@@ -36,7 +30,14 @@ for svc in "${CLUSTERS[@]}" ; do
     --dry-run=true -o yaml | kubectl apply -f -
 done
 
-# create multicluster ingress spanning all 3 clusters
+log "Installing kubemci..."
+wget https://storage.googleapis.com/kubemci-release/release/latest/bin/darwin/amd64/kubemci
+sudo mv ./kubemci /usr/local/bin
+
+log "Creating static IP..."
+gcloud compute addresses create --global zoneprinter-ip
+
+log "Creating multicluster ingress..."
 kubemci create zoneprinter-ingress \
 --ingress=ingress/ingress.yaml \
 --gcp-project=${PROJECT_ID} \

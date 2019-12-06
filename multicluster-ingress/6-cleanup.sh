@@ -14,24 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -euo pipefail
-log() { echo "$1" >&2; }
+source ./common.sh
 
-if [ -z "$PROJECT_ID" ]
-then
-    log "You must set PROJECT_ID to continue."
-    exit
-else
-    PROJECT_ID=$PROJECT_ID
-fi
+log "Deleting multicluster ingress..."
+kubemci delete zoneprinter-ingress \
+--ingress=ingress/ingress.yaml \
+--gcp-project=${PROJECT_ID} \
+--kubeconfig=${KUBECONFIG}
 
-export WORKDIR=${WORK_DIR:="${PWD}"}
+log "Deleting global IP..."
+gcloud compute addresses delete zoneprinter-ip --global --quiet
 
-# 1. los angeles   2. northern virginia    3. london
-CLUSTERS=("cluster1:us-west2-a"
-        "cluster2:us-east4-a"
-        "cluster3:europe-west2-b")
-
-ISTIO_VERSION="1.4.1"
-
-export KUBECONFIG=$WORKDIR/kubeconfig
+log "Deleting clusters..."
+for svc in "${CLUSTERS[@]}" ; do
+    NAME="${svc%%:*}"
+    ZONE="${svc##*:}"
+    gcloud container clusters delete $NAME --zone $ZONE --quiet --async
+done

@@ -26,8 +26,6 @@ log "Creating clusters..."
 for svc in "${CLUSTERS[@]}" ; do
     NAME="${svc%%:*}"
     ZONE="${svc##*:}"
-    log $NAME
-    log $ZONE
     gcloud beta container --project ${PROJECT_ID} clusters create ${NAME} --zone ${ZONE} \
     --no-enable-basic-auth --release-channel "regular" --machine-type "n1-standard-4" --image-type "COS" \
     --disk-type "pd-standard" --disk-size "100" \
@@ -36,5 +34,3 @@ for svc in "${CLUSTERS[@]}" ; do
     --default-max-pods-per-node "110" --addons HorizontalPodAutoscaling,HttpLoadBalancing \
     --no-enable-autoupgrade --no-enable-autorepair --async
 done
-
-log "Run `watch gcloud container clusters list` and wait for all 3 clusters to be RUNNING."
