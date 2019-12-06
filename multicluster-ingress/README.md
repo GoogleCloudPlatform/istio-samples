@@ -20,8 +20,6 @@ But what if you've installed Istio on your clusters, and want to leverage the po
 
 ![arch](images/architecture.png)
 
-Here, [`ZonePrinter`](https://github.com/GoogleCloudPlatform/k8s-multicluster-ingress/tree/master/examples/zone-printer) is the sample app, fronted by three Istio IngressGateways running in three clusters.
-
 ## Prerequistes
 
 - One [GCP Project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) with Billing enabled
@@ -83,8 +81,11 @@ Deploy the [Zone Printer](https://github.com/GoogleCloudPlatform/k8s-multicluste
 ./3-deploy-app.sh
 ```
 
-This script creates a Kubernetes Deployment with one replica, one Service (type `ClusterIP`), and two Istio resources: a `Gateway` (punching port `80` into the default IngressGateway), and a `VirtualService` to route inbound requests through the Gateway, to the `zone-printer` Service.
-
+This script creates four resources:
+1. A Kubernetes Deployment, `zone-printer`
+2. A Kubernetes Service, `zone-printer` (type `ClusterIP`), mapping to the `zone-printer` Deployment
+3. An Istio Gateway, punching port `80` into the default IngressGateway
+4. An Istio `VirtualService` to route inbound requests through the Gateway, to the `zone-printer` Service on port `80`.
 
 Note that right now (and by default), the Istio IngressGateway is mapped to a service type `LoadBalancer`, and has its own separate public IP. We can separately call that IngressGateway IP on all three clusters to verify that the zone printer app is running:
 
