@@ -153,7 +153,7 @@ mokeefe@laptop:~$ curl  34.102.158.9
 		<img src="https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg" style="width: 640px; height: auto; border: 1px solid black"/>
 ```
 
-To test the geo-aware routing further, you can create Google Compute Engine instances in different regions, ssh into each one, and `curl` the global IP. For instance, a VM in the Netherlands (`europe-west4-a`) is routed to the London (`europe-west2-b`) cluster:
+To test the geo-aware routing further, you can [create Google Compute Engine instances](https://cloud.google.com/compute/docs/instances/create-start-instance) in different regions, ssh into each one, and `curl` the global IP. For instance, a VM in the Netherlands (`europe-west4-a`) is routed to the London (`europe-west2-b`) cluster:
 
 ```
 mokeefe@netherlands-client:~$ curl 34.102.158.9
