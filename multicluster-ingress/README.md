@@ -1,8 +1,23 @@
 # Geo-aware Multicluster Load-Balancing with Istio on GKE
+- [Geo-aware Multicluster Load-Balancing with Istio on GKE](#geo-aware-multicluster-load-balancing-with-istio-on-gke)
+  - [Introduction](#introduction)
+  - [Prerequistes](#prerequistes)
+  - [Setup](#setup)
+  - [Install Istio](#install-istio)
+  - [Deploy the Sample App](#deploy-the-sample-app)
+  - [Create Multicluster Ingress](#create-multicluster-ingress)
+  - [Verify Multicluster Ingress](#verify-multicluster-ingress)
+  - [Test Geo-Aware Load Balancing](#test-geo-aware-load-balancing)
+  - [Cleanup](#cleanup)
 
-This sample demonstrates how to configure an HTTP(S) Load Balancer, combined with an GCP static IP, to route client requests to the closest Istio cluster. See the accompanying [blog post]() for more background.
+
+## Introduction
+
+This sample demonstrates how to configure an HTTP(S) Load Balancer, combined with an GCP static IP, to route client requests to the closest Istio cluster. We will end up with the following setup. `ZonePrinter` is the sample app, fronted by three Istio IngressGateways running in three clusters:
 
 ![arch](images/architecture.png)
+
+See the accompanying [blog post](https://askmeegs.dev/istio-multicluster-ingress) for more background.
 
 ## Prerequistes
 
