@@ -13,9 +13,9 @@
 
 ## Introduction
 
-Managing external Ingress traffic for GKE clusters is a common use case. If you are running the same services across multiple GKE clusters/regions, [you can use a GCP HTTP(S) Load Balancer](https://cloud.google.com/kubernetes-engine/docs/how-to/multi-cluster-ingress), configured with a global anycast IP, combined with Ingress resources for your services, to route client traffic to the closest GKE cluster.
+Managing Kubernetes Ingress traffic is an essential use case. If you are running the same services across multiple GKE clusters/regions, [you can use a GCP HTTP(S) Load Balancer](https://cloud.google.com/kubernetes-engine/docs/how-to/multi-cluster-ingress), configured with a global anycast IP, combined with Ingress resources for your services, to route client traffic to the closest GKE cluster.
 
-But what if you've installed Istio on your clusters, and want to leverage the policy logic of Istio `Gateways` and `VirtualServices`? This sample demonstrates how to use the [`kubemci`](https://github.com/GoogleCloudPlatform/k8s-multicluster-ingress) tool to map a global Anycast IP to multiple Istio IngressGateways, running in three separate clusters/regions. In the end, we will show how to route client requests to the closest instance of a service, which is replicated across three clusters.
+But what if you've installed Istio on your clusters, and want to leverage the policy logic of [Istio `Gateways`](https://istio.io/docs/tasks/traffic-management/ingress/ingress-control/), and at the same time, enable multicluster load balancing? This sample demonstrates how to use the [`kubemci`](https://github.com/GoogleCloudPlatform/k8s-multicluster-ingress) tool to map a global Anycast IP to multiple Istio IngressGateways, running in three separate clusters/regions. In the end, we will show how to route client requests to the closest instance of a service, which is replicated across three clusters.
 
 ![arch](images/architecture.png)
 
