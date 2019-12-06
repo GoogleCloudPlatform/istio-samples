@@ -9,3 +9,6 @@ istio-master.yaml
 istio_master.yaml
 istio-remote.yaml
 cluster-2
+kubectx
+kubemci
+kubeconfig

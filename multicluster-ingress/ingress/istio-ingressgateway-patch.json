@@ -1,0 +1,11 @@
+[
+    {
+      "op": "replace",
+      "path": "/spec/type",
+      "value": "NodePort"
+    },
+    {
+      "op": "remove",
+      "path": "/status"
+    }
+  ]
