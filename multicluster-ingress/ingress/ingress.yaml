@@ -1,0 +1,12 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-zoneprinter
+  namespace: istio-system
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: zoneprinter-ip
+    kubernetes.io/ingress.class: gce-multi-cluster
+spec:
+  backend:
+    serviceName: istio-ingressgateway
+    servicePort: 80
