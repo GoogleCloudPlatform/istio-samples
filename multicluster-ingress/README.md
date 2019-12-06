@@ -9,6 +9,7 @@
   - [Verify Multicluster Ingress](#verify-multicluster-ingress)
   - [Test Geo-Aware Load Balancing](#test-geo-aware-load-balancing)
   - [Cleanup](#cleanup)
+  - [Learn More](#learn-more)
 
 
 ## Introduction
@@ -181,3 +182,9 @@ To delete the resources used in this sample (ingress, static IP, GKE clusters):
 ```
 ./6-cleanup.sh
 ```
+
+## Learn More
+
+- [Istio By Example - Ingress (Single Cluster)](https://istiobyexample.dev/ingress/)
+- [Istio Docs - Ingress Gateway](https://istio.io/docs/concepts/traffic-management/#gateways)
+- [Solution: Integrating HTTP(S) Load Balancing with Istio and Cloud Run for Anthos on Google Cloud](https://cloud.google.com/solutions/integrating-https-load-balancing-with-istio-and-cloud-run-for-anthos-deployed-on-gke#top_of_page)
