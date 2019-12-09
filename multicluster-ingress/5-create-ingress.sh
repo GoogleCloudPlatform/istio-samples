@@ -32,13 +32,13 @@ done
 
 log "Installing kubemci..."
 wget https://storage.googleapis.com/kubemci-release/release/latest/bin/darwin/amd64/kubemci
-sudo mv ./kubemci /usr/local/bin
+sudo chmod +x ./kubemci
 
 log "Creating static IP..."
 gcloud compute addresses create --global zoneprinter-ip
 
 log "Creating multicluster ingress..."
-kubemci create zoneprinter-ingress \
+./kubemci create zoneprinter-ingress \
 --ingress=ingress/ingress.yaml \
 --gcp-project=${PROJECT_ID} \
 --kubeconfig=${KUBECONFIG}
