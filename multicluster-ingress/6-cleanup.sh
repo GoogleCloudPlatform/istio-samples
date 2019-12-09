@@ -16,6 +16,9 @@
 
 source ./common.sh
 
+log "Uninstalling kubemci..."
+sudo rm -rf $WORKDIR/kubemci
+
 log "Deleting multicluster ingress..."
 kubemci delete zoneprinter-ingress \
 --ingress=ingress/ingress.yaml \

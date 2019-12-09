@@ -115,7 +115,30 @@ This script does the following:
 1. Creates a VirtualService on all three clusters, to set up health checking for the IngressGateway. [This is needed](https://cloud.google.com/kubernetes-engine/docs/concepts/ingress#health_checks) for GCP load balancer health checking. Because the IngressGateway already exposes a `/healthz` endpoint on port `15020`, we just have to do a URL rewrite for requests from the `GoogleHC` user-agent.
 2. Updates the Service type on the Istio IngressGateway on all three clusters, from `LoadBalancer` to `NodePort`. A NodePort service is needed to configure Ingress.
 3. Reserves a global static IP in your project, named `zoneprinter-ip`.
-4. Installs [`kubemci`](https://github.com/GoogleCloudPlatform/k8s-multicluster-ingress), then uses it to provision a multicluster Ingress, mapping to the three clusters. The `kubemci create` command takes in a Kubernetes Ingress resource (see `ingress/ingress.yaml`), which has `annotations` for `gce-multi-cluster`, and a reference to the name of our new global static IP. The Ingress backend is the `istioingressgateway` Service running on port 80. From here, the `kubemci` tool provisions a GCP HTTP(S) Load Balancer, including backend services, url mappings, and firewall rules.
+4. Installs [`kubemci`](https://github.com/GoogleCloudPlatform/k8s-multicluster-ingress), then uses it to provision a multicluster Ingress, mapping to the three clusters. The `kubemci create` command takes in the following Kubernetes Ingress resource (see `ingress/ingress.yaml`):
+
+
+```YAML
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-zoneprinter
+  namespace: istio-system
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: zoneprinter-ip
+    kubernetes.io/ingress.class: gce-multi-cluster
+spec:
+  backend:
+    serviceName: istio-ingressgateway
+    servicePort: 80
+```
+
+Here, we're creating an `Ingress` for our existing NodePort backend service, `istio-ingressgateway`. We add the name of the global static IP we reserved, and a multicluster `ingress.class` which tells the kubemci tool to configure Ingress resources on all three clusters in our Kubeconfig. From here, the `kubemci` tool provisions a GCP HTTP(S) Load Balancer, including backend services, url mappings, and firewall rules.
+
+Two notes about this process:
+1. This is exactly how you'd do multicluster ingress for a single service, representing *one* backend workload (one Kubernetes Service) - the difference is that here, we're instead setting up ingress to an intermediate IngressGateway, allowing us to configure Istio traffic rules for *many* backend workloads, each srepresented by its own Kubernetes Service.
+2. Any multicluster ingress setup assumes that the same workloads (and in this case, traffic rules). We recommend using a Continuous Deployment tool to ensure that all clusters have ths same set of resources.
+
 
 ## Verify Multicluster Ingress
 
@@ -129,7 +152,7 @@ zoneprinter-ingress   <your-global-IP>   cluster1, cluster2, cluster3
 Then, run:
 
 ```
-kubemci get-status zoneprinter-ingress --gcp-project=${PROJECT_ID}
+./kubemci get-status zoneprinter-ingress --gcp-project=${PROJECT_ID}
 ```
 
 You should see:
@@ -137,10 +160,33 @@ You should see:
 Load balancer zoneprinter-ingress has IPAddress <ip> and is spread across 3 clusters (cluster1,cluster2,cluster3)
 ```
 
+But how does this multi-cluster `zoneprinter-ingress` load balancer translate into individual cluster resources? From `cluster3`, run:
+
+```
+kubectl get ingress ingress-zoneprinter -n istio-system -o yaml
+```
+
+You should see:
+
+```YAML
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.gcp.kubernetes.io/instance-groups: '[{"Name":"k8s-ig--eab086beeb92f4d7","Zone":"https://www.googleapis.com/compute/v1/projects/istio-multicluster-ingress/zones/europe-west2-b"}]'
+    kubernetes.io/ingress.class: gce-multi-cluster
+    kubernetes.io/ingress.global-static-ip-name: zoneprinter-ip
+...
+```
+
+Here, each cluster is its own [instance group](https://cloud.google.com/load-balancing/docs/backend-service#backends) (a managed GKE cluster). If you navigate in the Cloud Console to Network Services > Load Balancing, and click on the load balancer beginning with `mci...`, you should see:
+
+![console-screenshot](images/console-screenshot.png)
+
 
 ## Test Geo-Aware Load Balancing
 
-Now that we've configure multicluster ingress for a global anycast IP, we should be able to access the global IP from clients around the world, and be routed to the ZonePrinter running in the closest GKE cluster.
+Now that we've configure multicluster ingress for a global anycast IP, we should be able to access the global IP from clients around the world, and be routed to the ZonePrinter running in the closest GKE cluster. **Note**: it may take about 5 minutes to provision the load balancer.
 
 For instance, from a laptop connected to a network on the East Coast, we're redirected to the `us-east4` cluster:
 
