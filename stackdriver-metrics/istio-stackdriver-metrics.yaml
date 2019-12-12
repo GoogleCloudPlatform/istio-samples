@@ -173,20 +173,6 @@ spec:
     pushInterval: 10s
 # [END istio_istio_samples_stackdriver_metrics_handler_stackdriver]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_istio_samples_stackdriver_metrics_rule_stackdriver_server]
 apiVersion: config.istio.io/v1alpha2
 kind: rule
@@ -207,20 +193,6 @@ spec:
     | "inbound" == "inbound")
 # [END istio_istio_samples_stackdriver_metrics_rule_stackdriver_server]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_istio_samples_stackdriver_metrics_rule_stackdriver_client]
 apiVersion: config.istio.io/v1alpha2
 kind: rule
@@ -241,20 +213,6 @@ spec:
     | "inbound" == "outbound")
 # [END istio_istio_samples_stackdriver_metrics_rule_stackdriver_client]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_istio_samples_stackdriver_metrics_rule_stackdriver_tcp_server]
 apiVersion: config.istio.io/v1alpha2
 kind: rule
@@ -272,20 +230,6 @@ spec:
   match: context.protocol == "tcp" && (context.reporter.kind | "inbound" == "inbound")
 # [END istio_istio_samples_stackdriver_metrics_rule_stackdriver_tcp_server]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_istio_samples_stackdriver_metrics_rule_stackdriver_tcp_client]
 apiVersion: config.istio.io/v1alpha2
 kind: rule
@@ -303,20 +247,6 @@ spec:
   match: context.protocol == "tcp" && (context.reporter.kind | "inbound" == "outbound")
 # [END istio_istio_samples_stackdriver_metrics_rule_stackdriver_tcp_client]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_istio_samples_stackdriver_metrics_instance_server_request_count]
 apiVersion: config.istio.io/v1alpha2
 kind: instance
@@ -362,20 +292,6 @@ spec:
     value: '1'
 # [END istio_istio_samples_stackdriver_metrics_instance_server_request_count]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_istio_samples_stackdriver_metrics_instance_client_request_count]
 apiVersion: config.istio.io/v1alpha2
 kind: instance
@@ -418,20 +334,6 @@ spec:
     value: '1'
 # [END istio_istio_samples_stackdriver_metrics_instance_client_request_count]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_istio_samples_stackdriver_metrics_instance_server_request_bytes]
 apiVersion: config.istio.io/v1alpha2
 kind: instance
@@ -477,20 +379,6 @@ spec:
     value: request.total_size
 # [END istio_istio_samples_stackdriver_metrics_instance_server_request_bytes]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_istio_samples_stackdriver_metrics_instance_client_request_bytes]
 apiVersion: config.istio.io/v1alpha2
 kind: instance
@@ -533,20 +421,6 @@ spec:
     value: request.total_size
 # [END istio_istio_samples_stackdriver_metrics_instance_client_request_bytes]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_istio_samples_stackdriver_metrics_instance_server_response_bytes]
 apiVersion: config.istio.io/v1alpha2
 kind: instance
@@ -592,20 +466,6 @@ spec:
     value: response.total_size
 # [END istio_istio_samples_stackdriver_metrics_instance_server_response_bytes]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_istio_samples_stackdriver_metrics_instance_client_response_bytes]
 apiVersion: config.istio.io/v1alpha2
 kind: instance
@@ -648,20 +508,6 @@ spec:
     value: response.total_size
 # [END istio_istio_samples_stackdriver_metrics_instance_client_response_bytes]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_istio_samples_stackdriver_metrics_instance_server_response_latencies]
 apiVersion: config.istio.io/v1alpha2
 kind: instance
@@ -707,20 +553,6 @@ spec:
     value: response.duration
 # [END istio_istio_samples_stackdriver_metrics_instance_server_response_latencies]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_istio_samples_stackdriver_metrics_instance_client_roundtrip_latencies]
 apiVersion: config.istio.io/v1alpha2
 kind: instance
@@ -763,20 +595,6 @@ spec:
     value: response.duration
 # [END istio_istio_samples_stackdriver_metrics_instance_client_roundtrip_latencies]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_istio_samples_stackdriver_metrics_instance_server_received_bytes_count]
 apiVersion: config.istio.io/v1alpha2
 kind: instance
@@ -817,20 +635,6 @@ spec:
     value: connection.received.bytes | 0
 # [END istio_istio_samples_stackdriver_metrics_instance_server_received_bytes_count]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_istio_samples_stackdriver_metrics_instance_client_received_bytes_count]
 apiVersion: config.istio.io/v1alpha2
 kind: instance
@@ -868,20 +672,6 @@ spec:
     value: connection.received.bytes | 0
 # [END istio_istio_samples_stackdriver_metrics_instance_client_received_bytes_count]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_istio_samples_stackdriver_metrics_instance_server_sent_bytes_count]
 apiVersion: config.istio.io/v1alpha2
 kind: instance
@@ -922,20 +712,6 @@ spec:
     value: connection.sent.bytes | 0
 # [END istio_istio_samples_stackdriver_metrics_instance_server_sent_bytes_count]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_istio_samples_stackdriver_metrics_instance_client_sent_bytes_count]
 apiVersion: config.istio.io/v1alpha2
 kind: instance
