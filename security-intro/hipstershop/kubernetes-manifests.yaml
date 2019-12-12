@@ -51,20 +51,6 @@ spec:
       terminationGracePeriodSeconds: 5
 # [END istio_security_intro_hipstershop_deployment_emailservice]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_service_emailservice]
 apiVersion: v1
 kind: Service
@@ -80,20 +66,6 @@ spec:
   type: ClusterIP
 # [END istio_security_intro_hipstershop_service_emailservice]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_deployment_checkoutservice]
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -142,20 +114,6 @@ spec:
             memory: 64Mi
 # [END istio_security_intro_hipstershop_deployment_checkoutservice]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_service_checkoutservice]
 apiVersion: v1
 kind: Service
@@ -171,20 +129,6 @@ spec:
   type: ClusterIP
 # [END istio_security_intro_hipstershop_service_checkoutservice]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_deployment_recommendationservice]
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -226,20 +170,6 @@ spec:
       terminationGracePeriodSeconds: 5
 # [END istio_security_intro_hipstershop_deployment_recommendationservice]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_service_recommendationservice]
 apiVersion: v1
 kind: Service
@@ -255,20 +185,6 @@ spec:
   type: ClusterIP
 # [END istio_security_intro_hipstershop_service_recommendationservice]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_deployment_frontend]
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -309,20 +225,6 @@ spec:
             memory: 64Mi
 # [END istio_security_intro_hipstershop_deployment_frontend]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_service_frontend]
 apiVersion: v1
 kind: Service
@@ -338,20 +240,6 @@ spec:
   type: ClusterIP
 # [END istio_security_intro_hipstershop_service_frontend]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_deployment_paymentservice]
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -388,20 +276,6 @@ spec:
       terminationGracePeriodSeconds: 5
 # [END istio_security_intro_hipstershop_deployment_paymentservice]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_service_paymentservice]
 apiVersion: v1
 kind: Service
@@ -417,20 +291,6 @@ spec:
   type: ClusterIP
 # [END istio_security_intro_hipstershop_service_paymentservice]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_deployment_productcatalogservice]
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -468,20 +328,6 @@ spec:
       terminationGracePeriodSeconds: 5
 # [END istio_security_intro_hipstershop_deployment_productcatalogservice]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_service_productcatalogservice]
 apiVersion: v1
 kind: Service
@@ -497,20 +343,6 @@ spec:
   type: ClusterIP
 # [END istio_security_intro_hipstershop_service_productcatalogservice]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_namespace_cart]
 apiVersion: v1
 kind: Namespace
@@ -520,20 +352,6 @@ metadata:
   name: cart
 # [END istio_security_intro_hipstershop_namespace_cart]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_deployment_cartservice]
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -581,20 +399,6 @@ spec:
       terminationGracePeriodSeconds: 5
 # [END istio_security_intro_hipstershop_deployment_cartservice]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_service_cartservice]
 apiVersion: v1
 kind: Service
@@ -611,20 +415,6 @@ spec:
   type: ClusterIP
 # [END istio_security_intro_hipstershop_service_cartservice]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_deployment_loadgenerator]
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -656,20 +446,6 @@ spec:
       terminationGracePeriodSeconds: 5
 # [END istio_security_intro_hipstershop_deployment_loadgenerator]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_deployment_currencyservice]
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -707,20 +483,6 @@ spec:
       terminationGracePeriodSeconds: 5
 # [END istio_security_intro_hipstershop_deployment_currencyservice]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_service_currencyservice]
 apiVersion: v1
 kind: Service
@@ -736,20 +498,6 @@ spec:
   type: ClusterIP
 # [END istio_security_intro_hipstershop_service_currencyservice]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_deployment_shippingservice]
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -786,20 +534,6 @@ spec:
             memory: 64Mi
 # [END istio_security_intro_hipstershop_deployment_shippingservice]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_service_shippingservice]
 apiVersion: v1
 kind: Service
@@ -815,20 +549,6 @@ spec:
   type: ClusterIP
 # [END istio_security_intro_hipstershop_service_shippingservice]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_deployment_redis_cart]
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -869,20 +589,6 @@ spec:
         name: redis-data
 # [END istio_security_intro_hipstershop_deployment_redis_cart]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_service_redis_cart]
 apiVersion: v1
 kind: Service
@@ -899,20 +605,6 @@ spec:
   type: ClusterIP
 # [END istio_security_intro_hipstershop_service_redis_cart]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_deployment_adservice]
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -956,20 +648,6 @@ spec:
       terminationGracePeriodSeconds: 5
 # [END istio_security_intro_hipstershop_deployment_adservice]
 ---
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START istio_security_intro_hipstershop_service_adservice]
 apiVersion: v1
 kind: Service

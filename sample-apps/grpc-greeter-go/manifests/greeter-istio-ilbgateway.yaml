@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START istio_grpc_greeter_go_manifests_gateway_greeter]
+# [START istio_grpc_greeter_go_manifests_gateway_greeter2]
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
@@ -32,5 +32,5 @@ spec:
       mode: SIMPLE
       privateKey: /etc/istio/ilbgateway-certs/tls.key
       serverCertificate: /etc/istio/ilbgateway-certs/tls.crt
-# [END istio_grpc_greeter_go_manifests_gateway_greeter]
+# [END istio_grpc_greeter_go_manifests_gateway_greeter2]
 ---
