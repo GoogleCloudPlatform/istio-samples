@@ -1,3 +1,4 @@
+
 # Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,11 +12,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-apiVersion: "rbac.istio.io/v1alpha1"
+
+# [START istio_security_intro_istio_rbacconfig_default]
+apiVersion: rbac.istio.io/v1alpha1
 kind: RbacConfig
 metadata:
   name: default
 spec:
-  mode: 'ON_WITH_INCLUSION'
   inclusion:
-    services: ["frontend.default.svc.cluster.local"]
+    services:
+    - frontend.default.svc.cluster.local
+  mode: ON_WITH_INCLUSION
+# [END istio_security_intro_istio_rbacconfig_default]
+---

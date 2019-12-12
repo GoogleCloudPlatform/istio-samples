@@ -1,10 +1,11 @@
+
 # Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,10 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This Gateway object attaches to the Istio ILB Gateway. Use this manifest
-# instead of greeter-istio-ingressgateway.yaml if you only want to expose the
-# service on your private VPC network using Internal TCP/UDP Load Balancing.
-
+# [START istio_grpc_greeter_go_manifests_gateway_greeter]
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
@@ -24,13 +22,15 @@ spec:
   selector:
     istio: ilbgateway
   servers:
-  - port:
-      number: 443
+  - hosts:
+    - '*'
+    port:
       name: https
+      number: 443
       protocol: HTTPS
     tls:
       mode: SIMPLE
-      serverCertificate: /etc/istio/ilbgateway-certs/tls.crt
       privateKey: /etc/istio/ilbgateway-certs/tls.key
-    hosts:
-    - "*"
+      serverCertificate: /etc/istio/ilbgateway-certs/tls.crt
+# [END istio_grpc_greeter_go_manifests_gateway_greeter]
+---
