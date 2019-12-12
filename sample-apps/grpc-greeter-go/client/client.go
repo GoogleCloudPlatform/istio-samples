@@ -91,11 +91,11 @@ func main() {
 			log.Fatalf("could not greet: %v", err)
 		}
 		hostname := "unknown"
-// [START istio_samples_app_grpc_greeter_client_hostname]
+		// [START istio_sample_apps_grpc_greeter_go_client_hostname]
 		if len(header["hostname"]) > 0 {
 			hostname = header["hostname"][0]
 		}
 		log.Printf("%s from %s", r.Message, hostname)
-// [END istio_samples_app_grpc_greeter_client_hostname]
+		// [END istio_sample_apps_grpc_greeter_go_client_hostname]
 	}
 }

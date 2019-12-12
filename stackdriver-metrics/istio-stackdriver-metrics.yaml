@@ -1,97 +1,29 @@
-apiVersion: "config.istio.io/v1alpha2"
+
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START istio_istio_samples_stackdriver_metrics_handler_stackdriver]
+apiVersion: config.istio.io/v1alpha2
 kind: handler
 metadata:
-  name: stackdriver
-  namespace: istio-system
   labels:
     app: istio-telemetry
+  name: stackdriver
+  namespace: istio-system
 spec:
   compiledAdapter: stackdriver
   params:
-    pushInterval: 10s
-    metricInfo:
-      server-request-count.instance.istio-system:
-        # Due to a bug in gogoproto deserialization, Enums in maps must be
-        # specified by their integer value, not variant name. See
-        # https://github.com/googleapis/googleapis/blob/master/google/api/metric.proto
-        # MetricKind and ValueType for the values to provide.
-        kind: 3 # CUMULATIVE
-        value: 2 # INT64
-        metric_type: "istio.io/service/server/request_count"
-      server-request-bytes.instance.istio-system:
-        kind: 3 # CUMULATIVE
-        value: 5 # DISTRIBUTION
-        buckets:
-          exponentialBuckets:
-            numFiniteBuckets: 20
-            scale: 1
-            growthFactor: 2
-        metric_type: "istio.io/service/server/request_bytes"
-      server-response-bytes.instance.istio-system:
-        kind: 3 # CUMULATIVE
-        value: 5 # DISTRIBUTION
-        buckets:
-          exponentialBuckets:
-            numFiniteBuckets: 20
-            scale: 1
-            growthFactor: 2
-        metric_type: "istio.io/service/server/response_bytes"
-      server-response-latencies.instance.istio-system:
-        kind: 3 # CUMULATIVE
-        value: 5 # DISTRIBUTION
-        buckets:
-          exponentialBuckets:
-            numFiniteBuckets: 20
-            scale: 1
-            growthFactor: 2
-        metric_type: "istio.io/service/server/response_latencies"
-      server-received-bytes-count.instance.istio-system:
-        kind: 3 # CUMULATIVE
-        value: 2 # INT64
-        metric_type: "istio.io/service/server/received_bytes_count"
-      server-sent-bytes-count.instance.istio-system:
-        kind: 3 # CUMULATIVE
-        value: 2 # INT64
-        metric_type: "istio.io/service/server/sent_bytes_count"
-      client-request-count.instance.istio-system:
-        kind: 3 # CUMULATIVE
-        value: 2 # INT64
-        metric_type: "istio.io/service/client/request_count"
-      client-request-bytes.instance.istio-system:
-        kind: 3 # CUMULATIVE
-        value: 5 # DISTRIBUTION
-        buckets:
-          exponentialBuckets:
-            numFiniteBuckets: 20
-            scale: 1
-            growthFactor: 2
-        metric_type: "istio.io/service/client/request_bytes"
-      client-response-bytes.instance.istio-system:
-        kind: 3 # CUMULATIVE
-        value: 5 # DISTRIBUTION
-        buckets:
-          exponentialBuckets:
-            numFiniteBuckets: 20
-            scale: 1
-            growthFactor: 2
-        metric_type: "istio.io/service/client/response_bytes"
-      client-roundtrip-latencies.instance.istio-system:
-        kind: 3 # CUMULATIVE
-        value: 5 # DISTRIBUTION
-        buckets:
-          exponentialBuckets:
-            numFiniteBuckets: 20
-            scale: 1
-            growthFactor: 2
-        metric_type: "istio.io/service/client/roundtrip_latencies"
-      client-received-bytes-count.instance.istio-system:
-        kind: 3 # CUMULATIVE
-        value: 2 # INT64
-        metric_type: "istio.io/service/client/received_bytes_count"
-      client-sent-bytes-count.instance.istio-system:
-        kind: 3 # CUMULATIVE
-        value: 2 # INT64
-        metric_type: "istio.io/service/client/sent_bytes_count"
     logInfo:
       server-accesslog-stackdriver.instance.istio-system:
         labelNames:
@@ -159,19 +91,111 @@ spec:
         - sent_bytes
         - total_received_bytes
         - total_sent_bytes
+    metricInfo:
+      client-received-bytes-count.instance.istio-system:
+        kind: 3
+        metric_type: istio.io/service/client/received_bytes_count
+        value: 2
+      client-request-bytes.instance.istio-system:
+        buckets:
+          exponentialBuckets:
+            growthFactor: 2
+            numFiniteBuckets: 20
+            scale: 1
+        kind: 3
+        metric_type: istio.io/service/client/request_bytes
+        value: 5
+      client-request-count.instance.istio-system:
+        kind: 3
+        metric_type: istio.io/service/client/request_count
+        value: 2
+      client-response-bytes.instance.istio-system:
+        buckets:
+          exponentialBuckets:
+            growthFactor: 2
+            numFiniteBuckets: 20
+            scale: 1
+        kind: 3
+        metric_type: istio.io/service/client/response_bytes
+        value: 5
+      client-roundtrip-latencies.instance.istio-system:
+        buckets:
+          exponentialBuckets:
+            growthFactor: 2
+            numFiniteBuckets: 20
+            scale: 1
+        kind: 3
+        metric_type: istio.io/service/client/roundtrip_latencies
+        value: 5
+      client-sent-bytes-count.instance.istio-system:
+        kind: 3
+        metric_type: istio.io/service/client/sent_bytes_count
+        value: 2
+      server-received-bytes-count.instance.istio-system:
+        kind: 3
+        metric_type: istio.io/service/server/received_bytes_count
+        value: 2
+      server-request-bytes.instance.istio-system:
+        buckets:
+          exponentialBuckets:
+            growthFactor: 2
+            numFiniteBuckets: 20
+            scale: 1
+        kind: 3
+        metric_type: istio.io/service/server/request_bytes
+        value: 5
+      server-request-count.instance.istio-system:
+        kind: 3
+        metric_type: istio.io/service/server/request_count
+        value: 2
+      server-response-bytes.instance.istio-system:
+        buckets:
+          exponentialBuckets:
+            growthFactor: 2
+            numFiniteBuckets: 20
+            scale: 1
+        kind: 3
+        metric_type: istio.io/service/server/response_bytes
+        value: 5
+      server-response-latencies.instance.istio-system:
+        buckets:
+          exponentialBuckets:
+            growthFactor: 2
+            numFiniteBuckets: 20
+            scale: 1
+        kind: 3
+        metric_type: istio.io/service/server/response_latencies
+        value: 5
+      server-sent-bytes-count.instance.istio-system:
+        kind: 3
+        metric_type: istio.io/service/server/sent_bytes_count
+        value: 2
+    pushInterval: 10s
+# [END istio_istio_samples_stackdriver_metrics_handler_stackdriver]
 ---
-#################################################
-############## Metric Config ####################
-#################################################
-apiVersion: "config.istio.io/v1alpha2"
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START istio_istio_samples_stackdriver_metrics_rule_stackdriver_server]
+apiVersion: config.istio.io/v1alpha2
 kind: rule
 metadata:
-  name: stackdriver-server
-  namespace: istio-system
   labels:
     app: istio-telemetry
+  name: stackdriver-server
+  namespace: istio-system
 spec:
-  match: (context.protocol == "http" || context.protocol == "grpc") && (context.reporter.kind | "inbound" == "inbound")
   actions:
   - handler: stackdriver
     instances:
@@ -179,16 +203,33 @@ spec:
     - server-request-bytes
     - server-response-bytes
     - server-response-latencies
+  match: (context.protocol == "http" || context.protocol == "grpc") && (context.reporter.kind
+    | "inbound" == "inbound")
+# [END istio_istio_samples_stackdriver_metrics_rule_stackdriver_server]
 ---
-apiVersion: "config.istio.io/v1alpha2"
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START istio_istio_samples_stackdriver_metrics_rule_stackdriver_client]
+apiVersion: config.istio.io/v1alpha2
 kind: rule
 metadata:
-  name: stackdriver-client
-  namespace: istio-system
   labels:
     app: istio-telemetry
+  name: stackdriver-client
+  namespace: istio-system
 spec:
-  match: (context.protocol == "http" || context.protocol == "grpc") && (context.reporter.kind | "inbound" == "outbound")
   actions:
   - handler: stackdriver
     instances:
@@ -196,468 +237,739 @@ spec:
     - client-request-bytes
     - client-response-bytes
     - client-roundtrip-latencies
+  match: (context.protocol == "http" || context.protocol == "grpc") && (context.reporter.kind
+    | "inbound" == "outbound")
+# [END istio_istio_samples_stackdriver_metrics_rule_stackdriver_client]
 ---
-apiVersion: "config.istio.io/v1alpha2"
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START istio_istio_samples_stackdriver_metrics_rule_stackdriver_tcp_server]
+apiVersion: config.istio.io/v1alpha2
 kind: rule
 metadata:
-  name: stackdriver-tcp-server
-  namespace: istio-system
   labels:
     app: istio-telemetry
+  name: stackdriver-tcp-server
+  namespace: istio-system
 spec:
-  match: context.protocol == "tcp" && (context.reporter.kind | "inbound" == "inbound")
   actions:
   - handler: stackdriver
     instances:
     - server-received-bytes-count
     - server-sent-bytes-count
+  match: context.protocol == "tcp" && (context.reporter.kind | "inbound" == "inbound")
+# [END istio_istio_samples_stackdriver_metrics_rule_stackdriver_tcp_server]
 ---
-apiVersion: "config.istio.io/v1alpha2"
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START istio_istio_samples_stackdriver_metrics_rule_stackdriver_tcp_client]
+apiVersion: config.istio.io/v1alpha2
 kind: rule
 metadata:
-  name: stackdriver-tcp-client
-  namespace: istio-system
   labels:
     app: istio-telemetry
+  name: stackdriver-tcp-client
+  namespace: istio-system
 spec:
-  match: context.protocol == "tcp" && (context.reporter.kind | "inbound" == "outbound")
   actions:
   - handler: stackdriver
     instances:
     - client-received-bytes-count
     - client-sent-bytes-count
+  match: context.protocol == "tcp" && (context.reporter.kind | "inbound" == "outbound")
+# [END istio_istio_samples_stackdriver_metrics_rule_stackdriver_tcp_client]
 ---
-apiVersion: "config.istio.io/v1alpha2"
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START istio_istio_samples_stackdriver_metrics_instance_server_request_count]
+apiVersion: config.istio.io/v1alpha2
 kind: instance
 metadata:
+  labels:
+    app: istio-telemetry
   name: server-request-count
   namespace: istio-system
-  labels:
-    app: istio-telemetry
 spec:
   compiledTemplate: metric
   params:
-    value: "1"
     dimensions:
+      api_name: api.service | "unknown"
+      api_version: api.version | "unknown"
+      destination_owner: destination.owner | "unknown"
+      destination_port: destination.port | 0
+      destination_principal: destination.principal | "unknown"
       destination_service_name: destination.service.name | "unknown"
       destination_service_namespace: destination.service.namespace | "unknown"
-      destination_port: destination.port | 0
-      request_operation: conditional((context.protocol | "unknown") == "grpc", request.path | "unknown", request.method | "unknown")
-      request_protocol: context.protocol | "unknown"
-      api_version: api.version | "unknown"
-      api_name: api.service | "unknown"
-      response_code: response.code | 0
-      service_authentication_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
-      source_workload_namespace: source.workload.namespace | "unknown"
-      source_workload_name: source.workload.name | "unknown"
-      source_owner: source.owner | "unknown"
-      destination_workload_namespace: destination.workload.namespace | "unknown"
       destination_workload_name: destination.workload.name | "unknown"
-      destination_owner: destination.owner | "unknown"
-      destination_principal: destination.principal | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      request_operation: conditional((context.protocol | "unknown") == "grpc", request.path
+        | "unknown", request.method | "unknown")
+      request_protocol: context.protocol | "unknown"
+      response_code: response.code | 0
+      service_authentication_policy: conditional((context.reporter.kind | "inbound")
+        == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls",
+        "none"))
+      source_owner: source.owner | "unknown"
       source_principal: source.principal | "unknown"
-    monitoredResourceType: '"k8s_container"'
+      source_workload_name: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
     monitoredResourceDimensions:
-      project_id: '""'
       cluster_name: '""'
-      namespace_name: destination.workload.namespace | "unknown"
+      container_name: conditional((destination.name | "unknown").startsWith("istio-telemetry")
+        || (destination.name | "unknown").startsWith("istio-policy"), "mixer", destination.container.name
+        | "unknown")
       location: '""'
-      container_name: conditional((destination.name | "unknown").startsWith("istio-telemetry") || (destination.name | "unknown").startsWith("istio-policy"), "mixer", destination.container.name | "unknown")
+      namespace_name: destination.workload.namespace | "unknown"
       pod_name: destination.name | "unknown"
+      project_id: '""'
+    monitoredResourceType: '"k8s_container"'
+    value: '1'
+# [END istio_istio_samples_stackdriver_metrics_instance_server_request_count]
 ---
-apiVersion: "config.istio.io/v1alpha2"
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START istio_istio_samples_stackdriver_metrics_instance_client_request_count]
+apiVersion: config.istio.io/v1alpha2
 kind: instance
 metadata:
+  labels:
+    app: istio-telemetry
   name: client-request-count
   namespace: istio-system
-  labels:
-    app: istio-telemetry
 spec:
   compiledTemplate: metric
   params:
-    value: "1"
     dimensions:
+      api_name: api.service | "unknown"
+      api_version: api.version | "unknown"
+      destination_owner: destination.owner | "unknown"
+      destination_port: destination.port | 0
+      destination_principal: destination.principal | "unknown"
       destination_service_name: destination.service.name | "unknown"
       destination_service_namespace: destination.service.namespace | "unknown"
-      destination_port: destination.port | 0
-      request_operation: conditional((context.protocol | "unknown") == "grpc", request.path | "unknown", request.method | "unknown")
-      request_protocol: context.protocol | "unknown"
-      api_version: api.version | "unknown"
-      api_name: api.service | "unknown"
-      response_code: response.code | 0
-      service_authentication_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
-      source_workload_namespace: source.workload.namespace | "unknown"
-      source_workload_name: source.workload.name | "unknown"
-      source_owner: source.owner | "unknown"
-      destination_workload_namespace: destination.workload.namespace | "unknown"
       destination_workload_name: destination.workload.name | "unknown"
-      destination_owner: destination.owner | "unknown"
-      destination_principal: destination.principal | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      request_operation: conditional((context.protocol | "unknown") == "grpc", request.path
+        | "unknown", request.method | "unknown")
+      request_protocol: context.protocol | "unknown"
+      response_code: response.code | 0
+      service_authentication_policy: conditional((context.reporter.kind | "inbound")
+        == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls",
+        "none"))
+      source_owner: source.owner | "unknown"
       source_principal: source.principal | "unknown"
-    monitoredResourceType: '"k8s_pod"'
+      source_workload_name: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
     monitoredResourceDimensions:
-      project_id: '""'
       cluster_name: '""'
-      namespace_name: source.workload.namespace | "unknown"
       location: '""'
+      namespace_name: source.workload.namespace | "unknown"
       pod_name: source.name | "unknown"
+      project_id: '""'
+    monitoredResourceType: '"k8s_pod"'
+    value: '1'
+# [END istio_istio_samples_stackdriver_metrics_instance_client_request_count]
 ---
-apiVersion: "config.istio.io/v1alpha2"
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START istio_istio_samples_stackdriver_metrics_instance_server_request_bytes]
+apiVersion: config.istio.io/v1alpha2
 kind: instance
 metadata:
+  labels:
+    app: istio-telemetry
   name: server-request-bytes
   namespace: istio-system
-  labels:
-    app: istio-telemetry
 spec:
   compiledTemplate: metric
   params:
-    value: request.total_size
     dimensions:
+      api_name: api.service | "unknown"
+      api_version: api.version | "unknown"
+      destination_owner: destination.owner | "unknown"
+      destination_port: destination.port | 0
+      destination_principal: destination.principal | "unknown"
       destination_service_name: destination.service.name | "unknown"
       destination_service_namespace: destination.service.namespace | "unknown"
-      destination_port: destination.port | 0
-      request_operation: conditional((context.protocol | "unknown") == "grpc", request.path | "unknown", request.method | "unknown")
-      request_protocol: context.protocol | "unknown"
-      api_version: api.version | "unknown"
-      api_name: api.service | "unknown"
-      response_code: response.code | 0
-      service_authentication_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
-      source_workload_namespace: source.workload.namespace | "unknown"
-      source_workload_name: source.workload.name | "unknown"
-      source_owner: source.owner | "unknown"
-      destination_workload_namespace: destination.workload.namespace | "unknown"
       destination_workload_name: destination.workload.name | "unknown"
-      destination_owner: destination.owner | "unknown"
-      destination_principal: destination.principal | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      request_operation: conditional((context.protocol | "unknown") == "grpc", request.path
+        | "unknown", request.method | "unknown")
+      request_protocol: context.protocol | "unknown"
+      response_code: response.code | 0
+      service_authentication_policy: conditional((context.reporter.kind | "inbound")
+        == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls",
+        "none"))
+      source_owner: source.owner | "unknown"
       source_principal: source.principal | "unknown"
-    monitoredResourceType: '"k8s_container"'
+      source_workload_name: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
     monitoredResourceDimensions:
-      project_id: '""'
       cluster_name: '""'
-      namespace_name: destination.workload.namespace | "unknown"
+      container_name: conditional((destination.name | "unknown").startsWith("istio-telemetry")
+        || (destination.name | "unknown").startsWith("istio-policy"), "mixer", destination.container.name
+        | "unknown")
       location: '""'
-      container_name: conditional((destination.name | "unknown").startsWith("istio-telemetry") || (destination.name | "unknown").startsWith("istio-policy"), "mixer", destination.container.name | "unknown")
+      namespace_name: destination.workload.namespace | "unknown"
       pod_name: destination.name | "unknown"
+      project_id: '""'
+    monitoredResourceType: '"k8s_container"'
+    value: request.total_size
+# [END istio_istio_samples_stackdriver_metrics_instance_server_request_bytes]
 ---
-apiVersion: "config.istio.io/v1alpha2"
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START istio_istio_samples_stackdriver_metrics_instance_client_request_bytes]
+apiVersion: config.istio.io/v1alpha2
 kind: instance
 metadata:
+  labels:
+    app: istio-telemetry
   name: client-request-bytes
   namespace: istio-system
-  labels:
-    app: istio-telemetry
 spec:
   compiledTemplate: metric
   params:
-    value: request.total_size
     dimensions:
+      api_name: api.service | "unknown"
+      api_version: api.version | "unknown"
+      destination_owner: destination.owner | "unknown"
+      destination_port: destination.port | 0
+      destination_principal: destination.principal | "unknown"
       destination_service_name: destination.service.name | "unknown"
       destination_service_namespace: destination.service.namespace | "unknown"
-      destination_port: destination.port | 0
-      request_operation: conditional((context.protocol | "unknown") == "grpc", request.path | "unknown", request.method | "unknown")
-      request_protocol: context.protocol | "unknown"
-      api_version: api.version | "unknown"
-      api_name: api.service | "unknown"
-      response_code: response.code | 0
-      service_authentication_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
-      source_workload_namespace: source.workload.namespace | "unknown"
-      source_workload_name: source.workload.name | "unknown"
-      source_owner: source.owner | "unknown"
-      destination_workload_namespace: destination.workload.namespace | "unknown"
       destination_workload_name: destination.workload.name | "unknown"
-      destination_owner: destination.owner | "unknown"
-      destination_principal: destination.principal | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      request_operation: conditional((context.protocol | "unknown") == "grpc", request.path
+        | "unknown", request.method | "unknown")
+      request_protocol: context.protocol | "unknown"
+      response_code: response.code | 0
+      service_authentication_policy: conditional((context.reporter.kind | "inbound")
+        == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls",
+        "none"))
+      source_owner: source.owner | "unknown"
       source_principal: source.principal | "unknown"
-    monitoredResourceType: '"k8s_pod"'
+      source_workload_name: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
     monitoredResourceDimensions:
-      project_id: '""'
       cluster_name: '""'
-      namespace_name: source.workload.namespace | "unknown"
       location: '""'
+      namespace_name: source.workload.namespace | "unknown"
       pod_name: source.name | "unknown"
+      project_id: '""'
+    monitoredResourceType: '"k8s_pod"'
+    value: request.total_size
+# [END istio_istio_samples_stackdriver_metrics_instance_client_request_bytes]
 ---
-apiVersion: "config.istio.io/v1alpha2"
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START istio_istio_samples_stackdriver_metrics_instance_server_response_bytes]
+apiVersion: config.istio.io/v1alpha2
 kind: instance
 metadata:
+  labels:
+    app: istio-telemetry
   name: server-response-bytes
   namespace: istio-system
-  labels:
-    app: istio-telemetry
 spec:
   compiledTemplate: metric
   params:
-    value: response.total_size
     dimensions:
+      api_name: api.service | "unknown"
+      api_version: api.version | "unknown"
+      destination_owner: destination.owner | "unknown"
+      destination_port: destination.port | 0
+      destination_principal: destination.principal | "unknown"
       destination_service_name: destination.service.name | "unknown"
       destination_service_namespace: destination.service.namespace | "unknown"
-      destination_port: destination.port | 0
-      request_operation: conditional((context.protocol | "unknown") == "grpc", request.path | "unknown", request.method | "unknown")
-      request_protocol: context.protocol | "unknown"
-      api_version: api.version | "unknown"
-      api_name: api.service | "unknown"
-      response_code: response.code | 0
-      service_authentication_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
-      source_workload_namespace: source.workload.namespace | "unknown"
-      source_workload_name: source.workload.name | "unknown"
-      source_owner: source.owner | "unknown"
-      destination_workload_namespace: destination.workload.namespace | "unknown"
       destination_workload_name: destination.workload.name | "unknown"
-      destination_owner: destination.owner | "unknown"
-      destination_principal: destination.principal | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      request_operation: conditional((context.protocol | "unknown") == "grpc", request.path
+        | "unknown", request.method | "unknown")
+      request_protocol: context.protocol | "unknown"
+      response_code: response.code | 0
+      service_authentication_policy: conditional((context.reporter.kind | "inbound")
+        == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls",
+        "none"))
+      source_owner: source.owner | "unknown"
       source_principal: source.principal | "unknown"
-    monitoredResourceType: '"k8s_container"'
+      source_workload_name: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
     monitoredResourceDimensions:
-      project_id: '""'
       cluster_name: '""'
-      namespace_name: destination.workload.namespace | "unknown"
+      container_name: conditional((destination.name | "unknown").startsWith("istio-telemetry")
+        || (destination.name | "unknown").startsWith("istio-policy"), "mixer", destination.container.name
+        | "unknown")
       location: '""'
-      container_name: conditional((destination.name | "unknown").startsWith("istio-telemetry") || (destination.name | "unknown").startsWith("istio-policy"), "mixer", destination.container.name | "unknown")
+      namespace_name: destination.workload.namespace | "unknown"
       pod_name: destination.name | "unknown"
+      project_id: '""'
+    monitoredResourceType: '"k8s_container"'
+    value: response.total_size
+# [END istio_istio_samples_stackdriver_metrics_instance_server_response_bytes]
 ---
-apiVersion: "config.istio.io/v1alpha2"
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START istio_istio_samples_stackdriver_metrics_instance_client_response_bytes]
+apiVersion: config.istio.io/v1alpha2
 kind: instance
 metadata:
+  labels:
+    app: istio-telemetry
   name: client-response-bytes
   namespace: istio-system
-  labels:
-    app: istio-telemetry
 spec:
   compiledTemplate: metric
   params:
-    value: response.total_size
     dimensions:
+      api_name: api.service | "unknown"
+      api_version: api.version | "unknown"
+      destination_owner: destination.owner | "unknown"
+      destination_port: destination.port | 0
+      destination_principal: destination.principal | "unknown"
       destination_service_name: destination.service.name | "unknown"
       destination_service_namespace: destination.service.namespace | "unknown"
-      destination_port: destination.port | 0
-      request_operation: conditional((context.protocol | "unknown") == "grpc", request.path | "unknown", request.method | "unknown")
-      request_protocol: context.protocol | "unknown"
-      api_version: api.version | "unknown"
-      api_name: api.service | "unknown"
-      response_code: response.code | 0
-      service_authentication_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
-      source_workload_namespace: source.workload.namespace | "unknown"
-      source_workload_name: source.workload.name | "unknown"
-      source_owner: source.owner | "unknown"
-      destination_workload_namespace: destination.workload.namespace | "unknown"
       destination_workload_name: destination.workload.name | "unknown"
-      destination_owner: destination.owner | "unknown"
-      destination_principal: destination.principal | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      request_operation: conditional((context.protocol | "unknown") == "grpc", request.path
+        | "unknown", request.method | "unknown")
+      request_protocol: context.protocol | "unknown"
+      response_code: response.code | 0
+      service_authentication_policy: conditional((context.reporter.kind | "inbound")
+        == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls",
+        "none"))
+      source_owner: source.owner | "unknown"
       source_principal: source.principal | "unknown"
-    monitoredResourceType: '"k8s_pod"'
+      source_workload_name: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
     monitoredResourceDimensions:
-      project_id: '""'
       cluster_name: '""'
-      namespace_name: source.workload.namespace | "unknown"
       location: '""'
+      namespace_name: source.workload.namespace | "unknown"
       pod_name: source.name | "unknown"
+      project_id: '""'
+    monitoredResourceType: '"k8s_pod"'
+    value: response.total_size
+# [END istio_istio_samples_stackdriver_metrics_instance_client_response_bytes]
 ---
-apiVersion: "config.istio.io/v1alpha2"
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START istio_istio_samples_stackdriver_metrics_instance_server_response_latencies]
+apiVersion: config.istio.io/v1alpha2
 kind: instance
 metadata:
+  labels:
+    app: istio-telemetry
   name: server-response-latencies
   namespace: istio-system
-  labels:
-    app: istio-telemetry
 spec:
   compiledTemplate: metric
   params:
-    value: response.duration
     dimensions:
+      api_name: api.service | "unknown"
+      api_version: api.version | "unknown"
+      destination_owner: destination.owner | "unknown"
+      destination_port: destination.port | 0
+      destination_principal: destination.principal | "unknown"
       destination_service_name: destination.service.name | "unknown"
       destination_service_namespace: destination.service.namespace | "unknown"
-      destination_port: destination.port | 0
-      request_operation: conditional((context.protocol | "unknown") == "grpc", request.path | "unknown", request.method | "unknown")
-      request_protocol: context.protocol | "unknown"
-      api_version: api.version | "unknown"
-      api_name: api.service | "unknown"
-      response_code: response.code | 0
-      service_authentication_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
-      source_workload_namespace: source.workload.namespace | "unknown"
-      source_workload_name: source.workload.name | "unknown"
-      source_owner: source.owner | "unknown"
-      destination_workload_namespace: destination.workload.namespace | "unknown"
       destination_workload_name: destination.workload.name | "unknown"
-      destination_owner: destination.owner | "unknown"
-      destination_principal: destination.principal | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      request_operation: conditional((context.protocol | "unknown") == "grpc", request.path
+        | "unknown", request.method | "unknown")
+      request_protocol: context.protocol | "unknown"
+      response_code: response.code | 0
+      service_authentication_policy: conditional((context.reporter.kind | "inbound")
+        == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls",
+        "none"))
+      source_owner: source.owner | "unknown"
       source_principal: source.principal | "unknown"
-    monitoredResourceType: '"k8s_container"'
+      source_workload_name: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
     monitoredResourceDimensions:
-      project_id: '""'
       cluster_name: '""'
-      namespace_name: destination.workload.namespace | "unknown"
+      container_name: conditional((destination.name | "unknown").startsWith("istio-telemetry")
+        || (destination.name | "unknown").startsWith("istio-policy"), "mixer", destination.container.name
+        | "unknown")
       location: '""'
-      container_name: conditional((destination.name | "unknown").startsWith("istio-telemetry") || (destination.name | "unknown").startsWith("istio-policy"), "mixer", destination.container.name | "unknown")
+      namespace_name: destination.workload.namespace | "unknown"
       pod_name: destination.name | "unknown"
+      project_id: '""'
+    monitoredResourceType: '"k8s_container"'
+    value: response.duration
+# [END istio_istio_samples_stackdriver_metrics_instance_server_response_latencies]
 ---
-apiVersion: "config.istio.io/v1alpha2"
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START istio_istio_samples_stackdriver_metrics_instance_client_roundtrip_latencies]
+apiVersion: config.istio.io/v1alpha2
 kind: instance
 metadata:
+  labels:
+    app: istio-telemetry
   name: client-roundtrip-latencies
   namespace: istio-system
-  labels:
-    app: istio-telemetry
 spec:
   compiledTemplate: metric
   params:
-    value: response.duration
     dimensions:
+      api_name: api.service | "unknown"
+      api_version: api.version | "unknown"
+      destination_owner: destination.owner | "unknown"
+      destination_port: destination.port | 0
+      destination_principal: destination.principal | "unknown"
       destination_service_name: destination.service.name | "unknown"
       destination_service_namespace: destination.service.namespace | "unknown"
-      destination_port: destination.port | 0
-      request_operation: conditional((context.protocol | "unknown") == "grpc", request.path | "unknown", request.method | "unknown")
-      request_protocol: context.protocol | "unknown"
-      api_version: api.version | "unknown"
-      api_name: api.service | "unknown"
-      response_code: response.code | 0
-      service_authentication_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
-      source_workload_namespace: source.workload.namespace | "unknown"
-      source_workload_name: source.workload.name | "unknown"
-      source_owner: source.owner | "unknown"
-      destination_workload_namespace: destination.workload.namespace | "unknown"
       destination_workload_name: destination.workload.name | "unknown"
-      destination_owner: destination.owner | "unknown"
-      destination_principal: destination.principal | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      request_operation: conditional((context.protocol | "unknown") == "grpc", request.path
+        | "unknown", request.method | "unknown")
+      request_protocol: context.protocol | "unknown"
+      response_code: response.code | 0
+      service_authentication_policy: conditional((context.reporter.kind | "inbound")
+        == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls",
+        "none"))
+      source_owner: source.owner | "unknown"
       source_principal: source.principal | "unknown"
-    monitoredResourceType: '"k8s_pod"'
+      source_workload_name: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
     monitoredResourceDimensions:
-      project_id: '""'
       cluster_name: '""'
-      namespace_name: source.workload.namespace | "unknown"
       location: '""'
+      namespace_name: source.workload.namespace | "unknown"
       pod_name: source.name | "unknown"
+      project_id: '""'
+    monitoredResourceType: '"k8s_pod"'
+    value: response.duration
+# [END istio_istio_samples_stackdriver_metrics_instance_client_roundtrip_latencies]
 ---
-apiVersion: "config.istio.io/v1alpha2"
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START istio_istio_samples_stackdriver_metrics_instance_server_received_bytes_count]
+apiVersion: config.istio.io/v1alpha2
 kind: instance
 metadata:
+  labels:
+    app: istio-telemetry
   name: server-received-bytes-count
   namespace: istio-system
-  labels:
-    app: istio-telemetry
 spec:
   compiledTemplate: metric
   params:
-    value: connection.received.bytes | 0
     dimensions:
+      destination_owner: destination.owner | "unknown"
+      destination_port: destination.port | 0
+      destination_principal: destination.principal | "unknown"
       destination_service_name: destination.service.name | "unknown"
       destination_service_namespace: destination.service.namespace | "unknown"
-      destination_port: destination.port | 0
-      request_protocol: context.protocol | "unknown"
-      service_authentication_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
-      source_workload_namespace: source.workload.namespace | "unknown"
-      source_workload_name: source.workload.name | "unknown"
-      source_owner: source.owner | "unknown"
-      destination_workload_namespace: destination.workload.namespace | "unknown"
       destination_workload_name: destination.workload.name | "unknown"
-      destination_owner: destination.owner | "unknown"
-      destination_principal: destination.principal | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      request_protocol: context.protocol | "unknown"
+      service_authentication_policy: conditional((context.reporter.kind | "inbound")
+        == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls",
+        "none"))
+      source_owner: source.owner | "unknown"
       source_principal: source.principal | "unknown"
-    monitoredResourceType: '"k8s_container"'
+      source_workload_name: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
     monitoredResourceDimensions:
-      project_id: '""'
       cluster_name: '""'
-      namespace_name: destination.workload.namespace | "unknown"
+      container_name: conditional((destination.name | "unknown").startsWith("istio-telemetry")
+        || (destination.name | "unknown").startsWith("istio-policy"), "mixer", destination.container.name
+        | "unknown")
       location: '""'
-      container_name: conditional((destination.name | "unknown").startsWith("istio-telemetry") || (destination.name | "unknown").startsWith("istio-policy"), "mixer", destination.container.name | "unknown")
+      namespace_name: destination.workload.namespace | "unknown"
       pod_name: destination.name | "unknown"
+      project_id: '""'
+    monitoredResourceType: '"k8s_container"'
+    value: connection.received.bytes | 0
+# [END istio_istio_samples_stackdriver_metrics_instance_server_received_bytes_count]
 ---
-apiVersion: "config.istio.io/v1alpha2"
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START istio_istio_samples_stackdriver_metrics_instance_client_received_bytes_count]
+apiVersion: config.istio.io/v1alpha2
 kind: instance
 metadata:
+  labels:
+    app: istio-telemetry
   name: client-received-bytes-count
   namespace: istio-system
-  labels:
-    app: istio-telemetry
 spec:
   compiledTemplate: metric
   params:
-    value: connection.received.bytes | 0
     dimensions:
+      destination_owner: destination.owner | "unknown"
+      destination_port: destination.port | 0
+      destination_principal: destination.principal | "unknown"
       destination_service_name: destination.service.name | "unknown"
       destination_service_namespace: destination.service.namespace | "unknown"
-      destination_port: destination.port | 0
-      request_protocol: context.protocol | "unknown"
-      service_authentication_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
-      source_workload_namespace: source.workload.namespace | "unknown"
-      source_workload_name: source.workload.name | "unknown"
-      source_owner: source.owner | "unknown"
-      destination_workload_namespace: destination.workload.namespace | "unknown"
       destination_workload_name: destination.workload.name | "unknown"
-      destination_owner: destination.owner | "unknown"
-      destination_principal: destination.principal | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      request_protocol: context.protocol | "unknown"
+      service_authentication_policy: conditional((context.reporter.kind | "inbound")
+        == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls",
+        "none"))
+      source_owner: source.owner | "unknown"
       source_principal: source.principal | "unknown"
-    monitoredResourceType: '"k8s_pod"'
+      source_workload_name: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
     monitoredResourceDimensions:
-      project_id: '""'
       cluster_name: '""'
-      namespace_name: source.workload.namespace | "unknown"
       location: '""'
+      namespace_name: source.workload.namespace | "unknown"
       pod_name: source.name | "unknown"
+      project_id: '""'
+    monitoredResourceType: '"k8s_pod"'
+    value: connection.received.bytes | 0
+# [END istio_istio_samples_stackdriver_metrics_instance_client_received_bytes_count]
 ---
-apiVersion: "config.istio.io/v1alpha2"
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START istio_istio_samples_stackdriver_metrics_instance_server_sent_bytes_count]
+apiVersion: config.istio.io/v1alpha2
 kind: instance
 metadata:
+  labels:
+    app: istio-telemetry
   name: server-sent-bytes-count
   namespace: istio-system
-  labels:
-    app: istio-telemetry
 spec:
   compiledTemplate: metric
   params:
-    value: connection.sent.bytes | 0
     dimensions:
+      destination_owner: destination.owner | "unknown"
+      destination_port: destination.port | 0
+      destination_principal: destination.principal | "unknown"
       destination_service_name: destination.service.name | "unknown"
       destination_service_namespace: destination.service.namespace | "unknown"
-      destination_port: destination.port | 0
-      request_protocol: context.protocol | "unknown"
-      service_authentication_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
-      source_workload_namespace: source.workload.namespace | "unknown"
-      source_workload_name: source.workload.name | "unknown"
-      source_owner: source.owner | "unknown"
-      destination_workload_namespace: destination.workload.namespace | "unknown"
       destination_workload_name: destination.workload.name | "unknown"
-      destination_owner: destination.owner | "unknown"
-      destination_principal: destination.principal | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      request_protocol: context.protocol | "unknown"
+      service_authentication_policy: conditional((context.reporter.kind | "inbound")
+        == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls",
+        "none"))
+      source_owner: source.owner | "unknown"
       source_principal: source.principal | "unknown"
-    monitoredResourceType: '"k8s_container"'
+      source_workload_name: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
     monitoredResourceDimensions:
-      project_id: '""'
       cluster_name: '""'
-      namespace_name: destination.workload.namespace | "unknown"
+      container_name: conditional((destination.name | "unknown").startsWith("istio-telemetry")
+        || (destination.name | "unknown").startsWith("istio-policy"), "mixer", destination.container.name
+        | "unknown")
       location: '""'
-      container_name: conditional((destination.name | "unknown").startsWith("istio-telemetry") || (destination.name | "unknown").startsWith("istio-policy"), "mixer", destination.container.name | "unknown")
+      namespace_name: destination.workload.namespace | "unknown"
       pod_name: destination.name | "unknown"
+      project_id: '""'
+    monitoredResourceType: '"k8s_container"'
+    value: connection.sent.bytes | 0
+# [END istio_istio_samples_stackdriver_metrics_instance_server_sent_bytes_count]
 ---
-apiVersion: "config.istio.io/v1alpha2"
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START istio_istio_samples_stackdriver_metrics_instance_client_sent_bytes_count]
+apiVersion: config.istio.io/v1alpha2
 kind: instance
 metadata:
-  name: client-sent-bytes-count
-  namespace: istio-system
   labels:
     app: istio-telemetry
+  name: client-sent-bytes-count
+  namespace: istio-system
 spec:
   compiledTemplate: metric
   params:
-    value: connection.sent.bytes | 0
     dimensions:
+      destination_owner: destination.owner | "unknown"
+      destination_port: destination.port | 0
+      destination_principal: destination.principal | "unknown"
       destination_service_name: destination.service.name | "unknown"
       destination_service_namespace: destination.service.namespace | "unknown"
-      destination_port: destination.port | 0
-      request_protocol: context.protocol | "unknown"
-      service_authentication_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
-      source_workload_namespace: source.workload.namespace | "unknown"
-      source_workload_name: source.workload.name | "unknown"
-      source_owner: source.owner | "unknown"
-      destination_workload_namespace: destination.workload.namespace | "unknown"
       destination_workload_name: destination.workload.name | "unknown"
-      destination_owner: destination.owner | "unknown"
-      destination_principal: destination.principal | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      request_protocol: context.protocol | "unknown"
+      service_authentication_policy: conditional((context.reporter.kind | "inbound")
+        == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls",
+        "none"))
+      source_owner: source.owner | "unknown"
       source_principal: source.principal | "unknown"
-    monitoredResourceType: '"k8s_pod"'
+      source_workload_name: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
     monitoredResourceDimensions:
-      project_id: '""'
       cluster_name: '""'
-      namespace_name: source.workload.namespace | "unknown"
       location: '""'
+      namespace_name: source.workload.namespace | "unknown"
       pod_name: source.name | "unknown"
+      project_id: '""'
+    monitoredResourceType: '"k8s_pod"'
+    value: connection.sent.bytes | 0
+# [END istio_istio_samples_stackdriver_metrics_instance_client_sent_bytes_count]
 ---

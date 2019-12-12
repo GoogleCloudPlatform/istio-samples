@@ -1,10 +1,11 @@
+
 # Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# [START istio_grpc_greeter_go_manifests_deployment_greeter]
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -27,31 +29,53 @@ spec:
         app: greeter
     spec:
       containers:
-      - name: greeter
+      - args:
+        - --address=127.0.0.1:8080
         image: gcr.io/$GOOGLE_CLOUD_PROJECT/grpc-greeter-go-server
         imagePullPolicy: Always
-        args:
-        - "--address=127.0.0.1:8080"
-        ports:
-        - containerPort: 8080
         livenessProbe:
           exec:
-            command: ["/bin/grpc_health_probe", "-addr=:8080"]
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:8080
           initialDelaySeconds: 2
+        name: greeter
+        ports:
+        - containerPort: 8080
         readinessProbe:
           exec:
-            command: ["/bin/grpc_health_probe", "-addr=:8080"]
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:8080
           initialDelaySeconds: 2
+# [END istio_grpc_greeter_go_manifests_deployment_greeter]
 ---
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START istio_grpc_greeter_go_manifests_service_greeter]
 apiVersion: v1
 kind: Service
 metadata:
   name: greeter
 spec:
+  ports:
+  - name: grpc
+    port: 8080
+    protocol: TCP
   selector:
     app: greeter
   type: ClusterIP
-  ports:
-  - name: grpc
-    protocol: TCP
-    port: 8080
+# [END istio_grpc_greeter_go_manifests_service_greeter]
+---

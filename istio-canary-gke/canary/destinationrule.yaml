@@ -1,3 +1,4 @@
+
 # Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,6 +12,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# [START istio_istio_canary_gke_canary_destinationrule_productcatalogservice]
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
@@ -18,9 +21,11 @@ metadata:
 spec:
   host: productcatalogservice
   subsets:
-  - name: v1
-    labels:
+  - labels:
       version: v1
-  - name: v2
-    labels:
+    name: v1
+  - labels:
       version: v2
+    name: v2
+# [END istio_istio_canary_gke_canary_destinationrule_productcatalogservice]
+---

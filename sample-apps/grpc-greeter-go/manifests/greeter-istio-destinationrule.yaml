@@ -1,10 +1,11 @@
+
 # Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START istio_samples_app_grpc_greeter_istio_destinationrule]
+# [START istio_grpc_greeter_go_manifests_destinationrule_greeter]
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
@@ -20,8 +21,9 @@ metadata:
 spec:
   host: greeter
   trafficPolicy:
-    tls:
-      mode: ISTIO_MUTUAL  
     loadBalancer:
       simple: ROUND_ROBIN
-# [END istio_samples_app_grpc_greeter_istio_destinationrule]
+    tls:
+      mode: ISTIO_MUTUAL
+# [END istio_grpc_greeter_go_manifests_destinationrule_greeter]
+---

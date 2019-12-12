@@ -47,7 +47,7 @@ type greeterServer struct{}
 // SayHello implements helloworld.GreeterServer
 func (s *greeterServer) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
 	log.Printf("Received: %v", in.Name)
-// [START istio_samples_app_grpc_greeter_server_hostname]
+	// [START istio_sample_apps_grpc_greeter_go_server_hostname]
 	hostname, err := os.Hostname()
 	if err != nil {
 		log.Printf("Unable to get hostname %v", err)
@@ -55,7 +55,7 @@ func (s *greeterServer) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.
 	if hostname != "" {
 		grpc.SendHeader(ctx, metadata.Pairs("hostname", hostname))
 	}
-// [END istio_samples_app_grpc_greeter_server_hostname]
+	// [END istio_sample_apps_grpc_greeter_go_server_hostname]
 	return &pb.HelloReply{Message: "Hello " + in.Name}, nil
 }
 
