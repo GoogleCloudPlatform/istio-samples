@@ -43,3 +43,13 @@ spec:
       mode: ISTIO_MUTUAL
 # [END istio_security_intro_istio_destinationrule_frontend_dr2]
 ---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: frontend-dr
+  namespace: default
+spec:
+  host: frontend.default.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
