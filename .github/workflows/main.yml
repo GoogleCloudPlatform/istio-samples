@@ -7,7 +7,7 @@ jobs:
     steps:
     - name: yaml gen action step
       id: yamlgen
-      uses: askmeegs/yaml-region-tag-generator@v0.0.6
+      uses: askmeegs/yaml-region-tag-generator@v0.0.7
       env:
         ID_RSA: ${{ secrets.id_rsa }}
         KNOWN_HOSTS: ${{ secrets.known_hosts }}
