@@ -20,7 +20,7 @@ metadata:
   name: frontendservice-entry
 spec:
   addresses:
-  - 127.255.0.5
+  - 240.0.0.5
   endpoints:
   - address: 35.222.46.19
     ports:
@@ -42,7 +42,7 @@ metadata:
   name: productcatalogservice-entry
 spec:
   addresses:
-  - 127.255.0.6
+  - 240.0.0.6
   endpoints:
   - address: 35.222.46.19
     ports:
@@ -64,7 +64,7 @@ metadata:
   name: cartservice-entry
 spec:
   addresses:
-  - 127.255.0.7
+  - 240.0.0.7
   endpoints:
   - address: 35.222.46.19
     ports:

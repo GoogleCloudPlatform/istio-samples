@@ -20,7 +20,7 @@ metadata:
   name: adservice-entry
 spec:
   addresses:
-  - 127.255.0.2
+  - 240.0.0.2
   endpoints:
   - address: 34.67.127.28
     ports:
@@ -42,7 +42,7 @@ metadata:
   name: checkoutservice-entry
 spec:
   addresses:
-  - 127.255.0.3
+  - 240.0.0.3
   endpoints:
   - address: 34.67.127.28
     ports:
@@ -64,7 +64,7 @@ metadata:
   name: currencyservice-entry
 spec:
   addresses:
-  - 127.255.0.4
+  - 240.0.0.4
   endpoints:
   - address: 34.67.127.28
     ports:
@@ -86,7 +86,7 @@ metadata:
   name: shippingservice-entry
 spec:
   addresses:
-  - 127.255.0.8
+  - 240.0.0.8
   endpoints:
   - address: 34.67.127.28
     ports:
