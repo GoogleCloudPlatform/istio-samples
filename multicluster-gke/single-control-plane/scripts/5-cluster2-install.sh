@@ -15,20 +15,13 @@
 # limitations under the License.
 
 set -euo pipefail
-log() { echo "$1" >&2; }
-
-PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
-ISTIO_VERSION=${ISTIO_VERSION:=1.2.2}
-cluster1zone="us-east1-b"
-cluster2zone="us-central1-b"
-
-ctx1="gke_${PROJECT_ID}_${cluster1zone}_cluster-1"
-ctx2="gke_${PROJECT_ID}_${cluster2zone}_cluster-2"
-
+source ./scripts/env.sh
 
 # Create templated manifests using Cluster 1's Control Plane info, for deployment into
 # Cluster 2
 kubectl config use-context $ctx1
+
+kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user="$(gcloud config get-value core/account)"
 
 export PILOT_POD_IP=$(kubectl -n istio-system get pod -l istio=pilot -o jsonpath='{.items[0].status.podIP}')
 export POLICY_POD_IP=$(kubectl -n istio-system get pod -l istio=mixer -o jsonpath='{.items[0].status.podIP}')

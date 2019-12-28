@@ -15,23 +15,7 @@
 # limitations under the License.
 
 set -euo pipefail
-log() { echo "$1" >&2; }
-
-PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
-cluster1zone="us-east1-b"
-cluster2zone="us-central1-b"
-
-ctx1="gke_${PROJECT_ID}_${cluster1zone}_cluster-1"
-ctx2="gke_${PROJECT_ID}_${cluster2zone}_cluster-2"
-
-gcloud config set project $PROJECT_ID
+source ./scripts/env.sh
 
 gcloud container clusters get-credentials cluster-1 --zone $cluster1zone
 gcloud container clusters get-credentials cluster-2 --zone $cluster2zone
-
-kubectl config use-context $ctx1
-kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user="$(gcloud config get-value core/account)"
-
-
-kubectl config use-context $ctx2
-kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user="$(gcloud config get-value core/account)"

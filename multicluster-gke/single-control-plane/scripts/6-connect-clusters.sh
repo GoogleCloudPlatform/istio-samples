@@ -15,17 +15,9 @@
 # limitations under the License.
 
 set -euo pipefail
-log() { echo "$1" >&2; }
-
-PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
-cluster1zone="us-east1-b"
-cluster2zone="us-central1-b"
-
-ctx1="gke_${PROJECT_ID}_${cluster1zone}_cluster-1"
-ctx2="gke_${PROJECT_ID}_${cluster2zone}_cluster-2"
+source ./scripts/env.sh
 
 kubectl config use-context $ctx2
-
 
 # Generate a kubeconfig for Cluster 2. We'll add this as a secret to Cluster 1.
 export WORK_DIR=$(pwd)

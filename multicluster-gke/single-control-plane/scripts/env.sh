@@ -14,21 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -euo pipefail
 log() { echo "$1" >&2; }
 
 PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
+gcloud config set project $PROJECT_ID
+
 cluster1zone="us-east1-b"
 cluster2zone="us-central1-b"
 
 ctx1="gke_${PROJECT_ID}_${cluster1zone}_cluster-1"
 ctx2="gke_${PROJECT_ID}_${cluster2zone}_cluster-2"
 
-# Deploy "most of" Hipstershop to cluster 1
-kubectl config use-context $ctx1
-kubectl delete -f ./cluster1
+ISTIO_VERSION=${ISTIO_VERSION:=1.4.2}
 
-# Deploy the rest of Hipstershop (cartservice, recommendations, loadgenerator) to cluster2
-kubectl config use-context $ctx2
-kubectl delete -f ./cluster2
-
+services1=("emailservice" "paymentservice" "shippingservice" "adservice" "checkoutservice" "currencyservice" "frontend" "productcatalogservice")
+services2=("loadgenerator" "cartservice" "recommendationservice" "redis-cart")

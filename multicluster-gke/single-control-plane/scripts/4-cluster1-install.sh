@@ -15,26 +15,9 @@
 # limitations under the License.
 
 set -euo pipefail
-log() { echo "$1" >&2; }
-
-PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
-ISTIO_VERSION=${ISTIO_VERSION:=1.2.2}
-cluster1zone="us-east1-b"
-cluster2zone="us-central1-b"
-
-ctx1="gke_${PROJECT_ID}_${cluster1zone}_cluster-1"
-ctx2="gke_${PROJECT_ID}_${cluster2zone}_cluster-2"
+source ./scripts/env.sh
 
 kubectl config use-context $ctx1
 
-log "Downloading Istio ${ISTIO_VERSION}..."
-curl -L https://git.io/getLatestIstio | ISTIO_VERSION=$ISTIO_VERSION sh -
-
-# Install istio
-cat istio-${ISTIO_VERSION}/install/kubernetes/helm/istio-init/files/crd-* > istio_master.yaml
-helm template istio-${ISTIO_VERSION}/install/kubernetes/helm/istio --name istio --namespace istio-system >> istio_master.yaml
-
-kubectl create ns istio-system
-kubectl label namespace default istio-injection=enabled
-kubectl apply -f istio_master.yaml
-
+log "Installing Istio ${ISTIO_VERSION} on ${ctx1} ..."
+ISTIO_VERSION=${ISTIO_VERSION} ../../common/install_istio.sh

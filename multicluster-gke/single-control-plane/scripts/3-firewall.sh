@@ -15,7 +15,7 @@
 # limitations under the License.
 
 set -euo pipefail
-log() { echo "$1" >&2; }
+source ./scripts/env.sh
 
 function join_by { local IFS="$1"; shift; echo "$*"; }
 

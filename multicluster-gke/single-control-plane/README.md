@@ -75,8 +75,8 @@ Now we'll install the remote Istio components (Citadel's node-agent, and an Envo
 
 ## 6 - Connect Cluster 2 to Cluster 1
 
-This step generates a [Kubeconfig](https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/#define-clusters-users-and-contexts) file for the remote Cluster 2, then adds it as a [Secret](https://kubernetes.io/docs/concepts/configuration/secret/)
-to Cluster 1.
+This step generates a [Kubeconfig](https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/#define-clusters-users-and-contexts) file for the remote cluster 2, then adds it as a [Secret](https://kubernetes.io/docs/concepts/configuration/secret/)
+to Cluster 1. This step allows the Istio control plane on cluster 1 to configure Istio proxies on cluster 2.
 
 ```
 ./scripts/6-connect-clusters.sh
@@ -98,8 +98,9 @@ Run the script to deploy:
 ./scripts/7-deploy-hipstershop.sh
 ```
 
-You can verify that the deployment was successful using 3 methods:
+*Note*:  This script uses the default Hipstershop installation, which deploys all services to the cluster, then deletes the deployments that belong on the other cluster. Both clusters need Kubernetes Services for all the Hipstershop workloads, in order for cross-cluster DNS to work.
 
+You can verify that the multicluster deployment was successful using 3 methods:
 
 1) Run `kubectl get pods` on both clusters to ensure all pods are `RUNNING` and `READY`.
 
@@ -134,16 +135,10 @@ clusters.
 
 ## Cleanup
 
-To fully delete all the GCP resources used in this demo:
+To delete all the GCP resources used in this demo:
 
 ```
-./scripts/cleanup-delete-cluster.sh
-```
-
-To remove the Hipstershop app, but keep both GKE clusters (and Istio) running:
-
-```
-./scripts/cleanup-hipstershop-only.sh
+./scripts/cleanup-delete-clusters.sh
 ```
 
 ## What's next?
