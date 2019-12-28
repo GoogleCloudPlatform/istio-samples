@@ -12,7 +12,7 @@ different [virtual networks](https://cloud.google.com/kubernetes-engine/docs/con
 
 ## How it works
 
-This demo uses Istio 1.1's [Gateway-Connected Clusters](https://preliminary.istio.io/docs/concepts/multicluster-deployments/#multiple-control-plane-topology) feature. This is a specific mode of
+This demo uses Istio 1.4's [Gateway-Connected Clusters](https://preliminary.istio.io/docs/concepts/multicluster-deployments/#multiple-control-plane-topology) feature. This is a specific mode of
 multicluster Istio where two separate Kubernetes clusters run their own Istio control
 plane, and orchestrate their own mesh. But each Istio control plane also runs a CoreDNS
 server, which allows services in both clusters to refer to services in the other cluster,
