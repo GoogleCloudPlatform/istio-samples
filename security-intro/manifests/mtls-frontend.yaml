@@ -13,27 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START istio_security_intro_istio_policy_default]
-apiVersion: authentication.istio.io/v1alpha1
-kind: Policy
+# [START istio_security_intro_istio_policy_frontend_authn]
+apiVersion: "authentication.istio.io/v1alpha1"
+kind: "Policy"
 metadata:
-  name: default
-  namespace: default
+  name: "frontend-authn"
 spec:
+  targets:
+  - name: frontend
   peers:
   - mtls: {}
-# [END istio_security_intro_istio_policy_default]
+# [END istio_security_intro_istio_policy_frontend_authn]
 ---
-# [START istio_security_intro_istio_destinationrule_default]
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
+# [START istio_security_intro_istio_destinationrule_frontend_dr]
+apiVersion: "networking.istio.io/v1alpha3"
+kind: "DestinationRule"
 metadata:
-  name: default
-  namespace: default
+  name: "frontend"
 spec:
-  host: '*.default.svc.cluster.local'
+  host: "frontend.default.svc.cluster.local"
   trafficPolicy:
     tls:
       mode: ISTIO_MUTUAL
-# [END istio_security_intro_istio_destinationrule_default]
+# [END istio_security_intro_istio_destinationrule_frontend_dr]
 ---

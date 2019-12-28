@@ -13,15 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START istio_security_intro_istio_rbacconfig_default]
-apiVersion: rbac.istio.io/v1alpha1
-kind: RbacConfig
+# [START istio_security_intro_istio_policy_default]
+apiVersion: "authentication.istio.io/v1alpha1"
+kind: "Policy"
 metadata:
-  name: default
+  name: "default"
+  namespace: "default"
 spec:
-  inclusion:
-    services:
-    - frontend.default.svc.cluster.local
-  mode: ON_WITH_INCLUSION
-# [END istio_security_intro_istio_rbacconfig_default]
+  peers:
+  - mtls: {}
+# [END istio_security_intro_istio_policy_default]
+---
+# [START istio_security_intro_istio_destinationrule_default]
+apiVersion: "networking.istio.io/v1alpha3"
+kind: "DestinationRule"
+metadata:
+  name: "default"
+  namespace: "default"
+spec:
+  host: "*.default.svc.cluster.local"
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+# [END istio_security_intro_istio_destinationrule_default]
 ---

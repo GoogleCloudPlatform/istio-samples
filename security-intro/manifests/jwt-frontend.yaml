@@ -13,28 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START istio_security_intro_istio_policy_frontend_authn]
-apiVersion: authentication.istio.io/v1alpha1
-kind: Policy
+# [START istio_security_intro_istio_policy_frontend_authn2]
+apiVersion: "authentication.istio.io/v1alpha1"
+kind: "Policy"
 metadata:
-  name: frontend-authn
+  name: "frontend-authn"
 spec:
-  peers:
-  - mtls: {}
   targets:
   - name: frontend
-# [END istio_security_intro_istio_policy_frontend_authn]
----
-# [START istio_security_intro_istio_destinationrule_frontend_dr]
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: frontend-dr
-  namespace: default
-spec:
-  host: frontend.default.svc.cluster.local
-  trafficPolicy:
-    tls:
-      mode: ISTIO_MUTUAL
-# [END istio_security_intro_istio_destinationrule_frontend_dr]
----
+  peers:
+  - mtls: {}
+  origins:
+  - jwt:
+      issuer: "testing@secure.istio.io"
+      jwksUri: "https://raw.githubusercontent.com/istio/istio/release-1.4/security/tools/jwt/samples/jwks.json"
+  principalBinding: USE_ORIGIN
+# [END istio_security_intro_istio_policy_frontend_authn2]
