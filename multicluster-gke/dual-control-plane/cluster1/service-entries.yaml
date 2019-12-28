@@ -22,7 +22,7 @@ spec:
   addresses:
   - 240.0.0.5
   endpoints:
-  - address: 35.222.46.19
+  - address: 35.184.133.151
     ports:
       http1: 15443
   hosts:
@@ -44,7 +44,7 @@ spec:
   addresses:
   - 240.0.0.6
   endpoints:
-  - address: 35.222.46.19
+  - address: 35.184.133.151
     ports:
       grpc: 15443
   hosts:
@@ -66,7 +66,7 @@ spec:
   addresses:
   - 240.0.0.7
   endpoints:
-  - address: 35.222.46.19
+  - address: 35.184.133.151
     ports:
       grpc: 15443
   hosts:
