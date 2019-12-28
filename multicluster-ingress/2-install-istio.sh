@@ -16,40 +16,6 @@
 
 source ./common.sh
 
-install_istio() {
-    kubectx $1
-
-    kubectl create namespace istio-system
-
-    kubectl create clusterrolebinding cluster-admin-binding \
-        --clusterrole=cluster-admin \
-        --user=$(gcloud config get-value core/account)
-
-    helm template ${WORKDIR}/istio-${ISTIO_VERSION}/install/kubernetes/helm/istio-init --name istio-init --namespace istio-system | kubectl apply -f -
-    sleep 20
-
-    kubectl get crds | grep 'istio.io\|certmanager.k8s.io' | wc -l
-
-    sleep 1
-
-    helm template ${WORKDIR}/istio-${ISTIO_VERSION}/install/kubernetes/helm/istio --name istio --namespace istio-system \
-    --set prometheus.enabled=true \
-    --set tracing.enabled=true \
-    --set kiali.enabled=true --set kiali.createDemoSecret=true \
-    --set "kiali.dashboard.jaegerURL=http://jaeger-query:16686" \
-    --set "kiali.dashboard.grafanaURL=http://grafana:3000" \
-    --set grafana.enabled=true \
-    --set global.proxy.accessLogFile="/dev/stdout" \
-    --set mixer.policy.enabled=false > istio.yaml
-
-    # install istio
-    kubectl apply -f istio.yaml
-}
-
-# Download Istio 1.4
-curl -L https://git.io/getLatestIstio | ISTIO_VERSION=$ISTIO_VERSION sh -
-
-
 # Configure kubectx / install Istio
 for svc in "${CLUSTERS[@]}" ; do
     NAME="${svc%%:*}"
@@ -62,6 +28,6 @@ for svc in "${CLUSTERS[@]}" ; do
     kubectx ${NAME}=${LONG_CTX}
 
     # install istio on each cluster
-    install_istio $NAME
+    ISTIO_VERSION=${ISTIO_VERSION} MIXER_POLICY="false" ../common/install_istio.sh
 done
 

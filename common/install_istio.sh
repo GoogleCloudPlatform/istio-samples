@@ -35,6 +35,10 @@ sleep 20
 
 sleep 2
 
+# customize
+if [ $ILB_ENABLED == "true" ]; then ILB="--set gateways.istio-ilbgateway.enabled=true"; else ILB=""; fi
+if [ $MIXER_POLICY == "false"]; then MIXER="--set mixer.policy.enabled=false"; else MIXER=""; fi
+
 # installs Istio with Envoy access logging enabled
 helm template ${WORKDIR}/istio-${ISTIO_VERSION}/install/kubernetes/helm/istio --name istio --namespace istio-system \
 --set prometheus.enabled=true \
@@ -43,6 +47,8 @@ helm template ${WORKDIR}/istio-${ISTIO_VERSION}/install/kubernetes/helm/istio --
 --set "kiali.dashboard.jaegerURL=http://jaeger-query:16686" \
 --set "kiali.dashboard.grafanaURL=http://grafana:3000" \
 --set grafana.enabled=true \
+${ILB} \
+${MIXER} \
 --set global.proxy.accessLogFile="/dev/stdout" >> istio.yaml
 
 # install istio

@@ -21,7 +21,7 @@ sudo rm -rf $WORKDIR/kubemci
 
 log "Deleting multicluster ingress..."
 kubemci delete zoneprinter-ingress \
---ingress=ingress/ingress.yaml \
+--ingress=manifests/ingress.yaml \
 --gcp-project=${PROJECT_ID} \
 --kubeconfig=${KUBECONFIG}
 

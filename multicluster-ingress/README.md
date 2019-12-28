@@ -115,7 +115,7 @@ This script does the following:
 1. Creates a VirtualService on all three clusters, to set up health checking for the IngressGateway. [This is needed](https://cloud.google.com/kubernetes-engine/docs/concepts/ingress#health_checks) for GCP load balancer health checking. Because the IngressGateway already exposes a `/healthz` endpoint on port `15020`, we just have to do a URL rewrite for requests from the `GoogleHC` user-agent.
 2. Updates the Service type on the Istio IngressGateway on all three clusters, from `LoadBalancer` to `NodePort`. A NodePort service is needed to configure Ingress.
 3. Reserves a global static IP in your project, named `zoneprinter-ip`.
-4. Installs [`kubemci`](https://github.com/GoogleCloudPlatform/k8s-multicluster-ingress), then uses it to provision a multicluster Ingress, mapping to the three clusters. The `kubemci create` command takes in the following Kubernetes Ingress resource (see `ingress/ingress.yaml`):
+4. Installs [`kubemci`](https://github.com/GoogleCloudPlatform/k8s-multicluster-ingress), then uses it to provision a multicluster Ingress, mapping to the three clusters. The `kubemci create` command takes in the following Kubernetes Ingress resource (see `manifests/ingress.yaml`):
 
 
 ```YAML
