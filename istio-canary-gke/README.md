@@ -37,17 +37,27 @@ Click the button below to open the demo instructions in your Cloud Shell:
 gcloud services enable container.googleapis.com
 ```
 
-2. Create a GKE cluster using [Istio on GKE](https://cloud.google.com/istio/docs/istio-on-gke/overview). This add-on will provision
-   your GKE cluster with Istio.
+2. Create a GKE cluster:
 
 ```
-gcloud beta container clusters create istio-demo \
-    --addons=Istio \
+gcloud beta container clusters create istio-canary \
     --zone=us-central1-f \
     --machine-type=n1-standard-2 \
     --num-nodes=4
 ```
-3. Once the cluster is ready, ensure that Istio is running:
+
+1. `cd` into the directory for this demo.
+```
+cd istio-canary-gke;
+```
+
+1. Install Istio on the cluster:
+
+```
+chmod +x ../common/install_istio.sh; ../common/install_istio.sh
+```
+
+1. Once the cluster is ready, ensure that Istio is running:
 
 ```
 $ kubectl get pods -n istio-system
@@ -68,23 +78,15 @@ prometheus-7c589d4989-9mgg8              2/2       Running     1          7m
 
 ## Deploy the Sample App
 
-1. `cd` into the directory for this demo.
-```
-cd istio-canary-gke;
-```
-2. Label the default namespace for Istio [sidecar auto-injection](https://istio.io/docs/setup/kubernetes/sidecar-injection/):
+1. Deploy the [microservices-demo](https://github.com/GoogleCloudPlatform/microservices-demo) application, and add a `version=v1` label to the `productcatalog` deployment
 
 ```
-kubectl label namespace default istio-injection=enabled
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/istio-manifests.yaml
+kubectl patch deployments/productcatalogservice -p '{"spec":{"template":{"metadata":{"labels":{"version":"v1"}}}}}'
 ```
 
-3. Deploy the [microservices-demo](https://github.com/GoogleCloudPlatform/microservices-demo) application using the YAML files provided in this repo.
-
-```
-kubectl apply -f ./hipstershop
-```
-
-4. Using `kubectl get pods`, verify that all pods are `Running` and `Ready`.
+1. Using `kubectl get pods`, verify that all pods are `Running` and `Ready`.
 
 At this point, ProductCatalog v1 is deployed to the cluster, along with the rest of the
 demo microservices. You can reach the Hipstershop frontend at the `EXTERNAL_IP` address
@@ -136,9 +138,7 @@ kubectl apply -f canary/vs-split-traffic.yaml
 	- **Resource type**: Kubernetes Container
 	- **Metric**: Server Response Latencies (`istio.io/service/server/response_latencies`)
 	- **Group by**: `destination_workload_name`
-	- **Aligner**: 50th percentile
-	- **Reducer**: mean
-	- **Alignment period**: 1 minute
+	- **Aggregator**: 50th percentile
 
 5. In the menubar of the chart on the right, choose the **Line** type.
 6. Once the latency chart renders, you should see `productcatalog-v2` as an outlier, with
@@ -166,7 +166,7 @@ kubectl delete -f canary/productcatalog-v2.yaml
 To avoid incurring additional billing costs, delete the GKE cluster.
 
 ```
-gcloud container clusters delete istio-demo --zone us-central1-f
+gcloud container clusters delete istio-canary --zone us-central1-f
 ```
 
 ## Learn More

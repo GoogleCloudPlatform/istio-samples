@@ -1,5 +1,5 @@
 
-# Copyright 2019 Google LLC
+# Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,43 +14,46 @@
 # limitations under the License.
 
 # [START istio_istio_canary_gke_canary_deployment_productcatalogservice_v2]
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: productcatalogservice-v2
 spec:
+  selector:
+    matchLabels:
+      app: productcatalogservice
   template:
     metadata:
       labels:
         app: productcatalogservice
         version: v2
     spec:
+      terminationGracePeriodSeconds: 5
       containers:
-      - env:
-        - name: EXTRA_LATENCY
-          value: 3s
-        image: gcr.io/istio-next19/productcatalogservice:v0.0.1
-        imagePullPolicy: Always
-        livenessProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:3550
-        name: server
+      - name: server
+        image: gcr.io/google-samples/microservices-demo/productcatalogservice:v0.1.3
         ports:
         - containerPort: 3550
+        env:
+        - name: PORT
+          value: "3550"
+        - name: EXTRA_LATENCY
+          value: 3s
         readinessProbe:
           exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:3550
+            command: ["/bin/grpc_health_probe", "-addr=:3550"]
+        livenessProbe:
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:3550"]
+#        env:
+#          - name: JAEGER_SERVICE_ADDR
+#            value: "jaeger-collector:14268"
         resources:
-          limits:
-            cpu: 200m
-            memory: 128Mi
           requests:
             cpu: 100m
             memory: 64Mi
-      terminationGracePeriodSeconds: 5
+          limits:
+            cpu: 200m
+            memory: 128Mi
 # [END istio_istio_canary_gke_canary_deployment_productcatalogservice_v2]
 ---
