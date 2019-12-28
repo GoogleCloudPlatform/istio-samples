@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2019 Google LLC
+# Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ log() { echo "$1" >&2; }
 
 # set vars
 PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
-ISTIO_VERSION=${ISTIO_VERSION:=1.3.2}
+ISTIO_VERSION=${ISTIO_VERSION:=1.4.2}
 ZONE="us-central1-b"
 CLUSTER_NAME="mesh-exp-gke"
 CTX="gke_${PROJECT_ID}_${ZONE}_${CLUSTER_NAME}"

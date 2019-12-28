@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2019 Google LLC
+# Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,11 +22,11 @@ for svc in "${CLUSTERS[@]}" ; do
     kubectx $CTX
 
     # prep ingressgateway to be used as a GCLB backend
-    kubectl apply -f ingress/healthcheck.yaml
+    kubectl apply -f manifests/healthcheck.yaml
 
     # make the ingressgateway a NodePort svc
     kubectl -n istio-system patch svc istio-ingressgateway \
-    --type=json -p="$(cat ingress/istio-ingressgateway-patch.json)" \
+    --type=json -p="$(cat manifests/istio-ingressgateway-patch.json)" \
     --dry-run=true -o yaml | kubectl apply -f -
 done
 
@@ -39,6 +39,6 @@ gcloud compute addresses create --global zoneprinter-ip
 
 log "Creating multicluster ingress..."
 ./kubemci create zoneprinter-ingress \
---ingress=ingress/ingress.yaml \
+--ingress=manifests/ingress.yaml \
 --gcp-project=${PROJECT_ID} \
 --kubeconfig=${KUBECONFIG}

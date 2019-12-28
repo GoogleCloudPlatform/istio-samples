@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2019 Google LLC
+# Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,36 +15,37 @@
 # limitations under the License.
 
 set -euo pipefail
-log() { echo "$1" >&2; }
+source ./scripts/env.sh
 
 install_istio () {
-     helm install istio-${ISTIO_VERSION}/install/kubernetes/helm/istio --name istio --namespace istio-system \
-     --values istio-${ISTIO_VERSION}/install/kubernetes/helm/istio/example-values/values-istio-multicluster-gateways.yaml
+    cd istio-${ISTIO_VERSION}/
+
+    kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user="$(gcloud config get-value core/account)"
+    kubectl create namespace istio-system
+
+    kubectl create secret generic cacerts -n istio-system \
+    --from-file=samples/certs/ca-cert.pem \
+    --from-file=samples/certs/ca-key.pem \
+    --from-file=samples/certs/root-cert.pem \
+    --from-file=samples/certs/cert-chain.pem
+
+    ./bin/istioctl manifest apply -f install/kubernetes/operator/examples/multicluster/values-istio-multicluster-gateways.yaml
+    cd ../
 }
 
-# set vars
-ZONE="us-central1-b"
-ISTIO_VERSION=${ISTIO_VERSION:=1.4.2}
-
-PROJECT_1="${PROJECT_1:?PROJECT_1 env variable must be specified}"
-CLUSTER_1="dual-cluster1"
-CTX_1="gke_${PROJECT_1}_${ZONE}_${CLUSTER_1}"
-
-PROJECT_2="${PROJECT_2:?PROJECT_2 env variable must be specified}"
-CLUSTER_2="dual-cluster2"
-CTX_2="gke_${PROJECT_2}_${ZONE}_${CLUSTER_2}"
+log "Downloading Istio ${ISTIO_VERSION}..."
+curl -L https://git.io/getLatestIstio | ISTIO_VERSION=$ISTIO_VERSION sh -
 
 # Cluster 1
-log "Installing Istio ${ISTIO_VERSION} on Cluster 1..."
+log "Setting up Cluster 1..."
 gcloud config set project $PROJECT_1
 gcloud container clusters get-credentials $CLUSTER_1 --zone $ZONE
 kubectl config use-context $CTX_1
 install_istio
 log "...done with cluster 1."
 
-
 # Cluster 2
-log "Installing Istio ${ISTIO_VERSION} on Cluster 2..."
+log "Setting up Cluster 2..."
 gcloud config set project $PROJECT_2
 gcloud container clusters get-credentials $CLUSTER_2 --zone $ZONE
 kubectl config use-context $CTX_2

@@ -1,5 +1,5 @@
 
-# Copyright 2019 Google LLC
+# Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,27 +13,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START istio_security_intro_istio_policy_default]
-apiVersion: authentication.istio.io/v1alpha1
-kind: Policy
+# [START istio_security_intro_manifests_authorizationpolicy_frontend]
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
 metadata:
-  name: default
+  name: frontend
   namespace: default
 spec:
-  peers:
-  - mtls: {}
-# [END istio_security_intro_istio_policy_default]
----
-# [START istio_security_intro_istio_destinationrule_default]
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: default
-  namespace: default
-spec:
-  host: '*.default.svc.cluster.local'
-  trafficPolicy:
-    tls:
-      mode: ISTIO_MUTUAL
-# [END istio_security_intro_istio_destinationrule_default]
+  rules:
+  - from:
+    - source:
+        principals:
+        - '*'
+    to:
+    - operation:
+        methods:
+        - GET
+        paths:
+        - /*
+    when:
+    - key: request.headers[hello]
+      values:
+      - world
+  selector:
+    matchLabels:
+      app: frontend
+# [END istio_security_intro_manifests_authorizationpolicy_frontend]
 ---

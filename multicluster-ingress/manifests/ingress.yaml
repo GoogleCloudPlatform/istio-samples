@@ -1,5 +1,5 @@
 
-# Copyright 2019 Google LLC
+# Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START istio_multicluster_ingress_ingress_ingress_ingress_zoneprinter]
+# [START istio_multicluster_ingress_manifests_ingress_ingress_zoneprinter]
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -26,5 +26,5 @@ spec:
   backend:
     serviceName: istio-ingressgateway
     servicePort: 80
-# [END istio_multicluster_ingress_ingress_ingress_ingress_zoneprinter]
+# [END istio_multicluster_ingress_manifests_ingress_ingress_zoneprinter]
 ---

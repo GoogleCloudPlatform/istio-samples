@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2019 Google LLC
+# Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,12 +16,9 @@
 
 source ./common.sh
 
-log "Uninstalling kubemci..."
-sudo rm -rf $WORKDIR/kubemci
-
 log "Deleting multicluster ingress..."
-kubemci delete zoneprinter-ingress \
---ingress=ingress/ingress.yaml \
+./kubemci delete zoneprinter-ingress \
+--ingress=manifests/ingress.yaml \
 --gcp-project=${PROJECT_ID} \
 --kubeconfig=${KUBECONFIG}
 
@@ -34,3 +31,6 @@ for svc in "${CLUSTERS[@]}" ; do
     ZONE="${svc##*:}"
     gcloud container clusters delete $NAME --zone $ZONE --quiet --async
 done
+
+log "Uninstalling kubemci..."
+sudo rm -rf $WORKDIR/kubemci

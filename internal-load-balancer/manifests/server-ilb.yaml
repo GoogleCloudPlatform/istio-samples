@@ -1,5 +1,5 @@
 
-# Copyright 2019 Google LLC
+# Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START istio_internal_load_balancer_istio_gateway_hello_ilb_gateway]
+# [START istio_internal_load_balancer_manifests_gateway_hello_ilb_gateway]
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
@@ -28,9 +28,9 @@ spec:
       name: http
       number: 80
       protocol: HTTP
-# [END istio_internal_load_balancer_istio_gateway_hello_ilb_gateway]
+# [END istio_internal_load_balancer_manifests_gateway_hello_ilb_gateway]
 ---
-# [START istio_internal_load_balancer_istio_virtualservice_hellosvc_vs]
+# [START istio_internal_load_balancer_manifests_virtualservice_hellosvc_vs]
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
@@ -46,5 +46,5 @@ spec:
         host: hellosvc
         port:
           number: 80
-# [END istio_internal_load_balancer_istio_virtualservice_hellosvc_vs]
+# [END istio_internal_load_balancer_manifests_virtualservice_hellosvc_vs]
 ---

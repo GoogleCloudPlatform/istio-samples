@@ -1,5 +1,5 @@
 
-# Copyright 2019 Google LLC
+# Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,33 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START istio_security_intro_istio_policy_frontend_authn2]
+# [START istio_security_intro_manifests_policy_default]
 apiVersion: authentication.istio.io/v1alpha1
 kind: Policy
 metadata:
-  name: frontend-authn
+  name: default
+  namespace: default
 spec:
-  origins:
-  - jwt:
-      issuer: testing@secure.istio.io
-      jwksUri: https://raw.githubusercontent.com/istio/istio/release-1.0/security/tools/jwt/samples/jwks.json
   peers:
   - mtls: {}
-  principalBinding: USE_ORIGIN
-  targets:
-  - name: frontend
-# [END istio_security_intro_istio_policy_frontend_authn2]
+# [END istio_security_intro_manifests_policy_default]
 ---
-# [START istio_security_intro_istio_destinationrule_frontend_dr2]
+# [START istio_security_intro_manifests_destinationrule_default]
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: frontend-dr
+  name: default
   namespace: default
 spec:
-  host: frontend.default.svc.cluster.local
+  host: '*.default.svc.cluster.local'
   trafficPolicy:
     tls:
       mode: ISTIO_MUTUAL
-# [END istio_security_intro_istio_destinationrule_frontend_dr2]
+# [END istio_security_intro_manifests_destinationrule_default]
 ---

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2019 Google LLC
+# Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,17 +17,10 @@
 # Creates two GKE clusters in different regions.
 
 set -euo pipefail
-
-log() { echo "$1" >&2; }
-
-PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
-cluster1zone="us-east1-b"
-cluster2zone="us-central1-b"
-
-gcloud config set project $PROJECT_ID
+source ./scripts/env.sh
 
 log "Deleting cluster1..."
-gcloud container clusters delete cluster-1 --zone $cluster1zone
+gcloud container clusters delete cluster-1 --zone $cluster1zone --async
 
 log "Deleting cluster2..."
-gcloud container clusters delete cluster-2 --zone $cluster2zone
+gcloud container clusters delete cluster-2 --zone $cluster2zone --async

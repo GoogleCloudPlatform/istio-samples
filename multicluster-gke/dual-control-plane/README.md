@@ -30,7 +30,7 @@ The Kubernetes DNS server and Istio's CoreDNS know how to work together to resol
 - `helm` CLI
 
 
-## Set Env Variables
+## Set Project Variables
 
 ```
 export PROJECT_1=<your-project1>
@@ -38,7 +38,7 @@ export PROJECT_1=<your-project1>
 export PROJECT_2=<your-second-project>
 ```
 
-## 1 - Create Two GKE Clusters
+## Create Two GKE Clusters
 
 ```
 ./scripts/1-create-gke-clusters.sh
@@ -52,26 +52,10 @@ watch -n 1 gcloud container clusters list
 
 And wait for both clusters to be `RUNNING`.
 
-
-## 2- Prepare both GKE Clusters
-
-This script installs Helm onto each cluster, along with the Istio Custom Resource
-Definitions (CRDs).
+## Install Istio on Both Clusters
 
 ```
-./scripts/2-istio-preinstall.sh
-```
-
-Once the script finishes, verify (in both projects) that there are `23` Istio CRDs ready (or `53`, if using Istio 1.1):
-
-```
-kubectl get crds | grep 'istio.io\|certmanager.k8s.io' | wc -l
-```
-
-## 3 - Install Istio on Both Clusters
-
-```
-./scripts/3-istio-install.sh
+./scripts/2-install-istio.sh
 ```
 
 Wait for all Istio pods to be `RUNNING` and `READY`:
@@ -93,9 +77,9 @@ istiocoredns-586757d55d-bjzz9            2/2     Running     0          2m10s
 prometheus-5b48f5d49-pdsts               1/1     Running     0          2m10s
 ```
 
-## 4 - Configure KubeDNS to talk to Istio's CoreDNS
+## Configure KubeDNS to talk to Istio's CoreDNS
 
-You'll notice `istiocoredns` in the pods list. This DNS server which will handle DNS resolution across
+You'll notice `istiocoredns` in the list of pods. This DNS server which will handle DNS resolution across
 cluster boundaries.
 
 The next step configures the Kubernetes server (kubedns) to with a
@@ -107,11 +91,11 @@ A StubDomain is a forwarding rule for DNS addresses with a certain prefix.
 Run the script to configure the stub domain on both GKE clusters:
 
 ```
-./scripts/4-configure-dns.sh
+./scripts/3-configure-dns.sh
 ```
 
 
-## 5- Deploy the Sample App
+## Deploy the Sample App
 
 We will now deploy [Hipstershop, a sample application](https://github.com/GoogleCloudPlatform/microservices-demo), across our two GKE clusters.
 
@@ -152,16 +136,22 @@ The following script creates the following resources on both GKE clusters:
 Run the script to deploy these resources across both clusters:
 
 ```
-./scripts/5-deploy-hipstershop.sh
+./scripts/4-deploy-hipstershop.sh
 ```
 
 
-## Verify success
+## Verify successful deployment
 
-Open Hipstershop in a browser.
+Get the Ingress Gateway `EXTERNAL_IP` in `cluster2`, where the web `frontend` is deployed:
 
+```
+kubectl config use-context gke_${PROJECT_2}_us-central1-b_dual-cluster2
+kubectl get svc -n istio-system istio-ingressgateway
+```
 
-If it works, you just deployed Multicluster Istio across
+Navigate to that address in a browser.
+
+If you see the frontend, you just deployed Multicluster Istio across
 two separate networks, then ran an application that spanned two Kubernetes
 environments! All part of a single, two-headed Service Mesh. 🎉
 
@@ -169,7 +159,7 @@ environments! All part of a single, two-headed Service Mesh. 🎉
 ## Troubleshooting
 
 
-If you open Hipstershop in a browser, see a `500` error like this:
+If you open Hipstershop in a browser, and see a `500` error like this:
 
 ![500-error](screenshots/500-error.png)
 
@@ -196,4 +186,5 @@ Delete the 2 GKE clusters:
 
 ## Further reading
 
-To learn about Multicluster Istio and its different modes, [see the Istio docs](https://preliminary.istio.io/docs/concepts/multicluster-deployments/).
+- To learn about Multicluster Istio and its different modes, [see the Istio docs](https://istio.io/docs/concepts/multicluster-deployments/)
+- To learn how to configure and install the different modes, see the [Setup](https://istio.io/docs/setup/install/multicluster/) section in the Istio docs.

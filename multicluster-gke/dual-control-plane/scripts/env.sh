@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2019 Google LLC
+# Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,21 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -euo pipefail
 log() { echo "$1" >&2; }
 
-PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
-cluster1zone="us-east1-b"
-cluster2zone="us-central1-b"
+ZONE="us-central1-b"
 
-ctx1="gke_${PROJECT_ID}_${cluster1zone}_cluster-1"
-ctx2="gke_${PROJECT_ID}_${cluster2zone}_cluster-2"
+ISTIO_VERSION=${ISTIO_VERSION:=1.4.2}
 
-# Deploy "most of" Hipstershop to cluster 1
-kubectl config use-context $ctx1
-kubectl delete -f ./cluster1
+PROJECT_1="${PROJECT_1:?PROJECT_1 env variable must be specified}"
+CLUSTER_1="dual-cluster1"
+CTX_1="gke_${PROJECT_1}_${ZONE}_${CLUSTER_1}"
 
-# Deploy the rest of Hipstershop (cartservice, recommendations, loadgenerator) to cluster2
-kubectl config use-context $ctx2
-kubectl delete -f ./cluster2
-
+PROJECT_2="${PROJECT_2:?PROJECT_2 env variable must be specified}"
+CLUSTER_2="dual-cluster2"
+CTX_2="gke_${PROJECT_2}_${ZONE}_${CLUSTER_2}"

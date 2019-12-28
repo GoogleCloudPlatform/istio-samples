@@ -5,20 +5,22 @@ This example demonstrates the ways you can use [Stackdriver](https://cloud.googl
 We'll deploy the Hipstershop sample application along with an updated service that introduces a 3-second latency into all requests. Then we'll create Stackdriver Monitoring dashboards to dig into key metrics like cluster and service health. Next, we'll use Stackdriver Trace to identify high latency requests. Finally, we'll dig into service output using Stackdriver Logging.
 
 ### Contents
-- [Setup](#setup)
-  - [Create a GKE cluster](#create-a-gke-cluster)
-  - [Deploy the sample application](#deploy-the-sample-application)
-  - [Deploy a high latency service](#deploy-a-high-latency-service)
-- [Monitoring](#monitoring)
-  - [Create a monitoring dashboard](#create-a-monitoring-dashboard)
-  - [Examine service and cluster health](#examine-service-and-cluster-health)
-- [Tracing](#tracing)
-  - [Review trace output](#review-tracing-output)
-  - [Identify high latency requests](#identify-high-latency-requests)
-- [Logging](#logging)
-  - [Examine service logs](#examine-service-logs)
-- [Cleanup](#cleanup)
-- [Learn more](#learn-more)
+- [Istio and Stackdriver](#istio-and-stackdriver)
+    - [Contents](#contents)
+  - [Setup](#setup)
+    - [Create a GKE cluster](#create-a-gke-cluster)
+    - [Deploy the sample application](#deploy-the-sample-application)
+    - [Deploy a high latency service](#deploy-a-high-latency-service)
+  - [Monitoring](#monitoring)
+    - [Create a monitoring dashboard](#create-a-monitoring-dashboard)
+    - [Examine service and cluster health](#examine-service-and-cluster-health)
+  - [Tracing](#tracing)
+    - [Review trace output](#review-trace-output)
+    - [Identify high latency requests](#identify-high-latency-requests)
+  - [Logging](#logging)
+    - [Examine service logs](#examine-service-logs)
+  - [Cleanup](#cleanup)
+  - [Learn more](#learn-more)
 
 ## Setup
 1. Clone the repo and change into the demo directory.
@@ -40,36 +42,36 @@ gcloud services enable container.googleapis.com
 
 ```
 gcloud beta container clusters create istio-stackdriver-demo \
-    --addons=Istio --istio-config=auth=MTLS_PERMISSIVE \
-    --enable-stackdriver-kubernetes \
     --zone=us-central1-f \
     --machine-type=n1-standard-2 \
     --num-nodes=4
 ```
 
-*Note*: This Istio installation uses the default `MTLS_PERMISSIVE` [mesh-wide security
-option](https://cloud.google.com/istio/docs/istio-on-gke/installing#choose_a_security_option).
-This means that all services in the cluster will send **unencrypted** traffic by default.
+3. **Install Istio** on the cluster.
 
-3. Once the cluster is provisioned, check that Istio is ready by ensuring that all pods are `Running` or `Completed`.
+```
+chmod +x ../common/install_istio.sh; ../common/install_istio.sh
+```
+
+4. Wait for all Istio pods to be `Running` or `Completed`.
 ```
 kubectl get pods -n istio-system
 ```
 
+*Note*: This Istio installation uses the default `PERMISSIVE` [mesh-wide security
+option](https://istio.io/docs/reference/config/installation-options/#global-options).
+This means that all services in the cluster will send unencrypted traffic by default.
+
 ### Deploy the sample application
 
-1. **Label the default namespace** for Istio [sidecar proxy](https://istio.io/docs/concepts/what-is-istio/#envoy) auto-injection.
-```
-kubectl label namespace default istio-injection=enabled
-```
-
-2. **Deploy the sample application.**
+1. Apply the sample app manifests to the cluster:
 
 ```
-kubectl apply -f ./hipstershop
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/istio-manifests.yaml
 ```
 
-3. Run `kubectl get pods -n default` to ensure that all pods are `Running` and `Ready`.
+2. Run `kubectl get pods -n default` to ensure that all pods are `Running` and `Ready`.
 
 ```
 NAME                                     READY     STATUS    RESTARTS   AGE
@@ -85,7 +87,7 @@ recommendationservice-78c7676bfb-xqtp6   2/2       Running   0          1m
 shippingservice-7bc4bc75bb-kzfrb         2/2       Running   0          1m
 ```
 
-*Note*: Each pod has 2 containers, because each pod now has the injected Istio sidecar proxy
+*Note*: Each pod has 2 containers, because each pod now has the injected Istio sidecar proxy.
 
 ### Deploy a high latency service
 
@@ -174,28 +176,28 @@ Now that the high latency service (`productcatalogservice`) has been identified,
 
 ### Review trace output
 
-1. Open [Stackdriver Trace](https://console.cloud.google.com/traces) and you will see the tracing overview. 
+1. Open [Stackdriver Trace](https://console.cloud.google.com/traces) and you will see the tracing overview.
 
 The left side of the **Overview** contains
 * **Recent traces** captured
 * **Most frequent URIs** requested
 * **Most frequent RPCs** called
 
-And on the right you'll see automated analysis reports. These reports are generated by the system and correspond to some of the recent and/or high frequency requests/calls. 
+And on the right you'll see automated analysis reports. These reports are generated by the system and correspond to some of the recent and/or high frequency requests/calls.
 
 ![trace overview](screenshots/trace-overview.png)
 
-2. From the left navigation, head over to the **Trace List** and you'll see a chart of all requests plotted against latency along with a table of the most recent 1000 traces. 
+2. From the left navigation, head over to the **Trace List** and you'll see a chart of all requests plotted against latency along with a table of the most recent 1000 traces.
 
 ![trace list](screenshots/trace-list.png)
 
 ### Identify high latency requests
 
-1. From the **Trace List** chat, select a high latency outlier and you'll see a **Timeline** and **Summary** appear below. 
+1. From the **Trace List** chat, select a high latency outlier and you'll see a **Timeline** and **Summary** appear below.
 
 ![trace selected](screenshots/trace-selected.png)
 
-2. The timeline shows an initial request and the subsequent requests it generated. In the example below, you can see that requesting the URL `/product/L9ECAV7KIM` took about 12.1s, primarily due to the subsequent requests to the `productcatalogservice` (which has an extra 3s of latency added to each request). 
+2. The timeline shows an initial request and the subsequent requests it generated. In the example below, you can see that requesting the URL `/product/L9ECAV7KIM` took about 12.1s, primarily due to the subsequent requests to the `productcatalogservice` (which has an extra 3s of latency added to each request).
 
 ![trace timeline](screenshots/trace-timeline.png)
 
