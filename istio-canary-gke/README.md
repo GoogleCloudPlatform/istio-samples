@@ -46,18 +46,18 @@ gcloud beta container clusters create istio-canary \
     --num-nodes=4
 ```
 
-1. `cd` into the directory for this demo.
+3. `cd` into the directory for this demo.
 ```
 cd istio-canary-gke;
 ```
 
-1. Install Istio on the cluster:
+4. Install Istio on the cluster:
 
 ```
 chmod +x ../common/install_istio.sh; ../common/install_istio.sh
 ```
 
-1. Once the cluster is ready, ensure that Istio is running:
+5. Once the cluster is ready, ensure that Istio is running:
 
 ```
 $ kubectl get pods -n istio-system
@@ -86,7 +86,7 @@ kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microserv
 kubectl patch deployments/productcatalogservice -p '{"spec":{"template":{"metadata":{"labels":{"version":"v1"}}}}}'
 ```
 
-1. Using `kubectl get pods`, verify that all pods are `Running` and `Ready`.
+2. Using `kubectl get pods`, verify that all pods are `Running` and `Ready`.
 
 At this point, ProductCatalog v1 is deployed to the cluster, along with the rest of the
 demo microservices. You can reach the Hipstershop frontend at the `EXTERNAL_IP` address

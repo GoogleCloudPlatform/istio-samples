@@ -31,7 +31,7 @@ In this demo, we will build the following architecture:
 PROJECT_ID=<your-project-id>
 ```
 
-1. **Create the cluster:**
+2. **Create the cluster:**
 
 ```
 gcloud container clusters create istio-ilb --project $PROJECT_ID --zone us-east4-a \
@@ -39,13 +39,13 @@ gcloud container clusters create istio-ilb --project $PROJECT_ID --zone us-east4
 --num-nodes "4" --network "default" --async
 ```
 
-1. Wait for the cluster to be `RUNNING`, by executing:
+3. Wait for the cluster to be `RUNNING`, by executing:
 
 ```
 gcloud container clusters list --project $PROJECT_ID
 ```
 
-1. Get credentials:
+4. Get credentials:
 
 ```
 gcloud container clusters get-credentials istio-ilb --zone us-east4-a --project $PROJECT_ID
@@ -63,7 +63,7 @@ chmod +x ../common/install_istio.sh; ILB_ENABLED="true" ../common/install_istio.
 
 Also note that the Istio ILB Gateway has [more customization options](https://istio.io/docs/reference/config/installation-options/#gateways-options) on install that we aren't using here, that would be useful for production use cases-- for example, autoscaling options, and memory/CPU allocations.
 
-1. Run `kubectl get pods -n istio-system`. Notice a pod with the name prefix `istio-ilbgateway`. This is the Envoy proxy that will handle our requests from GCE.
+2. Run `kubectl get pods -n istio-system`. Notice a pod with the name prefix `istio-ilbgateway`. This is the Envoy proxy that will handle our requests from GCE.
 
 ## Deploy the HelloServer application
 

@@ -46,7 +46,7 @@ cd security-intro
 gcloud services enable container.googleapis.com
 ```
 
-1. **Create a GKE cluster** using [Istio on GKE](https://cloud.google.com/manifests/docs/istio-on-gke/overview). This add-on will provision
+2. **Create a GKE cluster** using [Istio on GKE](https://cloud.google.com/manifests/docs/istio-on-gke/overview). This add-on will provision
    your GKE cluster with Istio.
 
 ```
@@ -56,13 +56,13 @@ gcloud beta container clusters create istio-security-demo \
     --num-nodes=4
 ```
 
-1. **Install Istio** on the cluster.
+3. **Install Istio** on the cluster.
 
 ```
 chmod +x ../common/install_istio.sh; ../common/install_istio.sh
 ```
 
-1. Wait for all Istio pods to be `Running` or `Completed`.
+4. Wait for all Istio pods to be `Running` or `Completed`.
 ```
 kubectl get pods -n istio-system
 ```
@@ -77,7 +77,7 @@ kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microserv
 ```
 
 
-1. Run `kubectl get pods -n default` to ensure that all pods are `Running` and `Ready`.
+2. Run `kubectl get pods -n default` to ensure that all pods are `Running` and `Ready`.
 
 ```
 NAME                                     READY     STATUS    RESTARTS   AGE
@@ -265,7 +265,7 @@ Let's put this into action, by only allowing requests to the `frontend` that hav
 kubectl apply -f ./manifests/authz-frontend.yaml
 ```
 
-1. Run the same `GET` request to the frontend as we did in the last section  (with TLS
+2. Run the same `GET` request to the frontend as we did in the last section  (with TLS
    key/cert and JWT).
 
 ```
@@ -278,7 +278,7 @@ You should receive a `403- Forbidden` error. This is expected, because we just l
 frontend service to only whitelisted subjects.
 
 
-1. Make another request from `productcatalogservice` to the `frontend`. This time, **pass
+3. Make another request from `productcatalogservice` to the `frontend`. This time, **pass
    the `hello:world` request header.**
 
 ```

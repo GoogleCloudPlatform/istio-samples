@@ -38,7 +38,7 @@ cd istio-samples/istio-canary-gke
 gcloud services enable container.googleapis.com
 ```
 
-1. **Create a GKE cluster** using [Istio on GKE](https://cloud.google.com/istio/docs/istio-on-gke/overview). This add-on will provision your GKE cluster with Istio.
+2. **Create a GKE cluster** using [Istio on GKE](https://cloud.google.com/istio/docs/istio-on-gke/overview). This add-on will provision your GKE cluster with Istio.
 
 ```
 gcloud beta container clusters create istio-stackdriver-demo \
@@ -47,13 +47,13 @@ gcloud beta container clusters create istio-stackdriver-demo \
     --num-nodes=4
 ```
 
-1. **Install Istio** on the cluster.
+3. **Install Istio** on the cluster.
 
 ```
 chmod +x ../common/install_istio.sh; ../common/install_istio.sh
 ```
 
-1. Wait for all Istio pods to be `Running` or `Completed`.
+4. Wait for all Istio pods to be `Running` or `Completed`.
 ```
 kubectl get pods -n istio-system
 ```
@@ -71,7 +71,7 @@ kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microserv
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/istio-manifests.yaml
 ```
 
-1. Run `kubectl get pods -n default` to ensure that all pods are `Running` and `Ready`.
+2. Run `kubectl get pods -n default` to ensure that all pods are `Running` and `Ready`.
 
 ```
 NAME                                     READY     STATUS    RESTARTS   AGE

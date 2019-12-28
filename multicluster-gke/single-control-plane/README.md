@@ -15,7 +15,7 @@ Kubernetes Engine clusters in the same project, but across two different [zones]
    etc.) Note that we are only using the `helm template` command in this demo (ie. [Tiller](https://helm.sh/docs/glossary/#tiller)
    not required on any of the Kubernetes clusters).
 
-## 1 - Create two GKE clusters
+## Create two GKE clusters
 
 Set the project ID to your GCP Project:
 
@@ -37,7 +37,7 @@ watch -n 1 gcloud container clusters list
 
 Wait for both clusters to be `RUNNING`.
 
-## 2 - Connect to clusters
+## Connect to clusters
 
 This script creates kubeconfigs for both clusters, to allow future `kubectl` commands to
 switch back and forth between them.
@@ -46,7 +46,7 @@ switch back and forth between them.
 ./scripts/2-get-credentials.sh
 ```
 
-## 3 - Create a GKE Firewall Rule
+## Create a GKE Firewall Rule
 
 This step allows pods on both clusters to communicate directly.
 
@@ -55,7 +55,7 @@ This step allows pods on both clusters to communicate directly.
 ```
 
 
-## 4 - Install the Istio Control Plane on Cluster 1
+## Install the Istio Control Plane on Cluster 1
 
 This step installs the Istio control plane on one of the GKE clusters.
 
@@ -64,7 +64,7 @@ This step installs the Istio control plane on one of the GKE clusters.
 ```
 
 
-## 5 - Install the Istio Remote on Cluster 2
+## Install the Istio Remote on Cluster 2
 
 Now we'll install the remote Istio components (Citadel's node-agent, and an Envoy sidecar injector) on Cluster 2.
 
@@ -73,7 +73,7 @@ Now we'll install the remote Istio components (Citadel's node-agent, and an Envo
 ```
 
 
-## 6 - Connect Cluster 2 to Cluster 1
+## Connect Cluster 2 to Cluster 1
 
 This step generates a [Kubeconfig](https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/#define-clusters-users-and-contexts) file for the remote cluster 2, then adds it as a [Secret](https://kubernetes.io/docs/concepts/configuration/secret/)
 to Cluster 1. This step allows the Istio control plane on cluster 1 to configure Istio proxies on cluster 2.
@@ -83,7 +83,7 @@ to Cluster 1. This step allows the Istio control plane on cluster 1 to configure
 ```
 
 
-## 7 - Deploy [Hipstershop](https://github.com/GoogleCloudPlatform/microservices-demo)
+## Deploy [Hipstershop](https://github.com/GoogleCloudPlatform/microservices-demo)
 
 This script deploys the sample application across both cluster 1 and cluster 2. We have
 split the microservices in the application so that some run centrally to the Istio control
@@ -102,9 +102,9 @@ Run the script to deploy:
 
 You can verify that the multicluster deployment was successful using 3 methods:
 
-1) Run `kubectl get pods` on both clusters to ensure all pods are `RUNNING` and `READY`.
+1. Run `kubectl get pods` on both clusters to ensure all pods are `RUNNING` and `READY`.
 
-2) From cluster-1, run `istioctl proxy-status`. You should see cluster-2 services (eg.
+2. From cluster-1, run `istioctl proxy-status`. You should see cluster-2 services (eg.
    `cartservice`) appear in the list. This means that the Istio control plane can
    successfully configure Envoy proxies running on the remote GKE cluster-2.
 
@@ -116,7 +116,7 @@ checkoutservice-6848667dd7-b4qf6.default               SYNCED     SYNCED     SYN
 currencyservice-668f49f985-lbcfh.default               SYNCED     SYNCED     SYNCED (50%)      SYNCED       istio-pilot-7d7c547f8b-9jh24     1.1.1
 ```
 
-3) open Hipstershop in the browser by getting the Istio `IngressGateway`'s `EXTERNAL_IP`:
+3. open Hipstershop in the browser by getting the Istio `IngressGateway`'s `EXTERNAL_IP`:
 
 ```
 kubectl get svc istio-ingressgateway -n istio-system
