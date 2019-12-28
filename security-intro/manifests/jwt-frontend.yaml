@@ -1,5 +1,5 @@
 
-# Copyright 2020 Google LLC
+# Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,19 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START istio_security_intro_istio_policy_frontend_authn2]
-apiVersion: "authentication.istio.io/v1alpha1"
-kind: "Policy"
+# [START istio_security_intro_manifests_policy_frontend_authn2]
+apiVersion: authentication.istio.io/v1alpha1
+kind: Policy
 metadata:
-  name: "frontend-authn"
+  name: frontend-authn
 spec:
-  targets:
-  - name: frontend
-  peers:
-  - mtls: {}
   origins:
   - jwt:
-      issuer: "testing@secure.istio.io"
-      jwksUri: "https://raw.githubusercontent.com/istio/istio/release-1.4/security/tools/jwt/samples/jwks.json"
+      issuer: testing@secure.istio.io
+      jwksUri: https://raw.githubusercontent.com/istio/istio/release-1.4/security/tools/jwt/samples/jwks.json
+  peers:
+  - mtls: {}
   principalBinding: USE_ORIGIN
-# [END istio_security_intro_istio_policy_frontend_authn2]
+  targets:
+  - name: frontend
+# [END istio_security_intro_manifests_policy_frontend_authn2]
+---

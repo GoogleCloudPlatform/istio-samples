@@ -1,5 +1,5 @@
 
-# Copyright 2020 Google LLC
+# Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START istio_multicluster_ingress_ingress_virtualservice_health]
+# [START istio_multicluster_ingress_manifests_virtualservice_health]
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
@@ -41,5 +41,5 @@ spec:
         host: istio-ingressgateway.istio-system.svc.cluster.local
         port:
           number: 15020
-# [END istio_multicluster_ingress_ingress_virtualservice_health]
+# [END istio_multicluster_ingress_manifests_virtualservice_health]
 ---
