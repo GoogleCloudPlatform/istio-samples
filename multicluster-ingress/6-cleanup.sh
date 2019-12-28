@@ -16,11 +16,8 @@
 
 source ./common.sh
 
-log "Uninstalling kubemci..."
-sudo rm -rf $WORKDIR/kubemci
-
 log "Deleting multicluster ingress..."
-kubemci delete zoneprinter-ingress \
+./kubemci delete zoneprinter-ingress \
 --ingress=manifests/ingress.yaml \
 --gcp-project=${PROJECT_ID} \
 --kubeconfig=${KUBECONFIG}
@@ -34,3 +31,6 @@ for svc in "${CLUSTERS[@]}" ; do
     ZONE="${svc##*:}"
     gcloud container clusters delete $NAME --zone $ZONE --quiet --async
 done
+
+log "Uninstalling kubemci..."
+sudo rm -rf $WORKDIR/kubemci

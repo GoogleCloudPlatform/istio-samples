@@ -142,7 +142,7 @@ Two notes about this process:
 
 ## Verify Multicluster Ingress
 
-Verify that the multicluster ingress was created, by running `kubemci list`. You should see:
+Verify that the multicluster ingress was created, by running `./kubemci list`. You should see:
 
 ```
 NAME                  IP             CLUSTERS

@@ -11,5 +11,5 @@ istio-remote.yaml
 istio.yaml
 kubeconfig
 kubectx
-kubemci
+kubemci*
 region-tag-adder
