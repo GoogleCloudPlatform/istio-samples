@@ -55,15 +55,15 @@ kubectl -n ${SERVICE_NAMESPACE?} get secret istio.default \
 kubectl -n ${SERVICE_NAMESPACE?} get secret istio.default \
   -o jsonpath='{.data.cert-chain\.pem}' | base64 --decode | tee scripts/cert-chain.pem
 
-# Populate 6-configure-mesh script with the GWIP IP
+# Populate 7-configure-mesh script with the GWIP IP
 # (this script is sent to the VM, to run there.)
 pattern='GWIP=""'
 replace="GWIP='$GWIP'"
-gsed -r -i "s|$pattern|$replace|g" scripts/6-configure-vm.sh
+gsed -r -i "s|$pattern|$replace|g" scripts/7-configure-vm.sh
 
 # scp certs, env file, and script to the GCE instance
 log "sending cluster.env, certs, and script to VM..."
 # scp everything over to the VM
 gcloud compute --project ${PROJECT_ID?} scp --zone ${ZONE?} \
-  scripts/6-configure-vm.sh scripts/cluster.env scripts/*.pem ${VM_NAME?}:
+  scripts/7-configure-vm.sh scripts/cluster.env scripts/*.pem ${VM_NAME?}:
 log "...done."

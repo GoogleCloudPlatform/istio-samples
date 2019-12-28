@@ -23,14 +23,14 @@ ZONE="us-central1-b"
 CLUSTER_NAME="mesh-exp-gke"
 CTX="gke_${PROJECT_ID}_${ZONE}_${CLUSTER_NAME}"
 
-
 # configure cluster context
 gcloud config set project $PROJECT_ID
 gcloud container clusters get-credentials $CLUSTER_NAME --zone $ZONE
 kubectl config use-context $CTX
 
-# enable sidecar proxy injection on the default k8s namespace
-kubectl label namespace default istio-injection=enabled --overwrite
-
 # deploy sample app to GKE
-kubectl apply -f scripts/hipstershop-gke
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/istio-manifests.yaml
+
+# remove the cluster-based productcatalog - we'll deploy this on the VM
+kubectl delete svc productcatalogservice; kubectl delete deployment productcatalogservice

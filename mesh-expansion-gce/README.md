@@ -14,7 +14,7 @@ Here, the `productcatalog` service will be our "monolith" running in a VM outsid
 Kubernetes. For demonstration purposes, we'll run productcatalog in a raw Docker container
 inside the VM, then integrate it with the rest of the in-mesh services running in GKE.
 
-## prerequisites
+## Prerequisites
 
 - A GCP project with billing enabled
 - helm CLI
@@ -32,7 +32,7 @@ environment variable for your project ID.
 export PROJECT_ID=<your-project-id>
 ```
 
-## 1- Create a GKE Cluster
+## Create a GKE Cluster
 
 Create a 4-node GKE cluster named `mesh-exp-gke`:
 
@@ -52,21 +52,13 @@ Connect to the cluster:
 gcloud container clusters get-credentials mesh-exp-gke --zone us-central1-b --project $PROJECT_ID
 ```
 
-## 2- Install Istio on GKE
-
-*Optional*: Set [Istio Version](https://github.com/istio/istio/releases):
-
-```
-ISTIO_VERSION=<version>
-```
-
-Install Istio on the cluster:
+## Install Istio on the cluster
 
 ```
 ./scripts/2-install-istio-gke.sh
 ```
 
-## 3- Create a GCE Instance
+## Create a GCE Instance
 
 This script will create a Ubuntu GCE instance in your GCP Project. The VM is named `istio-gce`.
 
@@ -74,13 +66,22 @@ This script will create a Ubuntu GCE instance in your GCP Project. The VM is nam
 ./scripts/3-create-gce.sh
 ```
 
-## 4- Prepare the VM for Mesh Expansion
+## Deploy Hipstershop
 
-In order for mesh expansion to work, we must send Istio information from GKE to the VM.
-This includes a script, which will run on the VM in step 6.
+Deploy the sample app (without ProductCatalog) on the GKE cluster.
 
 ```
-./scripts/4-configure-mesh-exp.sh
+./scripts/4-deploy-hipstershop.sh
+```
+
+If you run `kubectl get pods`, you will see that the `loadgenerator` pod is in a CrashLoop state. This is expected, since a dependency service (productcatalog) has not been deployed yet.
+
+## Prepare the VM for Mesh Expansion
+
+In order for mesh expansion to work, we must send Istio information from GKE to the VM.
+
+```
+./scripts/5-configure-mesh-exp.sh
 ```
 
 At the end of the script output, you should see:
@@ -94,10 +95,10 @@ root-cert.pem                                                        100% 1054  
 ...done.
 ```
 
-## 5- Add VM to the GKE Istio Mesh
+## Add VM to the GKE Istio Mesh
 
 ```
-./scripts/5-expand-mesh.sh
+./scripts/6-expand-mesh.sh
 ```
 
 You will see some long output from `istioctl register`. If the VM Endpoint registration
@@ -118,7 +119,7 @@ kubernetes              ClusterIP   10.79.0.1     <none>        443/TCP    51m
 productcatalogservice   ClusterIP   10.79.6.227   <none>        3550/TCP   43s
 ```
 
-## 6- Install Istio on the VM / Run ProductCatalog
+## Install Istio on the VM / Run ProductCatalog
 
 To finish up Istio Mesh Expansion, we must ssh into the VM:
 
@@ -129,7 +130,7 @@ gcloud compute --project $PROJECT_ID ssh --zone "us-central1-b" "istio-gce"
 From the VM, run the mesh expansion script:
 
 ```
-chmod +x ./6-configure-vm.sh; ./6-configure-vm.sh
+chmod +x ./7-configure-vm.sh; ./7-configure-vm.sh
 ```
 
 This script:
@@ -139,49 +140,21 @@ This script:
 - configures the Istio remote to "call home" to Istio running on your GKE cluster
 - runs ProductCatalog inside a Docker container.
 
-When the script runs successfully, you should be able to run:
+When the script completes, run:
 
 ```
 sudo docker ps
 ```
 
-And you should see the ProductCatalog container running:
+You should see the ProductCatalog container running:
 ```
 CONTAINER ID        IMAGE                                                                   COMMAND                  CREATED             STATUS              PORTS                    NAMES
-521d9d0de04b        gcr.io/google-samples/microservices-demo/productcatalogservice:v0.1.0   "/productcatalogserv…"   2 minutes ago       Up 2 minutes        0.0.0.0:3550->3550/tcp   inspiring_hawking
+4a46ae3e1deb        gcr.io/google-samples/microservices-demo/productcatalogservice:v0.1.3   "/productcatalogserv…"   8 seconds ago       Up 6 seconds        0.0.0.0:3550->3550/tcp   elated_shannon
 ```
 
 Exit out of the VM shell.
 
-## 7- Deploy Hipstershop
 
-The last step is to deploy the rest of Hipstershop (without ProductCatalog) on the Istio-enabled GKE
-cluster.
-
-**Note**: The Hipstershop Deployments, here, refer to `productcatalog` as if it were an
-in-mesh service (`productcatalogservice:3550`). This is because in step 5, we created a
-`ServiceEntry` of type `MESH_INTERNAL` for our VM / port 3550.
-
-Deploy the app:
-
-```
-./scripts/7-deploy-hipstershop.sh
-```
-
-And wait until all the pods are running:
-
-```
-NAME                                     READY   STATUS    RESTARTS   AGE
-adservice-6cd6965787-29zk8               2/2     Running   0          4m
-cartservice-57c6949b9-cgmf9              2/2     Running   0          4m
-checkoutservice-6848667dd7-md66j         2/2     Running   0          4m
-currencyservice-668f49f985-zmvwk         2/2     Running   0          4m
-emailservice-796bb9588b-8c55p            2/2     Running   0          4m
-frontend-6dcd4969b4-hn6z8                2/2     Running   0          4m
-paymentservice-548657568f-lnnn9          2/2     Running   0          4m
-recommendationservice-5fb85f46df-kslhp   2/2     Running   0          4m
-shippingservice-5f5d75bf65-q6cf5         2/2     Running   0          4m
-```
 
 ## Verify that mesh expansion is working
 
@@ -205,13 +178,13 @@ Congratulations, you just set up Istio Mesh Expansion on GCP! 🎉
 To delete the GCE VM:
 
 ```
-gcloud compute instances --project $PROJECT_ID delete --zone "us-central1-b" "istio-gce"
+gcloud compute instances --project $PROJECT_ID delete --zone "us-central1-b" "istio-gce" --async
 ```
 
 To delete the GKE cluster:
 
 ```
-gcloud container clusters delete mesh-exp-gke --zone us-central1-b
+gcloud container clusters delete mesh-exp-gke --zone us-central1-b --async
 ```
 
 

@@ -33,11 +33,20 @@ kubectl create clusterrolebinding cluster-admin-binding \
 helm template ${WORKDIR}/istio-${ISTIO_VERSION}/install/kubernetes/helm/istio-init --name istio-init --namespace istio-system | kubectl apply -f -
 sleep 20
 
-sleep 2
 
 # customize
-if [ $ILB_ENABLED == "true" ]; then ILB="--set gateways.istio-ilbgateway.enabled=true"; else ILB=""; fi
-if [ $MIXER_POLICY == "false"]; then MIXER="--set mixer.policy.enabled=false"; else MIXER=""; fi
+if [ "$ILB_ENABLED" == "true" ]; then
+    ILB="--set gateways.istio-ilbgateway.enabled=true"
+else
+    ILB="--set gateways.istio-ilbgateway.enabled=false"
+fi
+
+if [ "$MESH_EXPANSION" == "true" ]; then
+    ENABLE_VM="--set global.meshExpansion.enabled=true"
+else
+    ENABLE_VM="--set global.meshExpansion.enabled=false"
+fi
+
 
 # installs Istio with Envoy access logging enabled
 helm template ${WORKDIR}/istio-${ISTIO_VERSION}/install/kubernetes/helm/istio --name istio --namespace istio-system \
@@ -47,8 +56,9 @@ helm template ${WORKDIR}/istio-${ISTIO_VERSION}/install/kubernetes/helm/istio --
 --set "kiali.dashboard.jaegerURL=http://jaeger-query:16686" \
 --set "kiali.dashboard.grafanaURL=http://grafana:3000" \
 --set grafana.enabled=true \
+--set mixer.policy.enabled=false \
 ${ILB} \
-${MIXER} \
+${ENABLE_VM} \
 --set global.proxy.accessLogFile="/dev/stdout" >> istio.yaml
 
 # install istio
@@ -59,7 +69,4 @@ git clone https://github.com/istio/installer && cd installer
 helm template istio-telemetry/mixer-telemetry --execute=templates/stackdriver.yaml -f global.yaml --set mixer.adapters.stackdriver.enabled=true --namespace istio-system | kubectl apply -f -
 cd ..
 
-# cleanup
-rm -rf istio-${ISTIO_VERSION}
-rm -rf installer
-
+rm -rf installer/
