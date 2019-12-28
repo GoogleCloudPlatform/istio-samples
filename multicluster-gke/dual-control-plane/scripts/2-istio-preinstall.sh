@@ -32,7 +32,7 @@ preinstall_istio () {
 
 # set vars
 ZONE="us-central1-b"
-ISTIO_VERSION=${ISTIO_VERSION:=1.2.2}
+ISTIO_VERSION=${ISTIO_VERSION:=1.4.2}
 
 PROJECT_1="${PROJECT_1:?PROJECT_1 env variable must be specified}"
 CLUSTER_1="dual-cluster1"
