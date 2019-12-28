@@ -1,5 +1,5 @@
 
-# Copyright 2019 Google LLC
+# Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,15 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START istio_security_intro_istio_rbacconfig_default]
-apiVersion: rbac.istio.io/v1alpha1
-kind: RbacConfig
+# [START istio_security_intro_manifests_policy_frontend_authn2]
+apiVersion: authentication.istio.io/v1alpha1
+kind: Policy
 metadata:
-  name: default
+  name: frontend-authn
 spec:
-  inclusion:
-    services:
-    - frontend.default.svc.cluster.local
-  mode: ON_WITH_INCLUSION
-# [END istio_security_intro_istio_rbacconfig_default]
+  origins:
+  - jwt:
+      issuer: testing@secure.istio.io
+      jwksUri: https://raw.githubusercontent.com/istio/istio/release-1.4/security/tools/jwt/samples/jwks.json
+  peers:
+  - mtls: {}
+  principalBinding: USE_ORIGIN
+  targets:
+  - name: frontend
+# [END istio_security_intro_manifests_policy_frontend_authn2]
 ---

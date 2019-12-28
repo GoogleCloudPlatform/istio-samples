@@ -1,5 +1,5 @@
 
-# Copyright 2019 Google LLC
+# Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ spec:
           value: checkoutservice.hipster1.global:5050
         - name: AD_SERVICE_ADDR
           value: adservice.hipster1.global:9555
-        image: gcr.io/google-samples/microservices-demo/frontend:v0.1.1
+        image: gcr.io/google-samples/microservices-demo/frontend:v0.1.3
         livenessProbe:
           httpGet:
             httpHeaders:
@@ -87,7 +87,7 @@ spec:
         app: productcatalogservice
     spec:
       containers:
-      - image: gcr.io/google-samples/microservices-demo/productcatalogservice:v0.1.1
+      - image: gcr.io/google-samples/microservices-demo/productcatalogservice:v0.1.3
         livenessProbe:
           exec:
             command:
@@ -133,7 +133,7 @@ spec:
           value: '7070'
         - name: LISTEN_ADDR
           value: 0.0.0.0
-        image: gcr.io/google-samples/microservices-demo/cartservice:v0.1.1
+        image: gcr.io/google-samples/microservices-demo/cartservice:v0.1.3
         livenessProbe:
           exec:
             command:
@@ -178,7 +178,7 @@ spec:
       - env:
         - name: PRODUCT_CATALOG_SERVICE_ADDR
           value: productcatalogservice.hipster2.svc.cluster.local:3550
-        image: gcr.io/google-samples/microservices-demo/recommendationservice:v0.1.1
+        image: gcr.io/google-samples/microservices-demo/recommendationservice:v0.1.3
         livenessProbe:
           exec:
             command:

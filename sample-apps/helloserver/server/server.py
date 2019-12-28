@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2019 Google LLC
+# Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,14 +28,14 @@ class S(BaseHTTPRequestHandler):
         self._set_response()
         self.wfile.write("Hello World! {}".format(self.path).encode('utf-8'))
 
-# HTTP Server runs on port 8080 
+# HTTP Server runs on port 8080
 def run(server_class=HTTPServer, handler_class=S, port=8080):
     logging.basicConfig(level=logging.INFO)
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
     logging.info('Starting server...\n')
 
-    # start listening 
+    # start listening
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

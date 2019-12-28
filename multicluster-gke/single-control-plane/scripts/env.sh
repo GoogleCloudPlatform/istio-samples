@@ -14,13 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+log() { echo "$1" >&2; }
 
-source ./common.sh
+PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
+gcloud config set project $PROJECT_ID
 
-for svc in "${CLUSTERS[@]}" ; do
-    CTX="${svc%%:*}"
-    printf "\n\n Calling ZonePrinter on $CTX...\n"
-    kubectx $CTX
-    IP=`kubectl get service/istio-ingressgateway -n istio-system -o jsonpath='{.status.loadBalancer.ingress[0].ip}'`
-    curl $IP
-done
+cluster1zone="us-east1-b"
+cluster2zone="us-central1-b"
+
+ctx1="gke_${PROJECT_ID}_${cluster1zone}_cluster-1"
+ctx2="gke_${PROJECT_ID}_${cluster2zone}_cluster-2"
+
+ISTIO_VERSION=${ISTIO_VERSION:=1.4.2}
+
+services1=("emailservice" "paymentservice" "shippingservice" "adservice" "checkoutservice" "currencyservice" "frontend" "productcatalogservice")
+services2=("loadgenerator" "cartservice" "recommendationservice" "redis-cart")

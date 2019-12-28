@@ -46,43 +46,38 @@ cd security-intro
 gcloud services enable container.googleapis.com
 ```
 
-2. **Create a GKE cluster** using [Istio on GKE](https://cloud.google.com/istio/docs/istio-on-gke/overview). This add-on will provision
+2. **Create a GKE cluster** using [Istio on GKE](https://cloud.google.com/manifests/docs/istio-on-gke/overview). This add-on will provision
    your GKE cluster with Istio.
 
 ```
 gcloud beta container clusters create istio-security-demo \
-    --addons=Istio --istio-config=auth=MTLS_PERMISSIVE \
     --zone=us-central1-f \
     --machine-type=n1-standard-2 \
     --num-nodes=4
 ```
 
-This Istio installation uses the default `MTLS_PERMISSIVE` [mesh-wide security
-option](https://cloud.google.com/istio/docs/istio-on-gke/installing#choose_a_security_option).
-This means that all services in the cluster will send **unencrypted** traffic by default. In `PERMISSIVE`
-mode, you can still enforce strict mutual TLS for individual services, which we'll
-explore below.
+3. **Install Istio** on the cluster.
 
-3. Once the cluster is provisioned, check that Istio is ready by ensuring that all pods are `Running` or `Completed`.
+```
+chmod +x ../common/install_istio.sh; ../common/install_istio.sh
+```
+
+4. Wait for all Istio pods to be `Running` or `Completed`.
 ```
 kubectl get pods -n istio-system
 ```
 
 ### Deploy the sample application
 
-1. **Label the default namespace** for Istio [sidecar proxy](https://istio.io/docs/concepts/what-is-istio/#envoy) auto-injection.
-```
-kubectl label namespace default istio-injection=enabled
-```
-
-2. **Deploy the sample application.**
+1. **Deploy the sample application.**
 
 ```
-kubectl apply -f ./hipstershop
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/istio-manifests.yaml
 ```
 
 
-3. Run `kubectl get pods -n default` to ensure that all pods are `Running` and `Ready`.
+2. Run `kubectl get pods -n default` to ensure that all pods are `Running` and `Ready`.
 
 ```
 NAME                                     READY     STATUS    RESTARTS   AGE
@@ -129,12 +124,12 @@ Istio resources](https://istio.io/docs/concepts/security/#authentication-policie
 `Policy` (require TLS for inbound requests) and a `DestinationRule` (TLS for the
 frontend's outbound requests).
 
-1. **View** both these resources in `./istio/mtls-frontend.yaml`.
+1. **View** both these resources in `./manifests/mtls-frontend.yaml`.
 
 2. **Apply** the resources to the cluster:
 
 ```
-kubectl apply -f ./istio/mtls-frontend.yaml
+kubectl apply -f ./manifests/mtls-frontend.yaml
 ```
 
 3. **Verify that mTLS is enabled** for the frontend by trying to reach it from the
@@ -178,26 +173,19 @@ namespace](https://istio.io/docs/tasks/security/authn-policy/#namespace-wide-pol
 Doing so will automatically encrypt service-to-service traffic for every Hipstershop service
 running in the `default` namespace.
 
-1. **Open** `istio/mtls-default-ns.yaml`. Notice that we're using the same resources
+1. **Open** `manifests/mtls-default-ns.yaml`. Notice that we're using the same resources
 (`Policy` and `DestinationRule`) for
 namespace-wide mTLS as we did for service-specific mTLS.
 
 2. **Apply** the resources:
 
 ```
-kubectl apply -f ./istio/mtls-default-ns.yaml
+kubectl apply -f ./manifests/mtls-default-ns.yaml
 ```
 
-From here, we could enable mTLS globally across the mesh using the `gcloud container
-clusters update` command, with the `--istio-config=auth=MTLS_STRICT` flag. Read more in
-the
-[Istio on GKE documentation](https://cloud.google.com/istio/docs/istio-on-gke/installing#adding_istio_on_gke_to_an_existing_cluster).
-
-You can also manually enable mesh-wide mTLS by applying a
+From here, we could enable mTLS globally by applying a
 [MeshPolicy](https://istio.io/docs/tasks/security/authn-policy/#globally-enabling-istio-mutual-tls)
 resource to the cluster.
-
-Overall, we hope this section showed how you can incrementally adopt encrypted service communication using Istio, at your own pace, without any code changes.
 
 ### Add End-User JWT Authentication
 
@@ -214,7 +202,7 @@ default namespace.
 First, we'll create an Istio `Policy` to enforce JWT authentication for inbound requests
 to the `frontend` service.
 
-1. **Open** the resource in  `./istio/jwt-frontend.yaml`.
+1. **Open** the resource in  `./manifests/jwt-frontend.yaml`.
 
 🔎 This `Policy` uses Istio's
 test JSON Web Key Set (`jwksUri`), the public key used to verify incoming JWTs.
@@ -228,14 +216,14 @@ at a time.
 2. **Apply** the updated frontend Policy:
 
 ```
-kubectl apply -f ./istio/jwt-frontend.yaml
+kubectl apply -f ./manifests/jwt-frontend.yaml
 ```
 
 3. **Set a local `TOKEN` variable.** We'll use this TOKEN on the client-side
    to make requests to the frontend.
 
 ```
-TOKEN=$(curl -k https://raw.githubusercontent.com/istio/istio/release-1.0/security/tools/jwt/samples/demo.jwt -s); echo $TOKEN
+TOKEN=$(curl -k https://raw.githubusercontent.com/istio/istio/release-1.4/security/tools/jwt/samples/demo.jwt -s); echo $TOKEN
 ```
 
 4. First try to reach the frontend with TLS keys/certs but **without** a JWT.
@@ -265,35 +253,19 @@ kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items.
 
 Unlike authentication, which refers to the "who," **authorization** refers to the "what", or: what is this service or user allowed to do?
 
-Istio [Authorization](https://istio.io/docs/concepts/security/#authorization) builds on
-Kubernetes [Role-based Access
-Control](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) (RBAC), which maps
-"subjects" (such as service accounts) to Roles.
+By default, requests between Istio services (and between end-users and services) are [allowed by default](https://istio.io/docs/concepts/security/#implicit-enablement). You can then enforce authorization for one or many services using an [`AuthorizationPolicy`](https://istio.io/docs/reference/config/security/authorization-policy/) custom resource.
 
-Istio access control model consists of three building blocks:
-1. **ServiceRole** - an abstract persona with specific permissions (example: a
-   `frontend-viewer` ServiceRole can make `GET` requests to the frontend.)
-2. **Subject**(s) - concrete users or services (example: the `ServiceAccount` running
-   `productcatalogservice`)
-3. **ServiceRoleBinding** - a mapping of ServiceRole to Subject(s). (example:
-   only the `ServiceAccount` running `productcatalogservice` can make `GET` requests to
-   the `frontend`.)
-
-Putting them together, we get:
-
- **ServiceRole** + **Subject(s)** = **ServiceRoleBinding**
-
-Let's put this into action.
+Let's put this into action, by only allowing requests to the `frontend` that have a specific HTTP header.
 
 ### Enable authorization (RBAC) for the frontend
 
-1. **Enable authorization** for the frontend service only:
+1. **Apply the AuthorizationPolicy** for the frontend service:
 
 ```
-kubectl apply -f ./istio/enable-authz.yaml
+kubectl apply -f ./manifests/authz-frontend.yaml
 ```
 
-1. Run the same `GET` request to the frontend as we did in the last section  (with TLS
+2. Run the same `GET` request to the frontend as we did in the last section  (with TLS
    key/cert and JWT).
 
 ```
@@ -305,24 +277,6 @@ kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items.
 You should receive a `403- Forbidden` error. This is expected, because we just locked down the
 frontend service to only whitelisted subjects.
 
-
-### Control access to the frontend
-
-1. **Open** the YAML file at `./istio/rbac-frontend.yaml`.
-
-🔎 The `ServiceRole` resource, `frontend-viewer`, specifies an abstract persona that can make `GET` and `HEAD` requests to the frontend.
-
-The `ServiceRoleBinding` maps the `frontend-viewer` role to only those `subjects` that
-have a `hello:world` request header. Also note how instead of specifying an explicit
-ServiceAccount that can make requests, we're using Istio's [Constraints and Properties](https://istio.io/docs/reference/config/authorization/constraints-and-properties/)
-feature. This feature allows us to dynamically select `subjects` based on abstract
-selectors.
-
-2. **Apply** the RBAC resources to the cluster:
-
-```
-kubectl apply -f ./istio/rbac-frontend.yaml
-```
 
 3. Make another request from `productcatalogservice` to the `frontend`. This time, **pass
    the `hello:world` request header.**

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2019 Google LLC
+# Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,20 +15,28 @@
 # limitations under the License.
 
 set -euo pipefail
-log() { echo "$1" >&2; }
-
-PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
-cluster1zone="us-east1-b"
-cluster2zone="us-central1-b"
-
-ctx1="gke_${PROJECT_ID}_${cluster1zone}_cluster-1"
-ctx2="gke_${PROJECT_ID}_${cluster2zone}_cluster-2"
+source ./scripts/env.sh
 
 # Deploy "most of" Hipstershop to cluster 1
 kubectl config use-context $ctx1
-kubectl apply -f ./cluster1
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/istio-manifests.yaml
+
+# delete cluster2 svcs from cluster1
+for i in "${services2[@]}"
+do
+   echo "Deleting ${i} from ${ctx1}"
+   kubectl delete deployment $i
+done
+
 
 # Deploy the rest of Hipstershop (cartservice, recommendations, loadgenerator) to cluster2
 kubectl config use-context $ctx2
-kubectl apply -f ./cluster2
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml
 
+# delete cluster1 svcs from cluster2
+for i in "${services1[@]}"
+do
+   echo "Deleting ${i} from ${ctx2}"
+   kubectl delete deployment $i
+done
