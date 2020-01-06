@@ -30,16 +30,3 @@ spec:
   - name: frontend
 # [END istio_security_intro_manifests_policy_frontend_authn2]
 ---
-# [START istio_security_intro_manifests_destinationrule_frontend_dr2]
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: frontend
-  namespace: default
-spec:
-  host: frontend.default.svc.cluster.local
-  trafficPolicy:
-    tls:
-      mode: ISTIO_MUTUAL
-# [END istio_security_intro_manifests_destinationrule_frontend_dr2]
----

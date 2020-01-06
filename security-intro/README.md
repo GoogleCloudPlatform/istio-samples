@@ -289,7 +289,7 @@ kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items.
 ✅ You should now see a `200` response code.
 
 🔎 From here, if you wanted to expand authorization to the entire default namespace, you
-can apply similar resources. Learn more about that [here](https://istio.io/docs/tasks/security/role-based-access-control/#namespace-level-access-control).
+can apply similar resources.
 
 🎉 Nice job! You just configured a fine-grained Istio access control policy for one
 service. We hope this section demonstrated how Istio can support specific, service-level
@@ -307,7 +307,7 @@ Or, to keep your GKE cluster with Istio and Hipstershop still installed, delete 
 resources only:
 
 ```
-kubectl delete -f ./istio
+kubectl delete -f ./manifests
 ```
 
 ## What's next?
