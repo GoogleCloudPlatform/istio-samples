@@ -37,7 +37,6 @@ Click the button below to open the demo instructions in your Cloud Shell:
 cd security-intro
 ```
 
-
 ### Create a GKE Cluster
 
 1. From Cloud Shell, **enable the Kubernetes Engine API**.
@@ -46,8 +45,7 @@ cd security-intro
 gcloud services enable container.googleapis.com
 ```
 
-2. **Create a GKE cluster** using [Istio on GKE](https://cloud.google.com/manifests/docs/istio-on-gke/overview). This add-on will provision
-   your GKE cluster with Istio.
+2. **Create a GKE cluster**.
 
 ```
 gcloud beta container clusters create istio-security-demo \
@@ -56,7 +54,7 @@ gcloud beta container clusters create istio-security-demo \
     --num-nodes=4
 ```
 
-3. **Install Istio** on the cluster.
+3. **Install Istio** on the cluster using Helm.
 
 ```
 chmod +x ../common/install_istio.sh; ../common/install_istio.sh
@@ -291,7 +289,7 @@ kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items.
 ✅ You should now see a `200` response code.
 
 🔎 From here, if you wanted to expand authorization to the entire default namespace, you
-can apply similar resources. Learn more about that [here](https://istio.io/docs/tasks/security/role-based-access-control/#namespace-level-access-control).
+can apply similar resources.
 
 🎉 Nice job! You just configured a fine-grained Istio access control policy for one
 service. We hope this section demonstrated how Istio can support specific, service-level
@@ -309,7 +307,7 @@ Or, to keep your GKE cluster with Istio and Hipstershop still installed, delete 
 resources only:
 
 ```
-kubectl delete -f ./istio
+kubectl delete -f ./manifests
 ```
 
 ## What's next?
