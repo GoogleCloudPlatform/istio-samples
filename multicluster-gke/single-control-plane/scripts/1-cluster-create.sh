@@ -26,7 +26,7 @@ log "Creating cluster1..."
 "https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring",\
 "https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly",\
 "https://www.googleapis.com/auth/trace.append" \
---num-nodes "4" --network "default" --enable-cloud-logging --enable-cloud-monitoring --enable-ip-alias --async
+--num-nodes "3" --network "default" --enable-cloud-logging --enable-cloud-monitoring --enable-ip-alias --async
 
 log "Creating cluster2..."
   gcloud container clusters create cluster-2 --zone $cluster2zone --username "admin" \
@@ -35,4 +35,4 @@ log "Creating cluster2..."
 "https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring",\
 "https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly",\
 "https://www.googleapis.com/auth/trace.append" \
---num-nodes "4" --network "default" --enable-cloud-logging --enable-cloud-monitoring --enable-ip-alias --async
+--num-nodes "3" --network "default" --enable-cloud-logging --enable-cloud-monitoring --enable-ip-alias --async
