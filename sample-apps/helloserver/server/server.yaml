@@ -48,6 +48,6 @@ spec:
     targetPort: 8080
   selector:
     app: helloserver
-  type: LoadBalancer
+#  type: LoadBalancer
 # [END istio_helloserver_server_service_hellosvc]
 ---
