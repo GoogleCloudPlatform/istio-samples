@@ -1,5 +1,5 @@
 
-FROM python:3-slim as builder  
+FROM python:3-slim as builder
 
 RUN apt-get -qq update \
     && apt-get install -y --no-install-recommends \
@@ -10,7 +10,7 @@ RUN apt-get -qq update \
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-FROM builder as final  
+FROM builder as final
 
 # Enable unbuffered logging
 ENV PYTHONUNBUFFERED=1
@@ -22,7 +22,7 @@ RUN apt-get -qq update \
 WORKDIR /loadgen
 
 # Grab packages from builder
-COPY --from=builder /usr/local/lib/python3.7/ /usr/local/lib/python3.7/
+COPY --from=builder /usr/local/lib/python3.8/ /usr/local/lib/python3.8/
 
 # Add the application
 COPY . .

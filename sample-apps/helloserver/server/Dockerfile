@@ -16,7 +16,7 @@ RUN apt-get -qq update \
 WORKDIR /helloserver
 
 # Grab packages from builder
-COPY --from=builder /usr/local/lib/python3.7/ /usr/local/lib/python3.7/
+COPY --from=builder /usr/local/lib/python3.8/ /usr/local/lib/python3.8/
 
 # Add the application
 COPY . .
