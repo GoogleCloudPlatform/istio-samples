@@ -13,20 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START istio_security_intro_manifests_policy_frontend_authn2]
-apiVersion: authentication.istio.io/v1alpha1
-kind: Policy
+# [START istio_security_intro_manifests_authorization_policy_frontend
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
 metadata:
-  name: frontend-authn
+  name: require-jwt
+  namespace: default
 spec:
-  origins:
-  - jwt:
-      issuer: testing@secure.istio.io
-      jwksUri: https://raw.githubusercontent.com/istio/istio/release-1.4/security/tools/jwt/samples/jwks.json
-  peers:
-  - mtls: {}
-  principalBinding: USE_ORIGIN
-  targets:
-  - name: frontend
-# [END istio_security_intro_manifests_policy_frontend_authn2]
+  selector:
+    matchLabels:
+      app: frontend
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+       requestPrincipals: ["testing@secure.istio.io/testing@secure.istio.io"]
+# [END istio_security_intro_manifests_authorization_policy_frontend
 ---

@@ -27,7 +27,7 @@ We'll deploy the Hipstershop sample application along with an updated service th
 
 ```
 git clone https://github.com/GoogleCloudPlatform/istio-samples
-cd istio-samples/istio-canary-gke
+cd istio-samples/common
 ```
 
 ### Create a GKE cluster
@@ -50,7 +50,7 @@ gcloud beta container clusters create istio-stackdriver-demo \
 3. **Install Istio** on the cluster.
 
 ```
-chmod +x ../common/install_istio.sh; ../common/install_istio.sh
+./install_istio.sh
 ```
 
 4. Wait for all Istio pods to be `Running` or `Completed`.
@@ -94,6 +94,7 @@ shippingservice-7bc4bc75bb-kzfrb         2/2       Running   0          1m
 1. Create an Istio [DestinationRule](https://istio.io/docs/reference/config/istio.networking.v1alpha3/#DestinationRule) for `productcatalogservice`.
 
 ```
+cd ../istio-canary-gke/
 kubectl apply -f canary/destinationrule.yaml
 ```
 

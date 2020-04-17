@@ -13,29 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START istio_security_intro_manifests_peer_authentication_frontend]
-apiVersion: "security.istio.io/v1beta1"
-kind: "PeerAuthentication"
+# [START istio_security_intro_manifests_request_authentication_frontend
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
 metadata:
-  name: "frontend"
-  namespace: "default"
+ name: frontend
+ namespace: default
 spec:
   selector:
     matchLabels:
       app: frontend
-  mtls:
-    mode: STRICT
-# [END istio_security_intro_manifests_peer_authentication_frontend]
----
-# [START istio_security_intro_manifests_destinationrule_frontend]
-apiVersion: "networking.istio.io/v1alpha3"
-kind: "DestinationRule"
-metadata:
-  name: "frontend"
-spec:
-  host: "frontend.default.svc.cluster.local"
-  trafficPolicy:
-    tls:
-      mode: ISTIO_MUTUAL
-# [END istio_security_intro_manifests_destinationrule_frontend]
+  jwtRules:
+  - issuer: "testing@secure.istio.io"
+    jwksUri: "https://raw.githubusercontent.com/istio/istio/release-1.5/security/tools/jwt/samples/jwks.json"
+# [END istio_security_intro_manifests_request_authentication_frontend
 ---
