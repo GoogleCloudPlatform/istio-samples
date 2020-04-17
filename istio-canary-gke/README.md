@@ -46,15 +46,15 @@ gcloud beta container clusters create istio-canary \
     --num-nodes=4
 ```
 
-3. `cd` into the directory for this demo.
+3. `cd` into the install directory.
 ```
-cd istio-canary-gke;
+cd common/
 ```
 
 4. Install Istio on the cluster:
 
 ```
-chmod +x ../common/install_istio.sh; ../common/install_istio.sh
+./install_istio.sh
 ```
 
 5. Once the cluster is ready, ensure that Istio is running:
@@ -62,18 +62,13 @@ chmod +x ../common/install_istio.sh; ../common/install_istio.sh
 ```
 $ kubectl get pods -n istio-system
 
-NAME                                     READY     STATUS      RESTARTS   AGE
-istio-citadel-776fb85794-9gcqz           1/1       Running     0          7m
-istio-cleanup-secrets-cg9b4              0/1       Completed   0          7m
-istio-egressgateway-7f778c7fcf-hj9fw     1/1       Running     0          7m
-istio-galley-794f98cf5f-9867s            1/1       Running     0          7m
-istio-ingressgateway-56b648f9fb-mt7tb    1/1       Running     0          7m
-istio-pilot-d87948784-7kfzt              2/2       Running     0          7m
-istio-policy-5757c77d8f-54vsl            2/2       Running     0          7m
-istio-security-post-install-bqjqq        0/1       Completed   0          7m
-istio-sidecar-injector-f555db659-l5btv   1/1       Running     0          7m
-istio-telemetry-85c84d85c6-qdtnm         2/2       Running     0          7m
-prometheus-7c589d4989-9mgg8              2/2       Running     1          7m
+NAME                                   READY   STATUS    RESTARTS   AGE
+grafana-556b649566-fw67z               1/1     Running   0          5m24s
+istio-ingressgateway-fc6c9d9df-nmndg   1/1     Running   0          5m30s
+istio-tracing-7cf5f46848-qksxq         1/1     Running   0          5m24s
+istiod-7b5d6db6b6-b457p                1/1     Running   0          5m48s
+kiali-b4b5b4fb8-hwm42                  1/1     Running   0          5m23s
+prometheus-558b665bb7-5v647            2/2     Running   0          5m23s
 ```
 
 ## Deploy the Sample App
@@ -98,29 +93,35 @@ kubectl get svc -n istio-system istio-ingressgateway
 
 ## Deploy ProductCatalog v2
 
-1. Create an Istio [DestinationRule](https://istio.io/docs/reference/config/istio.networking.v1alpha3/#DestinationRule) for `productcatalogservice`.
+1. `cd` into the example directory.
+
+```
+cd istio-canary-gke/
+```
+
+2. Create an Istio [DestinationRule](https://istio.io/docs/reference/config/istio.networking.v1alpha3/#DestinationRule) for `productcatalogservice`.
 
 ```
 kubectl apply -f canary/destinationrule.yaml
 ```
 
-2. Deploy `productcatalog` v2.
+3. Deploy `productcatalog` v2.
 ```
 kubectl apply -f canary/productcatalog-v2.yaml
 ```
 
-3. Using `kubectl get pods`, verify that the `v2` pod is Running.
+4. Using `kubectl get pods`, verify that the `v2` pod is Running.
 ```
 productcatalogservice-v2-79459dfdff-6qdh4   2/2       Running   0          1m
 ```
 
-4. Create an Istio [VirtualService](https://istio.io/docs/reference/config/istio.networking.v1alpha3/#VirtualService) to split incoming `productcatalog` traffic between v1 (75%) and v2 (25%).
+5. Create an Istio [VirtualService](https://istio.io/docs/reference/config/istio.networking.v1alpha3/#VirtualService) to split incoming `productcatalog` traffic between v1 (75%) and v2 (25%).
 ```
 kubectl apply -f canary/vs-split-traffic.yaml
 ```
 
-5. In a web browser, navigate again to the hipstershop frontend.
-6. Refresh the homepage a few times. You should notice that periodically, the frontend is
+6. In a web browser, navigate again to the hipstershop frontend.
+7. Refresh the homepage a few times. You should notice that periodically, the frontend is
    slower to load. Let's explore ProductCatalog's latency with Stackdriver.
 
 ## Observe Latency with Stackdriver
