@@ -78,6 +78,8 @@ prometheus-558b665bb7-5v647            2/2     Running   0          5m23s
 ```
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/istio-manifests.yaml
+kubectl delete serviceentry whitelist-egress-google-metadata
+kubectl delete serviceentry whitelist-egress-googleapis
 kubectl patch deployments/productcatalogservice -p '{"spec":{"template":{"metadata":{"labels":{"version":"v1"}}}}}'
 ```
 
@@ -123,6 +125,22 @@ kubectl apply -f canary/vs-split-traffic.yaml
 6. In a web browser, navigate again to the hipstershop frontend.
 7. Refresh the homepage a few times. You should notice that periodically, the frontend is
    slower to load. Let's explore ProductCatalog's latency with Stackdriver.
+
+
+## View traffic splitting in Kiali
+
+1. Open the Kiali dashboard.
+
+```
+istioctl dashboard kiali &
+```
+
+2. Navigate to Service Graph > namespace: `default`
+
+3. Select "Versioned App Graph."
+4. In the service graph, zoom in on `productcatalogservice`. You should see that approximately 25% of productcatalog requests are going to `v2`.
+
+![kiali](kiali.png)
 
 ## Observe Latency with Stackdriver
 
