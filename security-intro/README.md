@@ -325,17 +325,38 @@ kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items.
 
 🎉 Well done! You just secured the `frontend` service with a JWT policy and an authorization policy.
 
+8. Clean up:
+
+```
+kubectl delete -f manifests/jwt-frontend-authz.yaml
+kubectl delete -f manifests/jwt-frontend-request.yaml
+```
+
 ## Authorization
 
-We just saw a preview of how to enforce access control using Istio `AuthorizationPolicies`. Let's go deeper into how these policies wor.
+We just saw a preview of how to enforce access control using Istio `AuthorizationPolicies`. Let's go deeper into how these policies work.
 
 Unlike authentication, which refers to the "who," **authorization** refers to the "what", or: what is this service or user allowed to do?
 
 By default, requests between Istio services (and between end-users and services) are [allowed by default](https://istio.io/docs/concepts/security/#implicit-enablement). You can then enforce authorization for one or many services using an [`AuthorizationPolicy`](https://istio.io/docs/reference/config/security/authorization-policy/) custom resource.
 
-Let's put this into action, by only allowing requests to the `frontend` that have a specific HTTP header.
+Let's put this into action, by only allowing requests to the `frontend` that have a specific HTTP header (`hello`:`world`):
 
-### Enable authorization (RBAC) for the frontend
+```
+apiVersion: "security.istio.io/v1beta1"
+kind: "AuthorizationPolicy"
+metadata:
+  name: "frontend"
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  rules:
+  - when:
+    - key: request.headers[hello]
+      values: ["world"]
+```
 
 1. **Apply the AuthorizationPolicy** for the frontend service:
 
@@ -343,37 +364,27 @@ Let's put this into action, by only allowing requests to the `frontend` that hav
 kubectl apply -f ./manifests/authz-frontend.yaml
 ```
 
-2. Run the same `GET` request to the frontend as we did in the last section  (with TLS
-   key/cert and JWT).
+2. Curl the frontend without the `hello` header. You should see a `403: Forbidden` response.
 
 ```
 kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items..metadata.name}) -c istio-proxy \
--- curl  --header "Authorization: Bearer $TOKEN" https://frontend:80/ -o /dev/null -s -w '%{http_code}\n' \
---key /etc/certs/key.pem --cert /etc/certs/cert-chain.pem --cacert /etc/certs/root-cert.pem -k
+-- curl http://frontend:80/ -o /dev/null -s -w '%{http_code}\n'
+
+403
 ```
 
-You should receive a `403- Forbidden` error. This is expected, because we just locked down the
-frontend service to only whitelisted subjects.
-
-
-3. Make another request from `productcatalogservice` to the `frontend`. This time, **pass
-   the `hello:world` request header.**
+3. Curl the frontend with the `hello`:`world` header. You should now see a `200` response code.
 
 ```
 kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items..metadata.name}) -c istio-proxy \
--- curl --header "Authorization: Bearer $TOKEN" --header "hello:world"  \
-   https://frontend:80/ -o /dev/null -s -w '%{http_code}\n' \
-  --key /etc/certs/key.pem --cert /etc/certs/cert-chain.pem --cacert /etc/certs/root-cert.pem -k
+-- curl --header "hello:world" http://frontend:80 -o /dev/null -s -w '%{http_code}\n'
+
+200
 ```
 
-✅ You should now see a `200` response code.
-
-🔎 From here, if you wanted to expand authorization to the entire default namespace, you
-can apply similar resources.
-
-🎉 Nice job! You just configured a fine-grained Istio access control policy for one
+✅ You just configured a fine-grained Istio access control policy for one
 service. We hope this section demonstrated how Istio can support specific, service-level
-authorization policies using a set of familiar, Kubernetes-based RBAC resources.
+authorization policies using a set of familiar, Kubernetes-based resources.
 
 ## Cleanup
 
