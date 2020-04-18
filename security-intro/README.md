@@ -217,12 +217,6 @@ Now that we've enabled service-to-service authentication in the default namespac
 enforce **end-user ("origin") authentication** for the `frontend` service, using [JSON Web Tokens](https://jwt.io/)
 (JWT).
 
-⚠️ We recommend only using JWT authentication alongside mTLS (and not JWT by itself), because plaintext JWTs are not
-themselves encrypted, only [signed](https://jwt.io/introduction/). Forged or intercepted
-JWTs could compromise your
-service mesh. In this section, we're building on the mutual TLS authentication already configured for the
-default namespace.
-
 First, we'll create an Istio policy to [enforce JWT authentication](https://istio.io/docs/tasks/security/authorization/authz-jwt/) for inbound requests
 to the `frontend` service.
 
@@ -276,7 +270,7 @@ kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items.
 200
 ```
 
-You should see a `200` code. Why is this? Because starting in Istio 1.5, the Istio `RequestAuthentication` (JWT) policy is only responsible for *validating* tokens. If we pass an invalid token, we should see a "401: Unauthorized" response.
+You should see a `200` code. Why is this? Because starting in Istio 1.5, the Istio `RequestAuthentication` (JWT) policy [is only responsible for *validating*](https://istio.io/docs/tasks/security/authorization/authz-jwt/#allow-requests-with-valid-jwt-and-list-typed-claims) tokens. If we pass an invalid token, we should see a "401: Unauthorized" response:
 
 ```
 kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items..metadata.name}) -c istio-proxy \
@@ -285,9 +279,9 @@ kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items.
 401
 ```
 
-But if *no* token is passed, this `RequestAuthentication` policy is not invoked at all. Therefore, we need both an authenticaiton *and* an authorization policy to enforce that a JWT -- and a *valid* JWT -- is required for all frontend requests.
+But if we pass no token at all, the `RequestAuthentication` policy is not invoked. Therefore, in addition to this authentication policy, we need an **authorization policy** that requires a JWT on all requests.
 
-5. View the `AuthorizationPolicy` resource - open `manifests/jwt-frontend-authz.yaml`.
+6. View the `AuthorizationPolicy` resource - open `manifests/jwt-frontend-authz.yaml`. This policy declares that all requests to the `frontend` workload must have a JWT.
 
 ```
 apiVersion: security.istio.io/v1beta1
@@ -306,14 +300,14 @@ spec:
        requestPrincipals: ["testing@secure.istio.io/testing@secure.istio.io"]
 ```
 
-6. Apply the `AuthorizationPolicy`.
+7. Apply the `AuthorizationPolicy`.
 
 ```
 kubectl apply -f manifests/jwt-frontend-authz.yaml
 ```
 
 
-7. Curl the frontend again, without a JWT. You should now see `403 - Forbidden`. This is the `AuthorizationPolicy` taking effect-- that all frontend requests must have a JWT.
+8. Curl the frontend again, without a JWT. You should now see `403 - Forbidden`. This is the `AuthorizationPolicy` taking effect-- that all frontend requests must have a JWT.
 
 ```
 kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items..metadata.name}) -c istio-proxy \
@@ -325,7 +319,7 @@ kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items.
 
 🎉 Well done! You just secured the `frontend` service with a JWT policy and an authorization policy.
 
-8. Clean up:
+9. Clean up:
 
 ```
 kubectl delete -f manifests/jwt-frontend-authz.yaml
