@@ -1,4 +1,3 @@
-# ILB config source - https://github.com/istio/istio/issues/20033
 apiVersion: install.istio.io/v1alpha1
 kind: IstioOperator
 spec:
@@ -70,8 +69,7 @@ spec:
             maxSurge: 100%
             maxUnavailable: 25%
     ingressGateways:
-    - name: istio-ingressgateway
-      enabled: true
+    - enabled: true
       k8s:
         hpaSpec:
           maxReplicas: 5
@@ -96,117 +94,7 @@ spec:
           rollingUpdate:
             maxSurge: 100%
             maxUnavailable: 25%
-    - name: istio-ilbgateway
-      enabled: true
-      k8s:
-        serviceAnnotations:
-          cloud.google.com/load-balancer-type: "internal"
-        hpaSpec:
-          maxReplicas: 5
-          metrics:
-          - resource:
-              name: cpu
-              targetAverageUtilization: 80
-            type: Resource
-          minReplicas: 1
-          scaleTargetRef:
-            apiVersion: apps/v1
-            kind: Deployment
-            name: istio-ilbgateway
-        resources:
-          limits:
-            cpu: 2000m
-            memory: 1024Mi
-          requests:
-            cpu: 100m
-            memory: 128Mi
-        service:
-          ports:
-          - name: status-port
-            port: 15020
-            targetPort: 15020
-          - name: http2
-            port: 80
-            targetPort: 80
-          - name: https
-            port: 443
-          - name: kiali
-            port: 15029
-            targetPort: 15029
-          - name: prometheus
-            port: 15030
-            targetPort: 15030
-          - name: grafana
-            port: 15031
-            targetPort: 15031
-          - name: tracing
-            port: 15032
-            targetPort: 15032
-          - name: tls
-            port: 15443
-            targetPort: 15443
-          - name: tcp
-            port: 31400
-        strategy:
-          rollingUpdate:
-            maxSurge: 100%
-            maxUnavailable: 25%
-        overlays:
-          - kind: HorizontalPodAutoscaler
-            name: istio-ilbgateway
-            patches:
-              - path: metadata.labels.app
-                value: istio-ilbgateway
-              - path: metadata.labels.istio
-                value: ilbgateway
-              - path: spec.scaleTargetRef.name
-                value: istio-ilbgateway
-          - kind: Deployment
-            name: istio-ilbgateway
-            patches:
-              - path: metadata.labels.app
-                value: istio-ilbgateway
-              - path: metadata.labels.istio
-                value: ilbgateway
-              - path: spec.selector.matchLabels.app
-                value: istio-ilbgateway
-              - path: spec.selector.matchLabels.istio
-                value: ilbgateway
-              - path: spec.template.metadata.labels.app
-                value: istio-ilbgateway
-              - path: spec.template.metadata.labels.istio
-                value: ilbgateway
-          - kind: Service
-            name: istio-ilbgateway
-            patches:
-              - path: metadata.labels.app
-                value: istio-ilbgateway
-              - path: metadata.labels.istio
-                value: ilbgateway
-              - path: spec.selector.app
-                value: istio-ilbgateway
-              - path: spec.selector.istio
-                value: ilbgateway
-          - kind: Gateway
-            name: ingressgateway
-            patches:
-              - path: metadata.name
-                value: ilbgateway
-              - path: spec.selector.istio
-                value: istio-ilbgateway
-          - kind: PodDisruptionBudget
-            name: ingressgateway
-            patches:
-              - path: metadata.name
-                value: ilbgateway
-              - path: metadata.labels.app
-                value: istio-ilbgateway
-              - path: metadata.labels.istio
-                value: ilbgateway
-              - path: spec.selector.matchLabels.app
-                value: istio-ilbgateway
-              - path: spec.selector.matchLabels.istio
-                value: ilbgateway
+      name: istio-ingressgateway
     nodeAgent:
       enabled: false
     pilot:

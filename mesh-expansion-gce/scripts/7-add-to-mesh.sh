@@ -14,4 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-INSTALL_YAML=./install.yaml ../common/install_istio.sh
+set -euo pipefail
+log() { echo "$1" >&2; }
+ZONE="us-central1-b"
+GCE_NAME="istio-gce"
+
+export GCE_IP=$(gcloud --format="value(networkInterfaces[0].networkIP)" compute instances describe ${GCE_NAME} --zone ${ZONE})
+log "GCE IP is ${GCE_IP}"
+../common/istio-1.5.1/bin/istioctl experimental add-to-mesh external-service productcatalogservice ${GCE_IP} grpc:3550 -n default
+log "✅ added productcatalog to the mesh."
