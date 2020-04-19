@@ -31,19 +31,5 @@ kubectl create clusterrolebinding cluster-admin-binding \
 
 
 # install using operator config - https://istio.io/docs/setup/install/istioctl/#customizing-the-configuration
-istioctl manifest apply \
---set values.telemetry.v2.stackdriver.enabled=true \
---set values.telemetry.v2.stackdriver.logging=true \
---set values.telemetry.v2.stackdriver.monitoring=true \
---set values.telemetry.v2.stackdriver.topology=true \
---set values.prometheus.enabled=true \
---set values.grafana.enabled=true \
---set values.kiali.enabled=true \
---set values.tracing.enabled=true \
---set values.kiali.enabled=true \
---set values.kiali.createDemoSecret=true \
---set "values.kiali.dashboard.jaegerURL=http://jaeger-query:16686" \
---set "values.kiali.dashboard.grafanaURL=http://grafana:3000" \
---set values.global.proxy.accessLogFile="/dev/stdout"
-
-
+INSTALL_PROFILE=${INSTALL_YAML:-default.yaml}
+istioctl manifest apply -f ${INSTALL_PROFILE}
