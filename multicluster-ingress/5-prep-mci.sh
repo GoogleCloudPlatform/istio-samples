@@ -16,20 +16,16 @@
 
 source ./common.sh
 
-# Configure kubectx / install Istio
+log "Adding health check and updating the IngressGateway..."
 for svc in "${CLUSTERS[@]}" ; do
-    NAME="${svc%%:*}"
-    ZONE="${svc##*:}"
+    CTX="${svc%%:*}"
+    kubectx $CTX
 
-    gcloud container clusters get-credentials ${NAME} --zone ${ZONE} --project ${PROJECT_ID}
+    # prep ingressgateway to be used as a GCLB backend
+    kubectl apply -f manifests/healthcheck.yaml
 
-    # rename ctx
-    LONG_CTX="gke_${PROJECT_ID}_${ZONE}_${NAME}"
-    kubectx ${NAME}=${LONG_CTX}
-
-    # install istio on each cluster
-    cd ../common
-    ./install_istio.sh
-    cd ../multicluster-ingress
+    # make the ingressgateway a NodePort svc
+    kubectl -n istio-system patch svc istio-ingressgateway \
+    --type=json -p="$(cat manifests/istio-ingressgateway-patch.json)" \
+    --dry-run=true -o yaml | kubectl apply -f -
 done
-

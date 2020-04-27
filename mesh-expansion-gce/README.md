@@ -121,7 +121,7 @@ istioctl dashboard kiali &
 
 Open Service Graph > click the "default" namespace. You should see traffic moving to the `meshexpansion-productcatalogservice` ServiceEntry, corresponding to the VM.
 
-![screenshots/kiali.png]
+![screenshots/kiali.png](screenshots/kiali.png)
 
 ## Open the frontend in a browser
 
@@ -133,13 +133,14 @@ kubectl get svc -n istio-system istio-ingressgateway | awk '{print $4}'
 
 You should see the sample app frontend with a list of products, fetched from `productcatalog` running on the VM.
 
-![screenshots/onlineboutique.png]
+![screenshots/onlineboutique.png](screenshots/onlineboutique.png)
 
 ## Clean up
 
-To delete the cluster and VM used in this sample:
+To delete the resources used in this sample:
 
 ```
+gcloud compute firewall-rules delete k8s-to-istio-gce
 gcloud compute instances --project $PROJECT_ID delete --zone "us-central1-b" "istio-gce"
 gcloud container clusters delete mesh-exp-gke --zone us-central1-b --async
 ```

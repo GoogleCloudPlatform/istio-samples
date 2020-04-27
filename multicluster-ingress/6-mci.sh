@@ -16,20 +16,6 @@
 
 source ./common.sh
 
-log "Adding health check and updating the IngressGateway..."
-for svc in "${CLUSTERS[@]}" ; do
-    CTX="${svc%%:*}"
-    kubectx $CTX
-
-    # prep ingressgateway to be used as a GCLB backend
-    kubectl apply -f manifests/healthcheck.yaml
-
-    # make the ingressgateway a NodePort svc
-    kubectl -n istio-system patch svc istio-ingressgateway \
-    --type=json -p="$(cat manifests/istio-ingressgateway-patch.json)" \
-    --dry-run=true -o yaml | kubectl apply -f -
-done
-
 log "Installing kubemci..."
 wget https://storage.googleapis.com/kubemci-release/release/latest/bin/darwin/amd64/kubemci
 sudo chmod +x ./kubemci
