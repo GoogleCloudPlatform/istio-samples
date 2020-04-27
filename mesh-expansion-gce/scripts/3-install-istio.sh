@@ -19,7 +19,7 @@ log() { echo "$1" >&2; }
 
 cd ../common/
 INSTALL_YAML="../mesh-expansion-gce/scripts/install.yaml" ./install_istio.sh
-cd istio-1.5.1/
+cd istio-1.5.2/
 
 kubectl create secret generic cacerts -n istio-system \
     --from-file=samples/certs/ca-cert.pem \

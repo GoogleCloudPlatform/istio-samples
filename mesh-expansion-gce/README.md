@@ -17,7 +17,6 @@ inside the VM, then integrate it with the rest of the in-mesh services running i
 ## Prerequisites
 
 - A GCP project with billing enabled
-- helm CLI
 - gcloud
 - kubectl
 
@@ -37,7 +36,7 @@ export PROJECT_ID=<your-project-id>
 Create a 4-node GKE cluster named `mesh-exp-gke`:
 
 ```
-./scripts/1-create-gke.sh
+./scripts/1-create-cluster.sh
 ```
 
 Wait for the GKE cluster to be `RUNNING` -
@@ -116,7 +115,7 @@ This step uses the `istioctl add-to-mesh` command to generate a ServiceEntry and
 ## View the service topology
 
 ````
-alias istioctl="../common/istio-1.5.1/bin/istioctl"
+alias istioctl="../common/istio-1.5.2/bin/istioctl"
 istioctl dashboard kiali &
 ```
 
