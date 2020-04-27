@@ -33,12 +33,9 @@ ISTIO_SERVICE_CIDR=$(gcloud container clusters describe $CLUSTER_NAME --zone $ZO
 echo -e "ISTIO_SERVICE_CIDR=$ISTIO_SERVICE_CIDR\n" > cluster.env
 echo "ISTIO_INBOUND_PORTS=3550,8080" >> cluster.env
 
-# provision VM with certs
+# client certs
 go run istio.io/istio/security/tools/generate_cert -client -host spiffee://cluster.local/vm/vmname \
  --out-priv key.pem --out-cert cert-chain.pem  -mode citadel
-kubectl -n istio-system get cm istio-ca-root-cert -o jsonpath='{.data.root-cert\.pem}' > root-cert.pem
 
-# generate client certs
-go run istio.io/istio/security/tools/generate_cert \
-      -client -host spiffee://cluster.local/vm/vmname --out-priv key.pem --out-cert cert-chain.pem  -mode citadel
-      kubectl -n istio-system get cm istio-ca-root-cert -o jsonpath='{.data.root-cert\.pem}' > root-cert.pem
+# root cert
+kubectl -n istio-system get cm istio-ca-root-cert -o jsonpath='{.data.root-cert\.pem}' > root-cert.pem

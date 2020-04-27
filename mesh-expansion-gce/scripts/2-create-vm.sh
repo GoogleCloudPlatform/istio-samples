@@ -31,7 +31,7 @@ export K8S_POD_CIDR=$(gcloud container clusters describe ${CLUSTER_NAME?} --zone
 gcloud compute firewall-rules create k8s-to-istio-gce \
 --description="Allow k8s pods CIDR to istio-gce instance" \
 --source-ranges=$K8S_POD_CIDR \
---target-tags="istio-gce" \
+--target-tags=${GCE_INSTANCE_NAME} \
 --action=ALLOW \
 --rules=tcp:3550
 
@@ -41,5 +41,5 @@ gcloud config set project $PROJECT_ID
 gcloud compute --project=$PROJECT_ID instances create $GCE_INSTANCE_NAME --zone=$ZONE \
 --machine-type=n1-standard-2 --subnet=default --network-tier=PREMIUM --maintenance-policy=MIGRATE \
 --image=ubuntu-1604-xenial-v20190628 --image-project=ubuntu-os-cloud --boot-disk-size=10GB \
---boot-disk-type=pd-standard --boot-disk-device-name=$GCE_INSTANCE_NAME --tags="istio-gce"
+--boot-disk-type=pd-standard --boot-disk-device-name=$GCE_INSTANCE_NAME --tags=${GCE_INSTANCE_NAME}
 
