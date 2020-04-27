@@ -17,6 +17,17 @@
 set -euo pipefail
 log() { echo "$1" >&2; }
 
+PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
+ZONE="us-central1-b"
+CLUSTER_NAME="mesh-exp-gke"
+CTX="gke_${PROJECT_ID}_${ZONE}_${CLUSTER_NAME}"
+
+# configure cluster context
+gcloud config set project $PROJECT_ID
+gcloud container clusters get-credentials $CLUSTER_NAME --zone $ZONE
+kubectl config use-context $CTX
+
+
 cd ../common/
 INSTALL_YAML="../mesh-expansion-gce/scripts/install.yaml" ./install_istio.sh
 cd istio-1.5.2/

@@ -114,10 +114,14 @@ This step uses the `istioctl add-to-mesh` command to generate a ServiceEntry and
 
 ## View the service topology
 
-````
+```
 alias istioctl="../common/istio-1.5.2/bin/istioctl"
 istioctl dashboard kiali &
 ```
+
+Open Service Graph > click the "default" namespace. You should see traffic moving to the `meshexpansion-productcatalogservice` ServiceEntry, corresponding to the VM.
+
+![screenshots/kiali.png]
 
 ## Open the frontend in a browser
 
@@ -127,6 +131,18 @@ Get the external IP address of the Istio ingressgateway. Navigate to that IP add
 kubectl get svc -n istio-system istio-ingressgateway | awk '{print $4}'
 ```
 
+You should see the sample app frontend with a list of products, fetched from `productcatalog` running on the VM.
+
+![screenshots/onlineboutique.png]
+
+## Clean up
+
+To delete the cluster and VM used in this sample:
+
+```
+gcloud compute instances --project $PROJECT_ID delete --zone "us-central1-b" "istio-gce"
+gcloud container clusters delete mesh-exp-gke --zone us-central1-b --async
+```
 
 ## Learn more
 
