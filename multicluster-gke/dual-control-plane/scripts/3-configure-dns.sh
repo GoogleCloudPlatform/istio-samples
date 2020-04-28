@@ -17,7 +17,7 @@
 set -euo pipefail
 source ./scripts/env.sh
 
-configure_dns () {
+configure_kubedns () {
      kubectl apply -f - <<EOF
 apiVersion: v1
 kind: ConfigMap
@@ -30,12 +30,11 @@ data:
 EOF
 }
 
-
 # Cluster 1
 log "Configuring DNS on Cluster 1..."
 gcloud config set project $PROJECT_1
 kubectl config use-context $CTX_1
-configure_dns
+configure_kubedns
 log "...done with cluster 1."
 
 
@@ -43,5 +42,5 @@ log "...done with cluster 1."
 log "Configuring DNS on Cluster 2..."
 gcloud config set project $PROJECT_2
 kubectl config use-context $CTX_2
-configure_dns
+configure_kubedns
 log "...done with cluster 2."

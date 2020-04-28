@@ -24,6 +24,6 @@ kubectl config use-context $ctx1
 log "Installing the Istio ${ISTIO_VERSION} control plane on ${ctx1} ..."
 
 cd ../../common
-INSTALL_YAML="../multicluster-gke/single-control-plane/cluster1.yaml" ./install_istio.sh
+INSTALL_YAML="../multicluster-gke/single-control-plane/scripts/cluster1.yaml" ./install_istio.sh
 
 cd ../../multicluster-gke/single-control-plane/

@@ -25,9 +25,9 @@ kubectl config use-context $ctx2
 # configure cluster2 with "remote pilot" to get its config (istiod running in cluster1)
 pattern='ISTIOD_REMOTE_EP'
 replace="${ISTIOD_REMOTE_EP}"
-gsed -r -i "s|$pattern|$replace|g" cluster2.yaml
+gsed -r -i "s|$pattern|$replace|g" scripts/cluster2.yaml
 
 # install the istio sidecar injector (istiod), prometheus in cluster2
 cd ../../common
-INSTALL_YAML="../multicluster-gke/single-control-plane/cluster2.yaml" ./install_istio.sh
+INSTALL_YAML="../multicluster-gke/single-control-plane/scripts/cluster2.yaml" ./install_istio.sh
 

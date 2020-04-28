@@ -58,23 +58,27 @@ And wait for both clusters to be `RUNNING`.
 ./scripts/2-install-istio.sh
 ```
 
-Wait for all Istio pods to be `RUNNING` and `READY`:
+Wait for all Istio pods to be `RUNNING` -
 
 ```
-NAME                                     READY   STATUS      RESTARTS   AGE
-istio-citadel-5f5f589d85-ngwzx           1/1     Running     0          2m10s
-istio-egressgateway-586b67d9f9-rvgdl     1/1     Running     0          2m10s
-istio-galley-69dddcdb6d-ftc9k            1/1     Running     0          2m10s
-istio-ingressgateway-6cb57df9d5-s82ml    1/1     Running     0          2m10s
-istio-init-crd-10-44ftr                  0/1     Completed   0          3m41s
-istio-init-crd-11-bbf6m                  0/1     Completed   0          3m41s
-istio-init-crd-12-gd2fc                  0/1     Completed   0          3m41s
-istio-pilot-55b94698c4-5s8l4             2/2     Running     0          2m10s
-istio-policy-68b4bf556d-9l7sj            2/2     Running     2          2m10s
-istio-sidecar-injector-68bf9645b-2qfrv   1/1     Running     0          2m10s
-istio-telemetry-659fc8767d-4qt9h         2/2     Running     2          2m10s
-istiocoredns-586757d55d-bjzz9            2/2     Running     0          2m10s
-prometheus-5b48f5d49-pdsts               1/1     Running     0          2m10s
+NAME                                    READY   STATUS    RESTARTS
+ AGE
+grafana-556b649566-4fwb9                1/1     Running   0
+ 2m28s
+istio-egressgateway-79ffd95b56-zf2vg    1/1     Running   0
+ 8m18s
+istio-ingressgateway-6df84b84d4-dp9rw   1/1     Running   0
+ 8m17s
+istio-tracing-7cf5f46848-pzmf7          1/1     Running   0
+ 2m28s
+istiocoredns-5f7546c6f4-gjl2x           2/2     Running   0
+ 8m17s
+istiod-8465c8f9d9-pxb6v                 1/1     Running   0
+ 8m38s
+kiali-6d54b8ccbc-9qhc9                  1/1     Running   0
+ 2m28s
+prometheus-75f89f4df8-gd5mn             2/2     Running   0
+ 8m16s
 ```
 
 ## Configure KubeDNS to talk to Istio's CoreDNS
@@ -97,7 +101,7 @@ Run the script to configure the stub domain on both GKE clusters:
 
 ## Deploy the Sample App
 
-We will now deploy [Hipstershop, a sample application](https://github.com/GoogleCloudPlatform/microservices-demo), across our two GKE clusters.
+We will now deploy [Online Boutique, a sample application](https://github.com/GoogleCloudPlatform/microservices-demo), across our two GKE clusters.
 
 For demonstration purposes, we've split the microservices into two halves. One group
 will run on Cluster 1 (namespace `hipster1`):
@@ -130,19 +134,46 @@ The following script creates the following resources on both GKE clusters:
   opposite cluster. This is how CoreDNS will be able to resolve `global` to an actual
   external Istio IP.
 - ServiceEntries (type `MESH_EXTERNAL`) to access external Google APIs (necessary for
-  Hipstershop to run)
+  Online Boutique to run)
 - Istio VirtualServices / Gateway (for cluster 2 / the frontend only)
 
 Run the script to deploy these resources across both clusters:
 
 ```
-./scripts/4-deploy-hipstershop.sh
+./scripts/4-deploy-online-boutique.sh
 ```
 
 
 ## Verify successful deployment
 
-Get the Ingress Gateway `EXTERNAL_IP` in `cluster2`, where the web `frontend` is deployed:
+1. Get pods in cluster 1 (namespace `hipster1`) to make sure all are `RUNNING` -
+
+```
+NAME                               READY   STATUS    RESTARTS   AGE
+adservice-84449b8756-4nhpm         2/2     Running   0          3m29s
+checkoutservice-8dfb487c6-rwh9n    2/2     Running   0          3m30s
+currencyservice-b9fcb4c98-98q7x    2/2     Running   0          3m29s
+emailservice-57f9ddf9b9-hmpv7      2/2     Running   0          3m30s
+paymentservice-84d7bf956-8f9br     2/2     Running   0          3m29s
+shippingservice-78dc8784d4-7h4zx   2/2     Running   0          3m29s
+```
+
+2. Get pods in cluster 2 (namespace `hipster2`) to make sure all are `RUNNING` -
+
+```
+NAME                                     READY   STATUS    RESTARTS
+  AGE
+cartservice-5b88d44bd-t6s6c              2/2     Running   0
+2m31s
+frontend-7958cf4f9-r2b9m                 2/2     Running   0
+  2m32s
+productcatalogservice-c796f4c6d-qgfp8    2/2     Running   0
+  2m32s
+recommendationservice-6788b77796-z4xq8   2/2     Running   0
+  2m31s
+```
+
+3. Get the Ingress Gateway `EXTERNAL_IP` in `cluster2`, where the web `frontend` is deployed:
 
 ```
 kubectl config use-context gke_${PROJECT_2}_us-central1-b_dual-cluster2
@@ -151,29 +182,23 @@ kubectl get svc -n istio-system istio-ingressgateway
 
 Navigate to that address in a browser.
 
-If you see the frontend, you just deployed Multicluster Istio across
+![](screenshots/frontend.png)
+
+4. View the service graph.
+
+From `cluster2`, open the Kiali service graph dashboard.
+
+```
+../../common/istio-1.5.2/bin/istioctl dashboard kiali &
+```
+
+Log in as `admin/admin`. Navigate to Graph > Service Graph > namespace: `default`. You should see traffic moving from the `frontend` on cluster2, to services running in both cluster2 (eg. `productcatalogservice`) and in cluster1 (eg. `adservice`). Note that in-cluster traffic within cluster1 is not visible in cluster2's Kiali dashboard.
+
+![](screenshots/kiali-cluster2.png)
+
+Congrats! you just deployed Multicluster Istio across
 two separate networks, then ran an application that spanned two Kubernetes
 environments! All part of a single, two-headed Service Mesh. 🎉
-
-
-## Troubleshooting
-
-
-If you open Hipstershop in a browser, and see a `500` error like this:
-
-![500-error](screenshots/500-error.png)
-
-This means the Frontend (in cluster 2) cannot access services running on cluster 1.
-
-To debug, make sure that the Frontend's Envoy sidecar can ping a cluster-1 service:
-
-```
-$ kubectl exec -it frontend-85d9fd86f8-8gkpq -c istio-proxy -n hipster2 /bin/sh
-
-$ ping currencyservice.hipster1.global
-PING currencyservice.hipster1.global (127.255.0.4) 56(84) bytes of data.
-64 bytes from 127.255.0.4: icmp_seq=1 ttl=64 time=0.030 ms
-```
 
 
 ## Clean up
