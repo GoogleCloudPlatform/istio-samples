@@ -22,17 +22,12 @@ log "ISTIOD_REMOTE_EP is ${ISTIOD_REMOTE_EP}"
 
 kubectl config use-context $ctx2
 
-sed -i -e 's/\ISTIOD_REMOTE_EP/'${ISTIOD_REMOTE_EP}'/g' istio-remote-cluster.yaml
+# configure cluster2 with "remote pilot" to get its config (istiod running in cluster1)
+pattern='ISTIOD_REMOTE_EP'
+replace="${ISTIOD_REMOTE_EP}"
+gsed -r -i "s|$pattern|$replace|g" cluster2.yaml
 
+# install the istio sidecar injector (istiod), prometheus in cluster2
 cd ../../common
-INSTALL_YAML="../multicluster-gke/single-control-plane/istio-remote-cluster.yaml" ./install_istio.sh
-
-cd istio-1.5.2/
-kubectl create secret generic cacerts -n istio-system \
-    --from-file=samples/certs/ca-cert.pem \
-    --from-file=samples/certs/ca-key.pem \
-    --from-file=samples/certs/root-cert.pem \
-    --from-file=samples/certs/cert-chain.pem
-
-cd ../../multicluster-gke/single-control-plane/
+INSTALL_YAML="../multicluster-gke/single-control-plane/cluster2.yaml" ./install_istio.sh
 

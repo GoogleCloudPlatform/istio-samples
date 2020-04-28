@@ -24,13 +24,6 @@ kubectl config use-context $ctx1
 log "Installing the Istio ${ISTIO_VERSION} control plane on ${ctx1} ..."
 
 cd ../../common
-INSTALL_YAML="../multicluster-gke/single-control-plane/istio-main-cluster.yaml" ./install_istio.sh
-
-cd istio-1.5.2/
-kubectl create secret generic cacerts -n istio-system \
-    --from-file=samples/certs/ca-cert.pem \
-    --from-file=samples/certs/ca-key.pem \
-    --from-file=samples/certs/root-cert.pem \
-    --from-file=samples/certs/cert-chain.pem
+INSTALL_YAML="../multicluster-gke/single-control-plane/cluster1.yaml" ./install_istio.sh
 
 cd ../../multicluster-gke/single-control-plane/

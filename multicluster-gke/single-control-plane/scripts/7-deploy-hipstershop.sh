@@ -21,7 +21,7 @@ source ./scripts/env.sh
 kubectl config use-context $ctx1
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/istio-manifests.yaml
-
+kubectl delete svc frontend-external
 # delete cluster2 svcs from cluster1
 for i in "${services2[@]}"
 do
@@ -33,7 +33,7 @@ done
 # Deploy the rest of Hipstershop (cartservice, recommendations, loadgenerator) to cluster2
 kubectl config use-context $ctx2
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml
-
+kubectl delete svc frontend-external
 # delete cluster1 svcs from cluster2
 for i in "${services1[@]}"
 do
