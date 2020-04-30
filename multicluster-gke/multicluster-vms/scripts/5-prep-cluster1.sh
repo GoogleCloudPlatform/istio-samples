@@ -17,16 +17,21 @@
 set -euo pipefail
 source ./scripts/env.sh
 
-# send certs and cluster.env to VM
-gcloud compute scp --project=${PROJECT_ID} --zone=${GCE_INSTANCE_ZONE} \
- {key.pem,cert-chain.pem,cluster.env,root-cert.pem,scripts/vm-install-istio.sh,scripts/vm-run-products.sh} ${GCE_NAME}:
+# Cluster 1 will oversee the proxy config for istio-gce
+# (but both clusters 1 and 2 will be configured to reach the VM service)
 
-# from the VM, install the Istio sidecar proxy and update /etc/hosts to reach istiod
+# Generate cluster.env
 kubectl config set-context ${CTX_1}
 export ISTIOD_IP=$(kubectl get -n istio-system service istiod -o jsonpath='{.spec.clusterIP}')
 log "⛵️ cluster1 istiod IP is $ISTIOD_IP"
 
-gcloud compute --project $PROJECT_ID ssh --zone ${GCE_INSTANCE_ZONE} ${GCE_INSTANCE_NAME} --command="ISTIOD_IP=${ISTIOD_IP} ./vm-install-istio.sh"
+ISTIO_SERVICE_CIDR=$(gcloud container clusters describe $CLUSTER_1_NAME --zone $CLUSTER_1_ZONE --project $PROJECT_ID --format "value(servicesIpv4Cidr)")
+echo -e "ISTIO_SERVICE_CIDR=$ISTIO_SERVICE_CIDR\n" > cluster.env
+echo "ISTIO_INBOUND_PORTS=3550,8080" >> cluster.env
 
-# from the VM, install Docker and run productcatalog as a docker container
-gcloud compute --project $PROJECT_ID ssh --zone ${GCE_INSTANCE_ZONE} ${GCE_INSTANCE_NAME} --command="./vm-run-products.sh"
+# client certs
+go run istio.io/istio/security/tools/generate_cert -client -host spiffee://cluster.local/vm/vmname \
+ --out-priv key.pem --out-cert cert-chain.pem  -mode citadel
+
+# root cert
+kubectl -n istio-system get cm istio-ca-root-cert -o jsonpath='{.data.root-cert\.pem}' > root-cert.pem

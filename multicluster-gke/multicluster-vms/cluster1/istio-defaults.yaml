@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 
 # Copyright 2020 Google LLC
 #
@@ -14,5 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -euo pipefail
-source ./scripts/env.sh
+# [START istio_dual_control_plane_cluster1_serviceentry_currency_provider_external]
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: currency-provider-external
+spec:
+  hosts:
+  - www.ecb.europa.eu
+  ports:
+  - name: http
+    number: 80
+    protocol: HTTP
+  - name: https
+    number: 443
+    protocol: HTTPS
+# [END istio_dual_control_plane_cluster1_serviceentry_currency_provider_external]

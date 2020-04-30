@@ -17,13 +17,11 @@
 set -euo pipefail
 source ./scripts/env.sh
 
-# Create 2 clusters
 log "🚀 Creating clusters..."
-echo $PROJECT_ID
 gcloud config set project $PROJECT_ID
 
 gcloud container clusters create ${CLUSTER_1_NAME} --zone ${CLUSTER_1_ZONE} --username "admin" \
---machine-type "n1-standard-2" --image-type "COS" --disk-size "100" \
+--machine-type "n1-standard-4" --image-type "COS" --disk-size "100" \
 --scopes "https://www.googleapis.com/auth/compute","https://www.googleapis.com/auth/devstorage.read_only",\
 "https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring",\
 "https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly",\
@@ -31,7 +29,7 @@ gcloud container clusters create ${CLUSTER_1_NAME} --zone ${CLUSTER_1_ZONE} --us
 --num-nodes "4" --network "default" --enable-cloud-logging --enable-cloud-monitoring  --async
 
 gcloud container clusters create ${CLUSTER_2_NAME} --zone ${CLUSTER_2_ZONE} --username "admin" \
---machine-type "n1-standard-2" --image-type "COS" --disk-size "100" \
+--machine-type "n1-standard-4" --image-type "COS" --disk-size "100" \
 --scopes "https://www.googleapis.com/auth/compute","https://www.googleapis.com/auth/devstorage.read_only",\
 "https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring",\
 "https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly",\

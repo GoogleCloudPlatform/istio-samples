@@ -21,7 +21,6 @@ source ./scripts/env.sh
 # Cluster 1 --> VM
 log "🔥 Creating firewall rules..."
 export CLUSTER_1_POD_CIDR=$(gcloud container clusters describe ${CLUSTER_1_NAME?} --zone ${CLUSTER_1_ZONE?} --format=json | jq -r '.clusterIpv4Cidr')
-
 log "Cluster 1 Pod CIDR is ${CLUSTER_1_POD_CIDR}"
 
 gcloud compute firewall-rules create "${CLUSTER_1_NAME}-to-${GCE_INSTANCE_NAME}" \

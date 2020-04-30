@@ -16,3 +16,22 @@
 
 set -euo pipefail
 source ./scripts/env.sh
+
+
+DUAL_VMS_PROFILE="../multicluster-gke/multicluster-vms/scripts/install.yaml"
+cd ../../common
+
+# Cluster 1
+log "Installing Istio on Cluster 1..."
+gcloud config set project $PROJECT_ID
+gcloud container clusters get-credentials $CLUSTER_1_NAME --zone $CLUSTER_1_ZONE
+kubectl config use-context $CTX_1
+INSTALL_YAML=${DUAL_VMS_PROFILE} ./install_istio.sh
+
+
+# Cluster 2
+log "Installing Istio on Cluster 2..."
+gcloud container clusters get-credentials $CLUSTER_2_NAME --zone $CLUSTER_2_ZONE
+kubectl config use-context $CTX_2
+INSTALL_YAML=${DUAL_VMS_PROFILE} ./install_istio.sh
+
