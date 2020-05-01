@@ -17,16 +17,18 @@
 set -euo pipefail
 source ./scripts/env.sh
 
+log "🕸  Adding VM to the mesh..."
 export GCE_IP=$(gcloud --format="value(networkInterfaces[0].networkIP)" compute instances describe ${GCE_INSTANCE_NAME} --zone ${GCE_INSTANCE_ZONE})
 log "GCE IP is ${GCE_IP}"
 
-# Create a service entry and headless service for productcatalog on both clusters
-log "⏫ Adding productcatalog to cluster1..."
-kubectl config set-context ${CTX_1}
-../common/istio-1.5.2/bin/istioctl experimental add-to-mesh external-service productcatalogservice ${GCE_IP} grpc:3550 -n default
 
-log "⏫ Adding productcatalog to cluster2..."
-kubectl config set-context ${CTX_2}
-../common/istio-1.5.2/bin/istioctl experimental add-to-mesh external-service productcatalogservice ${GCE_IP} grpc:3550 -n default
+kubectl config set-context ${CTX_1}
+../../common/istio-1.5.2/bin/istioctl experimental add-to-mesh external-service productcatalogservice ${GCE_IP} grpc:3550 -n default
+
+# ??? why is cluster1 propagating to cluster2
+# log "⏫ Adding productcatalog to cluster2..."
+# kubectl config set-context ${CTX_2}
+# sleep 5
+# ../../common/istio-1.5.2/bin/istioctl experimental add-to-mesh external-service productcatalogservice ${GCE_IP} grpc:3550 -n default
 
 log "✅ added productcatalog to the mesh."

@@ -12,22 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-# [START istio_dual_control_plane_cluster2_service_recommendationservice]
-apiVersion: v1
-kind: Service
-metadata:
-  name: recommendationservice
-spec:
-  ports:
-  - name: grpc
-    port: 8080
-    targetPort: 8080
-  selector:
-    app: recommendationservice
-  type: ClusterIP
-# [END istio_dual_control_plane_cluster2_service_recommendationservice]
----
 # [START istio_dual_control_plane_cluster2_service_frontend]
 apiVersion: v1
 kind: Service
@@ -42,21 +26,6 @@ spec:
     app: frontend
   type: ClusterIP
 # [END istio_dual_control_plane_cluster2_service_frontend]
----
-# [START istio_dual_control_plane_cluster2_service_productcatalogservice]
-apiVersion: v1
-kind: Service
-metadata:
-  name: productcatalogservice
-spec:
-  ports:
-  - name: grpc
-    port: 3550
-    targetPort: 3550
-  selector:
-    app: productcatalogservice
-  type: ClusterIP
-# [END istio_dual_control_plane_cluster2_service_productcatalogservice]
 ---
 # [START istio_dual_control_plane_cluster2_service_cartservice]
 apiVersion: v1

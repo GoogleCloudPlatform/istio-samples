@@ -22,7 +22,7 @@ spec:
   addresses:
   - 240.0.0.5
   endpoints:
-  - address: 35.223.239.218
+  - address: 35.243.174.130
     ports:
       http1: 15443
   hosts:
@@ -35,28 +35,6 @@ spec:
   resolution: DNS
 # [END istio_dual_control_plane_cluster1_serviceentry_frontendservice_entry]
 ---
-# [START istio_dual_control_plane_cluster1_serviceentry_productcatalogservice_entry]
-apiVersion: networking.istio.io/v1alpha3
-kind: ServiceEntry
-metadata:
-  name: productcatalogservice-entry
-spec:
-  addresses:
-  - 240.0.0.6
-  endpoints:
-  - address: 35.223.239.218
-    ports:
-      grpc: 15443
-  hosts:
-  - productcatalogservice.default.global
-  location: MESH_INTERNAL
-  ports:
-  - name: grpc
-    number: 3550
-    protocol: GRPC
-  resolution: DNS
-# [END istio_dual_control_plane_cluster1_serviceentry_productcatalogservice_entry]
----
 # [START istio_dual_control_plane_cluster1_serviceentry_cartservice_entry]
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
@@ -66,7 +44,7 @@ spec:
   addresses:
   - 240.0.0.7
   endpoints:
-  - address: 35.223.239.218
+  - address: 35.243.174.130
     ports:
       grpc: 15443
   hosts:

@@ -69,7 +69,7 @@ spec:
         - name: CART_SERVICE_ADDR
           value: cartservice.default.svc.cluster.local:7070
         - name: RECOMMENDATION_SERVICE_ADDR
-          value: recommendationservice.default.svc.cluster.local:8080
+          value: recommendationservice.default.global:8080
         - name: SHIPPING_SERVICE_ADDR
           value: shippingservice.default.global:50051
         - name: CHECKOUT_SERVICE_ADDR
@@ -104,45 +104,6 @@ spec:
             cpu: 100m
             memory: 64Mi
 # [END istio_dual_control_plane_cluster2_deployment_frontend]
----
-# [START istio_dual_control_plane_cluster2_deployment_productcatalogservice]
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: productcatalogservice
-spec:
-  selector:
-    matchLabels:
-      app: productcatalogservice
-  template:
-    metadata:
-      labels:
-        app: productcatalogservice
-    spec:
-      containers:
-      - image: gcr.io/google-samples/microservices-demo/productcatalogservice:v0.2.0
-        livenessProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:3550
-        name: server
-        ports:
-        - containerPort: 3550
-        readinessProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:3550
-        resources:
-          limits:
-            cpu: 200m
-            memory: 128Mi
-          requests:
-            cpu: 100m
-            memory: 64Mi
-      terminationGracePeriodSeconds: 5
-# [END istio_dual_control_plane_cluster2_deployment_productcatalogservice]
 ---
 # [START istio_dual_control_plane_cluster2_deployment_cartservice]
 apiVersion: apps/v1
@@ -192,48 +153,3 @@ spec:
             memory: 64Mi
       terminationGracePeriodSeconds: 5
 # [END istio_dual_control_plane_cluster2_deployment_cartservice]
----
-# [START istio_dual_control_plane_cluster2_deployment_recommendationservice]
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: recommendationservice
-spec:
-  selector:
-    matchLabels:
-      app: recommendationservice
-  template:
-    metadata:
-      labels:
-        app: recommendationservice
-    spec:
-      containers:
-      - env:
-        - name: PRODUCT_CATALOG_SERVICE_ADDR
-          value: productcatalogservice.default.svc.cluster.local:3550
-        image: gcr.io/google-samples/microservices-demo/recommendationservice:v0.2.0
-        livenessProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:8080
-          periodSeconds: 5
-        name: server
-        ports:
-        - containerPort: 8080
-        readinessProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:8080
-          periodSeconds: 5
-        resources:
-          limits:
-            cpu: 200m
-            memory: 450Mi
-          requests:
-            cpu: 100m
-            memory: 220Mi
-      terminationGracePeriodSeconds: 5
-# [END istio_dual_control_plane_cluster2_deployment_recommendationservice]
----

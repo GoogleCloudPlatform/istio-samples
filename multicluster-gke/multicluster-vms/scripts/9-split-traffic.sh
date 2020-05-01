@@ -16,3 +16,6 @@
 
 set -euo pipefail
 source ./scripts/env.sh
+
+
+# update virtualservice on both clusters to send 80% -> VM, 20% -> GKE cluster 2

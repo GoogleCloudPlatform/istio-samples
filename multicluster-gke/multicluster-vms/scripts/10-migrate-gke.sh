@@ -18,31 +18,4 @@ set -euo pipefail
 source ./scripts/env.sh
 
 
-
-# Cluster 1 gets:
-log "☸️ Creating productcatalog-gke Istio resources on cluster1..."
-# productcatalog-gke serviceentry
-
-
-# productacatalog DR --> VM, GKE subsets
-
-
-# productcatalogservice VS --> 100% VM, 0% GKE
-
-
-
-# Cluster 2 gets:
-
-# productcatalog-gke deployment
-log "🛍 Deploying productcatalog-gke on cluster2..."
-
-# local productcatalog-gke service
-
-
-# productacatalog DR --> VM, GKE subsets
-log "☸️ Creating productcatalog-gke Istio resources on cluster2..."
-
-
-
-# productcatalogservice VS --> 100% VM, 0% GKE
-
+# send 100% of traffic to productcatalog-gke

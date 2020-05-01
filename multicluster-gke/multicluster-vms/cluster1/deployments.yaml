@@ -273,3 +273,47 @@ spec:
       terminationGracePeriodSeconds: 5
 # [END istio_dual_control_plane_cluster1_deployment_adservice]
 ---
+# [START istio_dual_control_plane_cluster1_deployment_recommendationservice]
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recommendationservice
+spec:
+  selector:
+    matchLabels:
+      app: recommendationservice
+  template:
+    metadata:
+      labels:
+        app: recommendationservice
+    spec:
+      containers:
+      - env:
+        - name: PRODUCT_CATALOG_SERVICE_ADDR
+          value: productcatalogservice.default.global:3550
+        image: gcr.io/google-samples/microservices-demo/recommendationservice:v0.2.0
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:8080
+          periodSeconds: 5
+        name: server
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:8080
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 200m
+            memory: 450Mi
+          requests:
+            cpu: 100m
+            memory: 220Mi
+      terminationGracePeriodSeconds: 5
+# [END istio_dual_control_plane_cluster1_deployment_recommendationservice]
+---

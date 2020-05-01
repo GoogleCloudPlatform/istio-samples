@@ -27,7 +27,7 @@ GWIP2=$(kubectl get -n istio-system service istio-ingressgateway -o jsonpath='{.
 
 
 # Populate YAML / Deploy to Cluster 1
-log "Deploying OnlineBoutique on Cluster 1..."
+log "📸 Deploying OnlineBoutique on Cluster 1..."
 gcloud config set project $PROJECT_ID
 gcloud container clusters get-credentials $CLUSTER_1_NAME --zone $CLUSTER_1_ZONE
 kubectl config use-context $CTX_1
@@ -39,7 +39,7 @@ log "...done with cluster 1."
 
 
 # Populate YAML /  Deploy to Cluster 2
-log "Deploying OnlineBoutique on Cluster 2..."
+log "📸 Deploying OnlineBoutique on Cluster 2..."
 gcloud container clusters get-credentials $CLUSTER_2_NAME --zone $CLUSTER_2_ZONE
 kubectl config use-context $CTX_2
 pattern='.*- address:.*'

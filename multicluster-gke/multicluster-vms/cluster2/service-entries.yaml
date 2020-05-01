@@ -22,7 +22,7 @@ spec:
   addresses:
   - 240.0.0.2
   endpoints:
-  - address: 35.224.71.251
+  - address: 34.82.124.194
     ports:
       grpc: 15443
   hosts:
@@ -35,6 +35,26 @@ spec:
   resolution: DNS
 # [END istio_dual_control_plane_cluster2_serviceentry_adservice_entry]
 ---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: recommendationservice-entry
+spec:
+  addresses:
+  - 240.0.0.3
+  endpoints:
+  - address: 34.82.124.194
+    ports:
+      grpc: 15443
+  hosts:
+  - recommendationservice.default.global
+  location: MESH_INTERNAL
+  ports:
+  - name: grpc
+    number: 8080
+    protocol: GRPC
+  resolution: DNS
+---
 # [START istio_dual_control_plane_cluster2_serviceentry_checkoutservice_entry]
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
@@ -42,9 +62,9 @@ metadata:
   name: checkoutservice-entry
 spec:
   addresses:
-  - 240.0.0.3
+  - 240.0.0.4
   endpoints:
-  - address: 35.224.71.251
+  - address: 34.82.124.194
     ports:
       grpc: 15443
   hosts:
@@ -64,9 +84,9 @@ metadata:
   name: currencyservice-entry
 spec:
   addresses:
-  - 240.0.0.4
+  - 240.0.0.5
   endpoints:
-  - address: 35.224.71.251
+  - address: 34.82.124.194
     ports:
       grpc: 15443
   hosts:
@@ -86,9 +106,9 @@ metadata:
   name: shippingservice-entry
 spec:
   addresses:
-  - 240.0.0.8
+  - 240.0.0.6
   endpoints:
-  - address: 35.224.71.251
+  - address: 34.82.124.194
     ports:
       grpc: 15443
   hosts:

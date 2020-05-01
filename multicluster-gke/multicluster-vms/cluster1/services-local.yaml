@@ -12,7 +12,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+# [START istio_dual_control_plane_cluster1_service_recommendationservice]
+apiVersion: v1
+kind: Service
+metadata:
+  name: recommendationservice
+spec:
+  ports:
+  - name: grpc
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: recommendationservice
+  type: ClusterIP
+# [END istio_dual_control_plane_cluster1_service_recommendationservice]
+---
 # [START istio_dual_control_plane_cluster1_service_emailservice]
 apiVersion: v1
 kind: Service

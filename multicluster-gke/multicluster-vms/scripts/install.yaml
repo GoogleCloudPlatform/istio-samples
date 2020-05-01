@@ -336,7 +336,6 @@ spec:
       podDNSSearchNamespaces:
         - global
         - "{{ valueOrDefault .DeploymentMeta.Namespace \"default\" }}.global"
-      controlPlaneSecurityEnabled: true
       policyCheckFailOpen: false
       priorityClassName: ""
       proxy:

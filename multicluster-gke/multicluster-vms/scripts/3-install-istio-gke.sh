@@ -17,12 +17,11 @@
 set -euo pipefail
 source ./scripts/env.sh
 
-
 DUAL_VMS_PROFILE="../multicluster-gke/multicluster-vms/scripts/install.yaml"
 cd ../../common
 
 # Cluster 1
-log "Installing Istio on Cluster 1..."
+log "⛵️ Installing Istio on Cluster 1..."
 gcloud config set project $PROJECT_ID
 gcloud container clusters get-credentials $CLUSTER_1_NAME --zone $CLUSTER_1_ZONE
 kubectl config use-context $CTX_1
@@ -30,8 +29,37 @@ INSTALL_YAML=${DUAL_VMS_PROFILE} ./install_istio.sh
 
 
 # Cluster 2
-log "Installing Istio on Cluster 2..."
+log "⛵️ Installing Istio on Cluster 2..."
 gcloud container clusters get-credentials $CLUSTER_2_NAME --zone $CLUSTER_2_ZONE
 kubectl config use-context $CTX_2
 INSTALL_YAML=${DUAL_VMS_PROFILE} ./install_istio.sh
 
+
+# Configure dns
+log "🌎 Configuring CoreDNS..."
+
+configure_kubedns () {
+     kubectl apply -f - <<EOF
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kube-dns
+  namespace: kube-system
+data:
+  stubDomains: |
+    {"global": ["$(kubectl get svc -n istio-system istiocoredns -o jsonpath={.spec.clusterIP})"]}
+EOF
+}
+
+# Cluster 1
+log "Configuring DNS on Cluster 1..."
+kubectl config use-context $CTX_1
+configure_kubedns
+log "...done with cluster 1."
+
+
+# Cluster 2
+log "Configuring DNS on Cluster 2..."
+kubectl config use-context $CTX_2
+configure_kubedns
+log "...done with cluster 2."
