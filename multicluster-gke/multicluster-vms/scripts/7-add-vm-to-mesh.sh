@@ -21,14 +21,11 @@ log "🕸  Adding VM to the mesh..."
 export GCE_IP=$(gcloud --format="value(networkInterfaces[0].networkIP)" compute instances describe ${GCE_INSTANCE_NAME} --zone ${GCE_INSTANCE_ZONE})
 log "GCE IP is ${GCE_IP}"
 
-
-kubectl config set-context ${CTX_1}
+kubectl config use-context ${CTX_1}
 ../../common/istio-1.5.2/bin/istioctl experimental add-to-mesh external-service productcatalogservice ${GCE_IP} grpc:3550 -n default
 
-# ??? why is cluster1 propagating to cluster2
-# log "⏫ Adding productcatalog to cluster2..."
-# kubectl config set-context ${CTX_2}
-# sleep 5
-# ../../common/istio-1.5.2/bin/istioctl experimental add-to-mesh external-service productcatalogservice ${GCE_IP} grpc:3550 -n default
+kubectl config use-context ${CTX_2}
+../../common/istio-1.5.2/bin/istioctl experimental add-to-mesh external-service productcatalogservice ${GCE_IP} grpc:3550 -n default
 
-log "✅ added productcatalog to the mesh."
+
+log "✅ done."

@@ -1,7 +1,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: productcatalogservice
+  name: productcatalog-migration
 spec:
   hosts:
     - productcatalogservice
@@ -11,5 +11,5 @@ spec:
         host: productcatalogservice
       weight: 80
     - destination:
-        host: productcatalogservice-gke.default.svc.cluster.local
+        host: productcatalogservice-gke
       weight: 20

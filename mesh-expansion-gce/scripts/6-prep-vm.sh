@@ -30,8 +30,8 @@ gcloud compute scp --project=${PROJECT_ID} --zone=${ZONE} \
  {key.pem,cert-chain.pem,cluster.env,root-cert.pem,scripts/vm-install-istio.sh,scripts/vm-run-products.sh} ${GCE_NAME}:
 
 # from the VM, install the Istio sidecar proxy and update /etc/hosts to reach istiod
-export ISTIOD_IP=$(kubectl get -n istio-system service istiod -o jsonpath='{.spec.clusterIP}')
-log "⛵️ istiod IP is $ISTIOD_IP"
+export ISTIOD_IP=$(kubectl get -n istio-system service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+log "⛵️ GWIP is is $ISTIOD_IP"
 
 gcloud compute --project $PROJECT_ID ssh --zone ${ZONE} ${GCE_NAME} --command="ISTIOD_IP=${ISTIOD_IP} ./vm-install-istio.sh"
 

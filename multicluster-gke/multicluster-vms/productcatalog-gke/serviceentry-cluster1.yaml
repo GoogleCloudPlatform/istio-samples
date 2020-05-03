@@ -6,7 +6,7 @@ spec:
   addresses:
   - 240.0.0.6
   endpoints:
-  - address: 35.243.174.130
+  - address: 34.73.60.172
     ports:
       grpc: 15443
   hosts:

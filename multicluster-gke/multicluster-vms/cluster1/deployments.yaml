@@ -69,7 +69,7 @@ spec:
       containers:
       - env:
         - name: PRODUCT_CATALOG_SERVICE_ADDR
-          value: productcatalogservice.default.global:3550
+          value: productcatalogservice:3550
         - name: SHIPPING_SERVICE_ADDR
           value: shippingservice.default.svc.cluster.local:50051
         - name: PAYMENT_SERVICE_ADDR
@@ -290,7 +290,7 @@ spec:
       containers:
       - env:
         - name: PRODUCT_CATALOG_SERVICE_ADDR
-          value: productcatalogservice.default.global:3550
+          value: productcatalogservice:3550
         image: gcr.io/google-samples/microservices-demo/recommendationservice:v0.2.0
         livenessProbe:
           exec:
