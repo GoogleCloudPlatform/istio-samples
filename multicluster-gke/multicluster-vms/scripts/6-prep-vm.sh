@@ -15,25 +15,20 @@
 # limitations under the License.
 
 set -euo pipefail
-log() { echo "$1" >&2; }
+source ./scripts/env.sh
 
-# set vars
-PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
-ZONE="us-central1-b"
-CLUSTER_NAME="mesh-exp-gke"
-CTX="gke_${PROJECT_ID}_${ZONE}_${CLUSTER_NAME}"
-GCE_NAME="istio-gce"
-SERVICE_NAMESPACE="default"
+log "🐳 Setting up the VM and deploying productcatalog..."
 
 # send certs and cluster.env to VM
-gcloud compute scp --project=${PROJECT_ID} --zone=${ZONE} \
- {key.pem,cert-chain.pem,cluster.env,root-cert.pem,scripts/vm-install-istio.sh,scripts/vm-run-products.sh} ${GCE_NAME}:
+gcloud compute scp --project=${PROJECT_ID} --zone=${GCE_INSTANCE_ZONE} \
+ {key.pem,cert-chain.pem,cluster.env,root-cert.pem,scripts/vm-install-istio.sh,scripts/vm-run-products.sh} ${GCE_INSTANCE_NAME}:
 
 # from the VM, install the Istio sidecar proxy and update /etc/hosts to reach istiod
+kubectl config set-context ${CTX_1}
 export ISTIOD_IP=$(kubectl get -n istio-system service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 log "⛵️ GWIP is is $ISTIOD_IP"
 
-gcloud compute --project $PROJECT_ID ssh --zone ${ZONE} ${GCE_NAME} --command="ISTIOD_IP=${ISTIOD_IP} ./vm-install-istio.sh"
+gcloud compute --project $PROJECT_ID ssh --zone ${GCE_INSTANCE_ZONE} ${GCE_INSTANCE_NAME} --command="ISTIOD_IP=${ISTIOD_IP} ./vm-install-istio.sh"
 
 # from the VM, install Docker and run productcatalog as a docker container
-gcloud compute --project $PROJECT_ID ssh --zone ${ZONE} ${GCE_NAME} --command="./vm-run-products.sh"
+gcloud compute --project $PROJECT_ID ssh --zone ${GCE_INSTANCE_ZONE} ${GCE_INSTANCE_NAME} --command="./vm-run-products.sh"
