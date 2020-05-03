@@ -73,4 +73,5 @@ Open the frontend in a web browser via the Istio Ingressgateway on cluster2.
 
 Open the service graph for cluster2.
 
-### Migrate the VM service to GKe
+### Migrate the VM service to GKE
+

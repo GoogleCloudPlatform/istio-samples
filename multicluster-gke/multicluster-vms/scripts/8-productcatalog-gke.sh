@@ -31,7 +31,6 @@ gsed -r -i "s|$pattern|$replace|g" productcatalog-gke/serviceentry-cluster1.yaml
 kubectl apply -f productcatalog-gke/serviceentry-cluster1.yaml
 kubectl apply -f productcatalog-gke/vs-80-20-cluster1.yaml
 
-
 # Cluster 2
 log "☸️   Creating a deployment, service, and virtualservice on cluster2..."
 kubectl config use-context ${CTX_2}
