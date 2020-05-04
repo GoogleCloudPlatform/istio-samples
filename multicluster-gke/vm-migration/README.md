@@ -1,8 +1,8 @@
-# Multicluster Istio with Virtual Machines
+# Virtual Machine Migration with Multicluster Istio
 
 Istio can help you modernize your existing infrastructure. Istio works with services running in Kubernetes containers, but it also works with virtual machines.
 
-Let's say we want to deploy a multi-service application. This application consists mostly of Kubernetes-ready microservices (running across two cloud datacenters in `us-west` and `us-east`), but one of the older services (`productcatalog`) runs in a virtual machine - in this case, in `us-central`. We can still get all the benefits of Istio (telemetry, security, traffic policies) for that virtual machine service, even with this geographically distributed architecture. And then when we're ready to move `productcatalog` from a VM to a container running in Kubernetes, Istio can help us to that migration with zero downtime. Let's see how that works.
+Let's say we want to deploy a multi-service application. This application consists mostly of Kubernetes-ready microservices (running across two cloud datacenters in `us-west` and `us-east`), but one of the older services (`productcatalog`) runs in a virtual machine - in this case, in `us-central`. We can still get all the benefits of Istio (telemetry, security, traffic policies) for that virtual machine service, even with this geographically distributed architecture. And then when we're ready to move `productcatalog` from a VM to a container running in Kubernetes, Istio can help us perform that migration with zero downtime. Let's see how that works.
 
 In this sample, we will:
 1. install dual control plane Istio multicluster across two GKE clusters
@@ -72,6 +72,8 @@ Open the frontend in a web browser via the Istio Ingressgateway on cluster2.
 
 
 Open the service graph for cluster2.
+
+Open the service graph for cluster1.
 
 ### Migrate the VM service to GKE
 
