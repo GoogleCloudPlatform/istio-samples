@@ -17,18 +17,11 @@
 set -euo pipefail
 source ./scripts/env.sh
 
-kubectl config use-context $CTX_1
-log "☸️ Cluster 1 pods:"
-kubectl get pods
+log "🚦 Sending 100% of productcatalog traffic to GKE..."
 
-kubectl config use-context $CTX_2
-log "☸️ Cluster 2 pods:"
-kubectl get pods
+kubectl config use-context ${CTX_1}
+kubectl apply -f productcatalog-gke/vs-100-cluster1.yaml
 
-log "🕸 Opening Kiali for cluster 1..."
-kubectl config use-context $CTX_1
-../../common/istio-1.5.2/bin/istioctl dashboard kiali &
-
-log "🚲 Open this frontend IP in a browser:"
-kubectl config use-context $CTX_2
-kubectl get svc -n istio-system istio-ingressgateway | awk '{print $4}'
+kubectl config use-context ${CTX_2}
+kubectl apply -f productcatalog-gke/vs-100-cluster2.yaml
+log "⭐️ GKE migration complete ☸️"

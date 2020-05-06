@@ -17,18 +17,7 @@
 set -euo pipefail
 source ./scripts/env.sh
 
-kubectl config use-context $CTX_1
-log "☸️ Cluster 1 pods:"
-kubectl get pods
-
-kubectl config use-context $CTX_2
-log "☸️ Cluster 2 pods:"
-kubectl get pods
-
-log "🕸 Opening Kiali for cluster 1..."
-kubectl config use-context $CTX_1
-../../common/istio-1.5.2/bin/istioctl dashboard kiali &
-
-log "🚲 Open this frontend IP in a browser:"
-kubectl config use-context $CTX_2
-kubectl get svc -n istio-system istio-ingressgateway | awk '{print $4}'
+gcloud config set project $PROJECT_ID
+gcloud container clusters delete ${CLUSTER_1_NAME} --zone ${CLUSTER_1_ZONE} --quiet --async
+gcloud container clusters delete ${CLUSTER_2_NAME} --zone ${CLUSTER_2_ZONE} --quiet --async
+gcloud compute --project=$PROJECT_ID instances delete $GCE_INSTANCE_NAME --zone=$GCE_INSTANCE_ZONE
