@@ -25,9 +25,10 @@ kubectl config use-context $CTX_2
 log "☸️ Cluster 2 pods:"
 kubectl get pods
 
-log "🕸 Opening Kiali for cluster 1..."
-kubectl config use-context $CTX_1
+log "🕸 Opening Kiali for cluster 2..."
+kubectl config use-context $CTX_2
 ../../common/istio-1.5.2/bin/istioctl dashboard kiali &
+
 
 log "🚲 Open this frontend IP in a browser:"
 kubectl config use-context $CTX_2

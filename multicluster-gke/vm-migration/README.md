@@ -36,7 +36,7 @@ cluster1  us-west1-b  1.14.10-gke.27  34.83.227.203  n1-standard-2
 ```
 
 
-4. Create firewall rules to allow traffic from the GKE pods in both clusters to your GCE instance. This is what allows Istio sidecar proxies to talk to each other across the different infrastructure - and what will connect the VM service with the others running in GKE.
+4. Create firewall rules to allow traffic from the GKE pods in both clusters to your GCE instance. This will allow traffic to move freely between the two GKE clusters and the service running on the VM.
 
 ```
 ./scripts/2-firewall.sh
@@ -92,7 +92,7 @@ spec:
 [See the Istio docs](https://istio.io/docs/setup/install/multicluster/gateways/#configure-the-example-services) for more details on how cross-cluster service discovery works.
 
 
-## Install Istio on the VM + Deploy `productcatalog`
+## Install Istio on the VM
 
 Now we're ready to install the Istio agent (sidecar proxy) on the GCE instance we provisioned earlier. This is the architecture we will set up:
 
@@ -111,17 +111,18 @@ Now we're ready to install the Istio agent (sidecar proxy) on the GCE instance w
 ```
 
 
-3. Add productcatalog to the logical mesh, via the `istioctl` tool. This command will create a `Service` and `ServiceEntry` for productcatalog running on the VM, to allow pods inside both clusters to reach `productcatalog` with a Kubernetes DNS name (`productcatalog.default.svc.cluster.local`), even though `productcatalog` isn't running in Kubernetes. The configuration across clusters looks like this:
+3. Add productcatalog to the logical mesh, via the `istioctl` tool. This command will create a `Service` and `ServiceEntry` for productcatalog running on the VM, to allow pods inside both clusters to reach `productcatalog` with a Kubernetes DNS name (`productcatalog.default.svc.cluster.local`), even though `productcatalog` isn't running in Kubernetes.
+
+```
+./scripts/7-add-vm-to-mesh.sh
+```
+
+The configuration across clusters now looks like this:
 
 
 ![](screenshots/migrate-before-config.png)
 
 Note that we do this step for both clusters, because services on **both** cluster1 (recommendations, checkout) and cluster2 (frontend) must reach productcatalog on the VM.
-
-
-```
-./scripts/7-add-vm-to-mesh.sh
-```
 
 
 4. Verify deployment. This script shows the pods running across both clusters, opens the Kiali service graph (for cluster1) in a browser tab, and outputs the Online frontend
@@ -135,7 +136,7 @@ Note that we do this step for both clusters, because services on **both** cluste
 
 ![](screenshots/../../dual-control-plane/screenshots/frontend.png)
 
-6. Open the Kiali service graph for cluster1. You should see traffic going from two backend services -- `checkout` and `recommendations` to the ServiceEntry for `productcatalogservice`:
+6. Open the Kiali service graph for cluster1. Log in with the demo credentials - `admin`/`admin`. You should see traffic going from two backend services -- `checkout` and `recommendations` to the ServiceEntry for `productcatalogservice`:
 
 ![](screenshots/cluster1-kiali-vm.png)
 
@@ -231,6 +232,10 @@ Our Istio config is now:
 To create the final traffic state where all traffic is now within GKE:
 
 ![](screenshots/migrate-complete-traffic.png)
+
+You should also see in Kiali (cluster1 shown here) that 100% of productcatalog traffic is going to the GKE version:
+
+![](screenshots/migrate-complete-kiali.png)
 
 The VM migration is complete! Now it would be safe to retire the VM, since all the app services are now running across our two GKE clusters.
 

@@ -9,7 +9,7 @@ spec:
   - route:
     - destination:
         host: productcatalogservice
-      weight: 100
+      weight: 0
     - destination:
         host: productcatalogservice-gke
-      weight: 0
+      weight: 100

@@ -17,7 +17,7 @@
 set -euo pipefail
 source ./scripts/env.sh
 
-DUAL_VMS_PROFILE="../multicluster-gke/multicluster-vms/scripts/install.yaml"
+DUAL_VMS_PROFILE="../multicluster-gke/vm-migration/scripts/install.yaml"
 cd ../../common
 
 # Cluster 1

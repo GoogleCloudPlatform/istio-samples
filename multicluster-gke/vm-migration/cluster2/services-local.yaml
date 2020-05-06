@@ -42,3 +42,15 @@ spec:
   type: ClusterIP
 # [END istio_dual_control_plane_cluster2_service_cartservice]
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-cart
+spec:
+  type: ClusterIP
+  selector:
+    app: redis-cart
+  ports:
+  - name: redis
+    port: 6379
+    targetPort: 6379
