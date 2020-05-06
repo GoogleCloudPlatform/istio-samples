@@ -131,17 +131,21 @@ Note that we do this step for both clusters, because services on **both** cluste
 ./scripts/8-verify-deploy.sh
 ```
 
-In a browser, navigate the IP shown at the end of the script output. You should see the OnlineBoutique frontend with a list of products - this shows that the frontend running on `cluster2` can reach both the services running on `cluster1` (eg. `currencyservice`) **and** the `productcatalog` service running on the VM, using the Kubernetes DNS names made possible by the Istio `ServiceEntry` resources we just created.
+5. In a browser, navigate the IP shown at the end of the script output. You should see the OnlineBoutique frontend with a list of products - this shows that the frontend running on `cluster2` can reach both the services running on `cluster1` (eg. `currencyservice`) **and** the `productcatalog` service running on the VM, using the Kubernetes DNS names made possible by the Istio `ServiceEntry` resources we just created.
 
 ![](screenshots/../../dual-control-plane/screenshots/frontend.png)
 
-In the Kiali service graph
+6. Open the Kiali service graph for cluster1. You should see traffic going from two backend services -- `checkout` and `recommendations` to the ServiceEntry for `productcatalogservice`:
 
-(auto mtls?)
+![](screenshots/cluster1-kiali-vm.png)
+
+7. Open the Kiali service graph for cluster2. You should see traffic going from the frontend to `productcatalogservice` on the VM:
+
+![](screenshots/cluster2-kiali-vm.png)
 
 ## Prepare for VM to GKE Migration
 
-Now let's say we are ready to migrate `productcatalog` from GCE to one of our Istio-enabled GKE clusters. The first step to do this is to deploy - but to not send any traffic to this GKE version yet.
+Now let's say we are ready to migrate `productcatalog` from GCE to one of our Istio-enabled GKE clusters. The first step to do this is to deploy `productcatalog` as a GKE pod, alongside the VM. To start, we will continue sending all traffic to the VM.
 
 1. Deploy `productcatalog-gke` to cluster2, but don't send any traffic there yet. This script creates the Kubernetes and Istio resources to set up the VM-to-GKE migration - `Deployment` (cluster2), `Service` (cluster2), `ServiceEntry` (cluster1), and `VirtualService` (both clusters).
 
@@ -197,11 +201,36 @@ spec:
 ./scripts/10-split-traffic.sh
 ```
 
-2. Return to the Kiali service graph to view the traffic splitting in action.
+Our Istio configuration now looks like this:
+
+![](screenshots/migrate-progress-config.png)
 
 
-3. Complete the migration by updating both VirtualServices to send 100% of productcatalog traffic to the GKE pod, and 0% of traffic to the VM.
+And the traffic split looks like this:
 
+![](screenshots/migrate-progress-traffic.png)
+
+2. Return to the Kiali service graph to view the traffic splitting in action:
+
+![](screenshots/traffic-split-cluster1.png)
+
+## Complete the GKE Migration
+
+In a real production migration, you would continue updating the traffic percentages to slowly send more traffic to the GKE version of `productcatalog.`. Let's say we've done that and we're ready to send 100% of traffic to the GKE pod.
+
+1. Complete the migration by updating both VirtualServices to send 100% of productcatalog traffic to the GKE pod, and 0% of traffic to the VM.
+
+```
+./scripts/11-complete-migration.sh
+```
+
+Our Istio config is now:
+
+![](screenshots/migrate-complete-config.png)
+
+To create the final traffic state where all traffic is now within GKE:
+
+![](screenshots/migrate-complete-traffic.png)
 
 The VM migration is complete! Now it would be safe to retire the VM, since all the app services are now running across our two GKE clusters.
 
