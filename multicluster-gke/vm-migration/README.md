@@ -1,8 +1,19 @@
 # Virtual Machine Migration with Multicluster Istio
 
-Istio can help you modernize your existing infrastructure. Istio works with services running in Kubernetes containers, but it also works with virtual machines.
+  - [Introduction](#introduction)
+  - [Setup](#setup)
+  - [Deploy the sample application to GKE](#deploy-the-sample-application-to-gke)
+  - [Install Istio on the VM](#install-istio-on-the-vm)
+  - [Prepare for VM to GKE Migration](#prepare-for-vm-to-gke-migration)
+  - [Migrate productcatalog to GKE](#migrate-productcatalog-to-gke)
+  - [Complete the GKE Migration](#complete-the-gke-migration)
+  - [Cleanup](#cleanup)
 
-Let's say we want to deploy a multi-service application. This application consists mostly of Kubernetes-ready microservices (running across two cloud datacenters in `us-west` and `us-east`), but one of the older services (`productcatalog`) runs in a virtual machine in `us-central`. We can still get all the benefits of Istio (telemetry, security, traffic policies) for that virtual machine service. Then, when we're ready to migrate `productcatalog` from a VM to a container running in one of our Kubernetes clusters, Istio can progressively - and safely - migrate traffic from the VM to the container version with zero downtime.
+## Introduction
+
+Istio works with services running in Kubernetes containers, but it also works with virtual machines. Because of this, Istio can help you integrate legacy VM workloads into a modern, Kubernetes-based service mesh - and help you migrate the VM services to Kubernetes, when you're ready.
+
+For instance, let's say we want to deploy a multi-service application. This application consists mostly of Kubernetes-ready microservices (running across two cloud datacenters in `us-west` and `us-east`), but one of the older services (`productcatalog`) runs in a virtual machine in `us-central`. We can still get all the benefits of Istio (telemetry, security, traffic policies) for that virtual machine service. Then, when we're ready to migrate `productcatalog` from a VM to a container running in one of our Kubernetes clusters, Istio can progressively - and safely - migrate traffic from the VM to the container version with zero downtime.
 
 In this sample, we will set up multicluster Istio on two GKE clusters, then configure a GCE instance to join the mesh. Then we'll deploy a sample app across the two clusters and the VM. Finally, we'll deploy the VM service a Kubernetes pod alongside the VM instance, and use Istio traffic splitting to migrate from GCE to all GKE. We will work towards this final state, where the VM service is no longer needed -
 
