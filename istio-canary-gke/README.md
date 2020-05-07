@@ -46,7 +46,7 @@ gcloud beta container clusters create istio-canary \
     --num-nodes=4
 ```
 
-3. `cd` into the install directory.
+3. Change into the Istio install directory from the root of this repository.
 ```
 cd common/
 ```
@@ -140,7 +140,7 @@ istioctl dashboard kiali &
 3. Select "Versioned App Graph."
 4. In the service graph, zoom in on `productcatalogservice`. You should see that approximately 25% of productcatalog requests are going to `v2`.
 
-![kiali](kiali.png)
+![kiali](screenshots/kiali.png)
 
 ## Observe Latency with Stackdriver
 

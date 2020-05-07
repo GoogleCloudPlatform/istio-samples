@@ -69,6 +69,7 @@ This means that all services in the cluster will send unencrypted traffic by def
 ```
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/istio-manifests.yaml
+kubectl patch deployments/productcatalogservice -p '{"spec":{"template":{"metadata":{"labels":{"version":"v1"}}}}}'
 ```
 
 2. Run `kubectl get pods -n default` to ensure that all pods are `Running` and `Ready`.
