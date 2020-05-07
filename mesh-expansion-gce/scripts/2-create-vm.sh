@@ -19,6 +19,7 @@ log() { echo "$1" >&2; }
 
 # set vars
 PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
+gcloud config set project $PROJECT_ID
 ZONE="us-central1-b"
 CLUSTER_NAME="mesh-exp-gke"
 CTX="gke_${PROJECT_ID}_${ZONE}_${CLUSTER_NAME}"

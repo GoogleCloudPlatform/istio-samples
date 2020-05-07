@@ -34,8 +34,10 @@ echo -e "ISTIO_SERVICE_CIDR=$ISTIO_SERVICE_CIDR\n" > cluster.env
 echo "ISTIO_INBOUND_PORTS=3550,8080" >> cluster.env
 
 # client certs
+log "Getting client certs..."
 go run istio.io/istio/security/tools/generate_cert -client -host spiffee://cluster.local/vm/vmname \
- --out-priv key.pem --out-cert cert-chain.pem  -mode citadel
+ --out-priv key.pem --out-cert cert-chain.pem  -mode self-signed
 
 # root cert
+log "Getting root cert..."
 kubectl -n istio-system get cm istio-ca-root-cert -o jsonpath='{.data.root-cert\.pem}' > root-cert.pem

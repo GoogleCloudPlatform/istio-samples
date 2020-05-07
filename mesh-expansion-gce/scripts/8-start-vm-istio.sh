@@ -19,15 +19,9 @@ log() { echo "$1" >&2; }
 
 PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
 ZONE="us-central1-b"
-CLUSTER_NAME="mesh-exp-gke"
-CTX="gke_${PROJECT_ID}_${ZONE}_${CLUSTER_NAME}"
+GCE_NAME="istio-gce"
 
-# configure cluster context
-gcloud config set project $PROJECT_ID
-gcloud container clusters get-credentials $CLUSTER_NAME --zone $ZONE
-kubectl config use-context $CTX
-
-
-cd ../common/
-INSTALL_YAML="../mesh-expansion-gce/scripts/install.yaml" ./install_istio.sh
-cd ../mesh-expansion-gce
+# re-kick Istio on the VM
+log "Restarting istio on the VM..."
+gcloud compute --project $PROJECT_ID ssh --zone ${ZONE} ${GCE_NAME} --command="sudo systemctl stop istio; sudo systemctl start istio;"
+log "Done."

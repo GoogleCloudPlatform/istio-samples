@@ -112,6 +112,12 @@ This script does the following:
 
 This step uses the `istioctl add-to-mesh` command to generate a ServiceEntry and headless Service corresponding to the VM `productcatalogservice`. This allows the frontend running as a GKE pod to resolve the `productcatalogservice` DNS to the GCE VM, via Istio.
 
+## Start the Istio proxy on the VM
+
+```
+./scripts/8-start-vm-istio.sh
+```
+
 ## View the service topology
 
 ```
