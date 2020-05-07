@@ -6,4 +6,4 @@ spec:
       multiCluster:
         clusterName: cluster2
       network: ""
-      remotePilotAddress: 104.196.177.154
+      remotePilotAddress: 34.75.85.226
