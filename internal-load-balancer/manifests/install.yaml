@@ -173,26 +173,6 @@ spec:
                 value: istio-ilbgateway
               - path: spec.selector.istio
                 value: ilbgateway
-          - kind: Gateway
-            name: ingressgateway
-            patches:
-              - path: metadata.name
-                value: ilbgateway
-              - path: spec.selector.istio
-                value: istio-ilbgateway
-          - kind: PodDisruptionBudget
-            name: ingressgateway
-            patches:
-              - path: metadata.name
-                value: ilbgateway
-              - path: metadata.labels.app
-                value: istio-ilbgateway
-              - path: metadata.labels.istio
-                value: ilbgateway
-              - path: spec.selector.matchLabels.app
-                value: istio-ilbgateway
-              - path: spec.selector.matchLabels.istio
-                value: ilbgateway
     nodeAgent:
       enabled: false
     pilot:

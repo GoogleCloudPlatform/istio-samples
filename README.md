@@ -36,6 +36,6 @@ Introduces Multicluster Istio by uniting GKE workloads in two different clusters
 
 Shows how to connect two separate GKE clusters, each with their own Istio control planes, into a single Gateway-connected mesh.
 
-## [Virtual Machine Migration with Multicluster Istio](/multicluster-gke/vm-migration/)
+### [Virtual Machine Migration with Multicluster Istio](/multicluster-gke/vm-migration/)
 
 Demonstrates how to integrate an Istio-enabled VM into a multicluster mesh, then migrate traffic from the VM to GKE.

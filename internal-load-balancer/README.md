@@ -118,7 +118,7 @@ kubectl apply -f ../sample-apps/helloserver/loadgen/loadgen.yaml
 1. Open the Kiali dashboard in a browser.
 
 ```
-alias istioctl="../common/istio-1.5.1/bin/istioctl"
+alias istioctl="../common/istio-1.5.2/bin/istioctl"
 istioctl dashboard kiali &
 ```
 
@@ -142,7 +142,7 @@ gcloud compute --project=$PROJECT_ID instances create gce-ilb --zone=us-central1
 ```
 
 
-1. **Create a VirtualService and Gateway.**
+2. **Create a VirtualService and Gateway.**
 
 If we want to send traffic from GCE to GKE, via the Istio ILB Gateway, we will have to expose HelloServer within GCP. This will be the same process as if we were exposing HelloServer to the public internet ([with the IngressGateway](https://istio.io/docs/tasks/traffic-management/ingress/#configuring-ingress-using-an-istio-gateway)). For this, we'll use an Istio `Gateway` resource, along with a `VirtualService`.
 
