@@ -14,10 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# cluster 1 is the "main" cluster running the Istio control plane
+# src https://istio.io/docs/setup/install/multicluster/shared/
+
 set -euo pipefail
 source ./scripts/env.sh
 
 kubectl config use-context $ctx1
+log "Installing the Istio ${ISTIO_VERSION} control plane on ${ctx1} ..."
 
-log "Installing Istio ${ISTIO_VERSION} on ${ctx1} ..."
-ISTIO_VERSION=${ISTIO_VERSION} ../../common/install_istio.sh
+cd ../../common
+INSTALL_YAML="../multicluster-gke/single-control-plane/scripts/cluster1.yaml" ./install_istio.sh

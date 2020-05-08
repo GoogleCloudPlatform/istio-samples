@@ -22,11 +22,11 @@ spec:
   addresses:
   - 240.0.0.2
   endpoints:
-  - address: 35.202.241.50
+  - address: 34.70.9.157
     ports:
       grpc: 15443
   hosts:
-  - adservice.hipster1.global
+  - adservice.default.global
   location: MESH_INTERNAL
   ports:
   - name: grpc
@@ -44,11 +44,11 @@ spec:
   addresses:
   - 240.0.0.3
   endpoints:
-  - address: 35.202.241.50
+  - address: 34.70.9.157
     ports:
       grpc: 15443
   hosts:
-  - checkoutservice.hipster1.global
+  - checkoutservice.default.global
   location: MESH_INTERNAL
   ports:
   - name: grpc
@@ -66,11 +66,11 @@ spec:
   addresses:
   - 240.0.0.4
   endpoints:
-  - address: 35.202.241.50
+  - address: 34.70.9.157
     ports:
       grpc: 15443
   hosts:
-  - currencyservice.hipster1.global
+  - currencyservice.default.global
   location: MESH_INTERNAL
   ports:
   - name: grpc
@@ -88,11 +88,11 @@ spec:
   addresses:
   - 240.0.0.8
   endpoints:
-  - address: 35.202.241.50
+  - address: 34.70.9.157
     ports:
       grpc: 15443
   hosts:
-  - shippingservice.hipster1.global
+  - shippingservice.default.global
   location: MESH_INTERNAL
   ports:
   - name: grpc

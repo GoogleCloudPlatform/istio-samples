@@ -12,7 +12,40 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loadgenerator
+spec:
+  selector:
+    matchLabels:
+      app: loadgenerator
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: loadgenerator
+      annotations:
+        sidecar.istio.io/rewriteAppHTTPProbers: "true"
+    spec:
+      terminationGracePeriodSeconds: 5
+      restartPolicy: Always
+      containers:
+      - name: main
+        image: gcr.io/google-samples/microservices-demo/loadgenerator:v0.2.0
+        env:
+        - name: FRONTEND_ADDR
+          value: "frontend:80"
+        - name: USERS
+          value: "10"
+        resources:
+          requests:
+            cpu: 300m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+---
 # [START istio_dual_control_plane_cluster2_deployment_frontend]
 apiVersion: apps/v1
 kind: Deployment
@@ -30,20 +63,20 @@ spec:
       containers:
       - env:
         - name: PRODUCT_CATALOG_SERVICE_ADDR
-          value: productcatalogservice.hipster2.svc.cluster.local:3550
+          value: productcatalogservice.default.svc.cluster.local:3550
         - name: CURRENCY_SERVICE_ADDR
-          value: currencyservice.hipster1.global:7000
+          value: currencyservice.default.global:7000
         - name: CART_SERVICE_ADDR
-          value: cartservice.hipster2.svc.cluster.local:7070
+          value: cartservice.default.svc.cluster.local:7070
         - name: RECOMMENDATION_SERVICE_ADDR
-          value: recommendationservice.hipster2.svc.cluster.local:8080
+          value: recommendationservice.default.svc.cluster.local:8080
         - name: SHIPPING_SERVICE_ADDR
-          value: shippingservice.hipster1.global:50051
+          value: shippingservice.default.global:50051
         - name: CHECKOUT_SERVICE_ADDR
-          value: checkoutservice.hipster1.global:5050
+          value: checkoutservice.default.global:5050
         - name: AD_SERVICE_ADDR
-          value: adservice.hipster1.global:9555
-        image: gcr.io/google-samples/microservices-demo/frontend:v0.1.3
+          value: adservice.default.global:9555
+        image: gcr.io/google-samples/microservices-demo/frontend:v0.2.0
         livenessProbe:
           httpGet:
             httpHeaders:
@@ -87,7 +120,7 @@ spec:
         app: productcatalogservice
     spec:
       containers:
-      - image: gcr.io/google-samples/microservices-demo/productcatalogservice:v0.1.3
+      - image: gcr.io/google-samples/microservices-demo/productcatalogservice:v0.2.0
         livenessProbe:
           exec:
             command:
@@ -133,7 +166,7 @@ spec:
           value: '7070'
         - name: LISTEN_ADDR
           value: 0.0.0.0
-        image: gcr.io/google-samples/microservices-demo/cartservice:v0.1.3
+        image: gcr.io/google-samples/microservices-demo/cartservice:v0.2.0
         livenessProbe:
           exec:
             command:
@@ -177,8 +210,8 @@ spec:
       containers:
       - env:
         - name: PRODUCT_CATALOG_SERVICE_ADDR
-          value: productcatalogservice.hipster2.svc.cluster.local:3550
-        image: gcr.io/google-samples/microservices-demo/recommendationservice:v0.1.3
+          value: productcatalogservice.default.svc.cluster.local:3550
+        image: gcr.io/google-samples/microservices-demo/recommendationservice:v0.2.0
         livenessProbe:
           exec:
             command:

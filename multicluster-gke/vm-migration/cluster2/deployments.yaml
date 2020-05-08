@@ -1,0 +1,195 @@
+
+# Copyright 2020 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loadgenerator
+spec:
+  selector:
+    matchLabels:
+      app: loadgenerator
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: loadgenerator
+      annotations:
+        sidecar.istio.io/rewriteAppHTTPProbers: "true"
+    spec:
+      terminationGracePeriodSeconds: 5
+      restartPolicy: Always
+      containers:
+      - name: main
+        image: gcr.io/google-samples/microservices-demo/loadgenerator:v0.2.0
+        env:
+        - name: FRONTEND_ADDR
+          value: "frontend:80"
+        - name: USERS
+          value: "10"
+        resources:
+          requests:
+            cpu: 300m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+---
+# [START istio_dual_control_plane_cluster2_deployment_frontend]
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - env:
+        - name: PRODUCT_CATALOG_SERVICE_ADDR
+          value: productcatalogservice.default.svc.cluster.local:3550
+        - name: CURRENCY_SERVICE_ADDR
+          value: currencyservice.default.global:7000
+        - name: CART_SERVICE_ADDR
+          value: cartservice.default.svc.cluster.local:7070
+        - name: RECOMMENDATION_SERVICE_ADDR
+          value: recommendationservice.default.global:8080
+        - name: SHIPPING_SERVICE_ADDR
+          value: shippingservice.default.global:50051
+        - name: CHECKOUT_SERVICE_ADDR
+          value: checkoutservice.default.global:5050
+        - name: AD_SERVICE_ADDR
+          value: adservice.default.global:9555
+        image: gcr.io/google-samples/microservices-demo/frontend:v0.2.0
+        livenessProbe:
+          httpGet:
+            httpHeaders:
+            - name: Cookie
+              value: shop_session-id=x-liveness-probe
+            path: /_healthz
+            port: 8080
+          initialDelaySeconds: 10
+        name: server
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            httpHeaders:
+            - name: Cookie
+              value: shop_session-id=x-readiness-probe
+            path: /_healthz
+            port: 8080
+          initialDelaySeconds: 10
+        resources:
+          limits:
+            cpu: 200m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 64Mi
+# [END istio_dual_control_plane_cluster2_deployment_frontend]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-cart
+spec:
+  selector:
+    matchLabels:
+      app: redis-cart
+  template:
+    metadata:
+      labels:
+        app: redis-cart
+    spec:
+      containers:
+      - name: redis
+        image: redis:alpine
+        ports:
+        - containerPort: 6379
+        readinessProbe:
+          periodSeconds: 5
+          tcpSocket:
+            port: 6379
+        livenessProbe:
+          periodSeconds: 5
+          tcpSocket:
+            port: 6379
+        volumeMounts:
+        - mountPath: /data
+          name: redis-data
+        resources:
+          limits:
+            memory: 256Mi
+            cpu: 125m
+          requests:
+            cpu: 70m
+            memory: 200Mi
+      volumes:
+      - name: redis-data
+        emptyDir: {}
+---
+# [START istio_dual_control_plane_cluster2_deployment_cartservice]
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cartservice
+spec:
+  selector:
+    matchLabels:
+      app: cartservice
+  template:
+    metadata:
+      labels:
+        app: cartservice
+    spec:
+      containers:
+      - env:
+        - name: REDIS_ADDR
+          value: "redis-cart:6379"
+        - name: PORT
+          value: '7070'
+        - name: LISTEN_ADDR
+          value: 0.0.0.0
+        image: gcr.io/google-samples/microservices-demo/cartservice:v0.2.0
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:7070
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        name: server
+        ports:
+        - containerPort: 7070
+        readinessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:7070
+          initialDelaySeconds: 15
+        resources:
+          limits:
+            cpu: 300m
+            memory: 128Mi
+          requests:
+            cpu: 200m
+            memory: 64Mi
+      terminationGracePeriodSeconds: 5
+# [END istio_dual_control_plane_cluster2_deployment_cartservice]

@@ -22,11 +22,11 @@ spec:
   addresses:
   - 240.0.0.5
   endpoints:
-  - address: 35.184.133.151
+  - address: 35.193.92.27
     ports:
       http1: 15443
   hosts:
-  - frontend.hipster2.global
+  - frontend.default.global
   location: MESH_INTERNAL
   ports:
   - name: http1
@@ -44,11 +44,11 @@ spec:
   addresses:
   - 240.0.0.6
   endpoints:
-  - address: 35.184.133.151
+  - address: 35.193.92.27
     ports:
       grpc: 15443
   hosts:
-  - productcatalogservice.hipster2.global
+  - productcatalogservice.default.global
   location: MESH_INTERNAL
   ports:
   - name: grpc
@@ -66,11 +66,11 @@ spec:
   addresses:
   - 240.0.0.7
   endpoints:
-  - address: 35.184.133.151
+  - address: 35.193.92.27
     ports:
       grpc: 15443
   hosts:
-  - cartservice.hipster2.global
+  - cartservice.default.global
   location: MESH_INTERNAL
   ports:
   - name: grpc

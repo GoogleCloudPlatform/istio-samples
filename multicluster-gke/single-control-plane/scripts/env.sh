@@ -19,13 +19,16 @@ log() { echo "$1" >&2; }
 PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
 gcloud config set project $PROJECT_ID
 
+cluster1="cluster1"
+cluster2="cluster2"
+network1="network1"
 cluster1zone="us-east1-b"
 cluster2zone="us-central1-b"
 
 ctx1="gke_${PROJECT_ID}_${cluster1zone}_cluster-1"
 ctx2="gke_${PROJECT_ID}_${cluster2zone}_cluster-2"
 
-ISTIO_VERSION=${ISTIO_VERSION:=1.4.2}
+ISTIO_VERSION=${ISTIO_VERSION:=1.5.2}
 
 services1=("emailservice" "paymentservice" "shippingservice" "adservice" "checkoutservice" "currencyservice" "frontend" "productcatalogservice")
 services2=("loadgenerator" "cartservice" "recommendationservice" "redis-cart")

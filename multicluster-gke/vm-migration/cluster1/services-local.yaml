@@ -1,0 +1,119 @@
+
+# Copyright 2020 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# [START istio_dual_control_plane_cluster1_service_recommendationservice]
+apiVersion: v1
+kind: Service
+metadata:
+  name: recommendationservice
+spec:
+  ports:
+  - name: grpc
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: recommendationservice
+  type: ClusterIP
+# [END istio_dual_control_plane_cluster1_service_recommendationservice]
+---
+# [START istio_dual_control_plane_cluster1_service_emailservice]
+apiVersion: v1
+kind: Service
+metadata:
+  name: emailservice
+spec:
+  ports:
+  - name: grpc
+    port: 5000
+    targetPort: 8080
+  selector:
+    app: emailservice
+  type: ClusterIP
+# [END istio_dual_control_plane_cluster1_service_emailservice]
+---
+# [START istio_dual_control_plane_cluster1_service_checkoutservice]
+apiVersion: v1
+kind: Service
+metadata:
+  name: checkoutservice
+spec:
+  ports:
+  - name: grpc
+    port: 5050
+    targetPort: 5050
+  selector:
+    app: checkoutservice
+  type: ClusterIP
+# [END istio_dual_control_plane_cluster1_service_checkoutservice]
+---
+# [START istio_dual_control_plane_cluster1_service_paymentservice]
+apiVersion: v1
+kind: Service
+metadata:
+  name: paymentservice
+spec:
+  ports:
+  - name: grpc
+    port: 50051
+    targetPort: 50051
+  selector:
+    app: paymentservice
+  type: ClusterIP
+# [END istio_dual_control_plane_cluster1_service_paymentservice]
+---
+# [START istio_dual_control_plane_cluster1_service_currencyservice]
+apiVersion: v1
+kind: Service
+metadata:
+  name: currencyservice
+spec:
+  ports:
+  - name: grpc
+    port: 7000
+    targetPort: 7000
+  selector:
+    app: currencyservice
+  type: ClusterIP
+# [END istio_dual_control_plane_cluster1_service_currencyservice]
+---
+# [START istio_dual_control_plane_cluster1_service_shippingservice]
+apiVersion: v1
+kind: Service
+metadata:
+  name: shippingservice
+spec:
+  ports:
+  - name: grpc
+    port: 50051
+    targetPort: 50051
+  selector:
+    app: shippingservice
+  type: ClusterIP
+# [END istio_dual_control_plane_cluster1_service_shippingservice]
+---
+# [START istio_dual_control_plane_cluster1_service_adservice]
+apiVersion: v1
+kind: Service
+metadata:
+  name: adservice
+spec:
+  ports:
+  - name: grpc
+    port: 9555
+    targetPort: 9555
+  selector:
+    app: adservice
+  type: ClusterIP
+# [END istio_dual_control_plane_cluster1_service_adservice]
+---

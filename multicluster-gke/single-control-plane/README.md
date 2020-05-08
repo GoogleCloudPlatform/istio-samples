@@ -109,11 +109,17 @@ You can verify that the multicluster deployment was successful using 3 methods:
    successfully configure Envoy proxies running on the remote GKE cluster-2.
 
 ```
-PROXY                                                  CDS        LDS        EDS               RDS          PILOT                            VERSION
-adservice-6cd6965787-djp8r.default                     SYNCED     SYNCED     SYNCED (50%)      SYNCED       istio-pilot-7d7c547f8b-9jh24     1.1.1
-cartservice-57c6949b9-qbfqx.default                    SYNCED     SYNCED     SYNCED (50%)      SYNCED       istio-pilot-7d7c547f8b-9jh24     1.1.1
-checkoutservice-6848667dd7-b4qf6.default               SYNCED     SYNCED     SYNCED (50%)      SYNCED       istio-pilot-7d7c547f8b-9jh24     1.1.1
-currencyservice-668f49f985-lbcfh.default               SYNCED     SYNCED     SYNCED (50%)      SYNCED       istio-pilot-7d7c547f8b-9jh24     1.1.1
+NAME                                                   CDS        LDS        EDS        RDS        PILOT                       VERSION
+adservice-86674bf94d-gq52w.default                     SYNCED     SYNCED     SYNCED     SYNCED     istiod-6c6c489d84-8rgnr     1.5.2
+checkoutservice-74df4f44c8-b6xlq.default               SYNCED     SYNCED     SYNCED     SYNCED     istiod-6c6c489d84-8rgnr     1.5.2
+currencyservice-6444b89474-ln4zp.default               SYNCED     SYNCED     SYNCED     SYNCED     istiod-6c6c489d84-8rgnr     1.5.2
+emailservice-c98d5d48d-5pg65.default                   SYNCED     SYNCED     SYNCED     SYNCED     istiod-6c6c489d84-8rgnr     1.5.2
+frontend-67dcdc8cf8-z64jh.default                      SYNCED     SYNCED     SYNCED     SYNCED     istiod-6c6c489d84-8rgnr     1.5.2
+istio-ingressgateway-5b477bdb4f-l9fw2.istio-system     SYNCED     SYNCED     SYNCED     SYNCED     istiod-6c6c489d84-8rgnr     1.5.2
+paymentservice-579d78fc44-r65wp.default                SYNCED     SYNCED     SYNCED     SYNCED     istiod-6c6c489d84-8rgnr     1.5.2
+productcatalogservice-65794cb878-bb6zf.default         SYNCED     SYNCED     SYNCED     SYNCED     istiod-6c6c489d84-8rgnr     1.5.2
+prometheus-7bc49f57-mjhqx.istio-system                 SYNCED     SYNCED     SYNCED     SYNCED     istiod-6c6c489d84-8rgnr     1.5.2
+shippingservice-794b4d66bb-prc9j.default               SYNCED     SYNCED     SYNCED     SYNCED     istiod-6c6c489d84-8rgnr     1.5.2
 ```
 
 3. open Hipstershop in the browser by getting the Istio `IngressGateway`'s `EXTERNAL_IP`:

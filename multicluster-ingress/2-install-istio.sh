@@ -28,6 +28,8 @@ for svc in "${CLUSTERS[@]}" ; do
     kubectx ${NAME}=${LONG_CTX}
 
     # install istio on each cluster
-    ISTIO_VERSION=${ISTIO_VERSION} MIXER_POLICY="false" ../common/install_istio.sh
+    cd ../common
+    ./install_istio.sh
+    cd ../multicluster-ingress
 done
 
