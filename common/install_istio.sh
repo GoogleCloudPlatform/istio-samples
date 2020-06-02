@@ -17,56 +17,27 @@
 
 # Download Istio
 WORKDIR="`pwd`"
-ISTIO_VERSION="${ISTIO_VERSION:-1.4.2}"
-log "Downloading Istio ${ISTIO_VERSION}..."
+ISTIO_VERSION="${ISTIO_VERSION:-1.5.2}"
+echo "Downloading Istio ${ISTIO_VERSION}..."
 curl -L https://git.io/getLatestIstio | ISTIO_VERSION=$ISTIO_VERSION sh -
 
-
 # Prepare for install
-kubectl label namespace default istio-injection=enabled
 kubectl create namespace istio-system
 
+cd ./istio-${ISTIO_VERSION}/
+kubectl create secret generic cacerts -n istio-system \
+    --from-file=samples/certs/ca-cert.pem \
+    --from-file=samples/certs/ca-key.pem \
+    --from-file=samples/certs/root-cert.pem \
+    --from-file=samples/certs/cert-chain.pem
+cd ../
+
+kubectl label namespace default istio-injection=enabled
 kubectl create clusterrolebinding cluster-admin-binding \
     --clusterrole=cluster-admin \
     --user=$(gcloud config get-value core/account)
 
-helm template ${WORKDIR}/istio-${ISTIO_VERSION}/install/kubernetes/helm/istio-init --name istio-init --namespace istio-system | kubectl apply -f -
-sleep 20
 
-
-# customize
-if [ "$ILB_ENABLED" == "true" ]; then
-    ILB="--set gateways.istio-ilbgateway.enabled=true"
-else
-    ILB="--set gateways.istio-ilbgateway.enabled=false"
-fi
-
-if [ "$MESH_EXPANSION" == "true" ]; then
-    ENABLE_VM="--set global.meshExpansion.enabled=true"
-else
-    ENABLE_VM="--set global.meshExpansion.enabled=false"
-fi
-
-
-# installs Istio with Envoy access logging enabled
-helm template ${WORKDIR}/istio-${ISTIO_VERSION}/install/kubernetes/helm/istio --name istio --namespace istio-system \
---set prometheus.enabled=true \
---set tracing.enabled=true \
---set kiali.enabled=true --set kiali.createDemoSecret=true \
---set "kiali.dashboard.jaegerURL=http://jaeger-query:16686" \
---set "kiali.dashboard.grafanaURL=http://grafana:3000" \
---set grafana.enabled=true \
---set mixer.policy.enabled=false \
-${ILB} \
-${ENABLE_VM} \
---set global.proxy.accessLogFile="/dev/stdout" >> istio.yaml
-
-# install istio
-kubectl apply -f istio.yaml
-
-# install the Stackdriver adapter
-git clone https://github.com/istio/installer && cd installer
-helm template istio-telemetry/mixer-telemetry --execute=templates/stackdriver.yaml -f global.yaml --set mixer.adapters.stackdriver.enabled=true --namespace istio-system | kubectl apply -f -
-cd ..
-
-rm -rf installer/
+# install using operator config - https://istio.io/docs/setup/install/istioctl/#customizing-the-configuration
+INSTALL_PROFILE=${INSTALL_YAML:-default.yaml}
+./istio-${ISTIO_VERSION}/bin/istioctl manifest apply -f ${INSTALL_PROFILE}

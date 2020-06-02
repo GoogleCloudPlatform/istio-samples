@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: productcatalogservice-gke
+spec:
+  addresses:
+  - 240.0.0.6
+  endpoints:
+  - address: 34.75.176.213
+    ports:
+      grpc: 15443
+  hosts:
+  - productcatalogservice-gke.default.global
+  location: MESH_INTERNAL
+  ports:
+  - name: grpc
+    number: 3550
+    protocol: GRPC
+  resolution: DNS

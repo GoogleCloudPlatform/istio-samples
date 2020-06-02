@@ -4,9 +4,9 @@ This example demonstrates how to leverage [Istio's](https://istio.io/docs/concep
 
 We'll use the [Hipstershop](https://github.com/GoogleCloudPlatform/microservices-demo) sample application to cover:
 
-*   Incrementally adopting Istio **mutual TLS** authentication across the service mesh
-*   Enabling **end-user (JWT)** authentication for the frontend service
-*   Using an Istio **access control policy** to secure access to the frontend service
+*   Incrementally adopting Istio **strict mutual TLS** authentication across the service mesh
+*   Enabling **JWT** authentication for the frontend service
+*   Using an Istio **authorization policy** to secure access to the frontend service
 
 ### Contents
 
@@ -54,10 +54,11 @@ gcloud beta container clusters create istio-security-demo \
     --num-nodes=4
 ```
 
-3. **Install Istio** on the cluster using Helm.
+3. **Install Istio** on the cluster.
 
 ```
-chmod +x ../common/install_istio.sh; ../common/install_istio.sh
+cd common/
+./install_istio.sh
 ```
 
 4. Wait for all Istio pods to be `Running` or `Completed`.
@@ -67,7 +68,9 @@ kubectl get pods -n istio-system
 
 ### Deploy the sample application
 
-1. **Deploy the sample application.**
+We will use the [Hipstershop](https://github.com/GoogleCloudPlatform/microservices-demo) sample application for this demo.
+
+1. **Apply the sample app manifests**
 
 ```
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml
@@ -92,8 +95,7 @@ shippingservice-7bc4bc75bb-kzfrb         2/2       Running   0          1m
 ```
 
 🔎 Each pod has 2 containers, because each pod now has the injected Istio
-sidecar proxy. (the cartservice and redis pods live in the `cart` namespace,
-but will not be used for the purposes of this demo.)
+sidecar proxy.
 
 Now we're ready to enforce security policies for this application.
 
@@ -110,30 +112,58 @@ properly across your mesh. Further, Istio allows you to adopt mTLS on a per-serv
 or **easily toggle end-to-end encryption** for your entire
 mesh. Let's see how.
 
+### Explore default mTLS behavior.
 
-### Enable mTLS for the frontend service
+Starting in Istio 1.5, the [default Istio mTLS behavior](https://istio.io/docs/tasks/security/authentication/authn-policy/#auto-mutual-tls) is "auto." This means that pod-to-pod traffic will use mutual TLS by default, but pods will still accept plain-text traffic - for instance, from pods in a different namespace that are not injected with the Istio proxy.
+Because we deployed the entire sample app into one namespace (`default`) and all pods have the Istio sidecar proxy, traffic will be mTLS for all the sample app workloads. Let's look at this behavior.
 
-Right now, the cluster is in `PERMISSIVE` mTLS mode, meaning all service-to-service ("east
-west") mesh traffic is unencrypted by default. First, let's toggle mTLS for the [frontend](https://github.com/GoogleCloudPlatform/microservices-demo/tree/master/src/frontend)
-microservice.
+1. Open the Kiali service graph in a web browser.
 
-For both inbound and outbound requests for the frontend to be encrypted, [we need two
-Istio resources](https://istio.io/docs/concepts/security/#authentication-policies): a
-`Policy` (require TLS for inbound requests) and a `DestinationRule` (TLS for the
-frontend's outbound requests).
+```
+istioctl dashboard kiali &
+```
 
-1. **View** both these resources in `./manifests/mtls-frontend.yaml`.
+2. In the left sidecar, click Graph > Namespace: `default`. Under "display," click the `security` view. You should see a lock icon on the edges in the graph, indicating that traffic is encrypted/mTLS.
 
-2. **Apply** the resources to the cluster:
+![default view](screenshots/kiali-auto.png)
+
+### Enforce strict mTLS for the frontend service
+
+From this default "permissive" mTLS behavior, we can enforce "strict" mTLS for a workload, namespace, or for the entire mesh. This means that only mTLS traffic will be accepted by the target workload(s).
+
+Let's enforce strict mTLS for the frontend workload. We'll use an Istio [`PeerAuthentication`](https://istio.io/docs/reference/config/security/peer_authentication/) resource to do this.
+
+1. To start, see what happens by default when you try to curl the frontend service with plain HTTP, from another pod in the same namespace. Your request should succeed with status `200`, because by default, both TLS and plain text traffic is accepted.
+
+```
+$ kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items..metadata.name}) -c istio-proxy -- curl http://frontend:80/ -o /dev/null -s -w '%{http_code}\n'
+
+200
+```
+
+2. Open the mTLS policy in `./manifests/mtls-frontend.yaml`. Notice how the authentication policy uses labels and selectors to target the specific `frontend` deployment in the `default` namespace.
+
+```
+apiVersion: "security.istio.io/v1beta1"
+kind: "PeerAuthentication"
+metadata:
+  name: "frontend"
+  namespace: "default"
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  mtls:
+    mode: STRICT
+```
+
+3. Apply the policy.
 
 ```
 kubectl apply -f ./manifests/mtls-frontend.yaml
 ```
 
-3. **Verify that mTLS is enabled** for the frontend by trying to reach it from the
-`istio-proxy` container of a different mesh service.
-
-First, try to reach `frontend` from `productcatalogservice` with plain HTTP.
+4. Try to reach the frontend again, with a plain HTTP request from the istio-proxy container in productcatalog.
 
 ```
 kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items..metadata.name}) -c istio-proxy -- curl http://frontend:80/ -o /dev/null -s -w '%{http_code}\n'
@@ -147,43 +177,39 @@ command terminated with exit code 56
 ```
 
 Exit code `56` [means](https://curl.haxx.se/libcurl/c/libcurl-errors.html) "failure to
-receive network data." This is expected.
-
-4. Now run the same command but **with HTTPS**, passing the client-side
-key and cert for `productcatalogservice`.
-
-```
-kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items..metadata.name}) -c istio-proxy \
--- curl https://frontend:80/ -o /dev/null -s -w '%{http_code}\n'  --key /etc/certs/key.pem --cert /etc/certs/cert-chain.pem --cacert /etc/certs/root-cert.pem -k
-```
-
-✅ You should now see a `200 - OK` response code.
-
-🔎 The TLS key and certificate for `productcatalogservice` comes from Istio's
-Citadel component, running centrally. [Citadel generates](https://istio.io/docs/concepts/security/#kubernetes-scenario) keys and certs for all mesh
-services, even if the cluster-wide mTLS is set to `PERMISSIVE`.
+receive network data." This is expected because now, the frontend expects TLS certificates on every request.
 
 ### Enable mTLS for the default namespace
 
 Now that we've adopted mTLS for one service, let's enforce mTLS for the [entire
 `default`
 namespace](https://istio.io/docs/tasks/security/authn-policy/#namespace-wide-policy).
-Doing so will automatically encrypt service-to-service traffic for every Hipstershop service
-running in the `default` namespace.
 
-1. **Open** `manifests/mtls-default-ns.yaml`. Notice that we're using the same resources
-(`Policy` and `DestinationRule`) for
-namespace-wide mTLS as we did for service-specific mTLS.
+1. **Open** `manifests/mtls-default-ns.yaml`. Notice that we're using the same resource type (`PeerAuthentication`) as we used for the workload-specific policy. The difference is that we omit `selectors` for a specific service, and only specify the `namespace` on which we want to enforce mTLS.
 
-2. **Apply** the resources:
+```
+apiVersion: "security.istio.io/v1beta1"
+kind: "PeerAuthentication"
+metadata:
+  name: "default"
+  namespace: "default"
+spec:
+  mtls:
+    mode: STRICT
+```
+
+2. **Apply** the resource:
 
 ```
 kubectl apply -f ./manifests/mtls-default-ns.yaml
 ```
 
-From here, we could enable mTLS globally by applying a
-[MeshPolicy](https://istio.io/docs/tasks/security/authn-policy/#globally-enabling-istio-mutual-tls)
-resource to the cluster.
+3. Clean up by deleting the policies created in this section.
+
+```
+kubectl delete -f ./manifests/mtls-frontend.yaml
+kubectl delete -f ./manifests/mtls-default-ns.yaml
+```
 
 ### Add End-User JWT Authentication
 
@@ -191,71 +217,140 @@ Now that we've enabled service-to-service authentication in the default namespac
 enforce **end-user ("origin") authentication** for the `frontend` service, using [JSON Web Tokens](https://jwt.io/)
 (JWT).
 
-⚠️ We recommend only using JWT authentication alongside mTLS (and not JWT by itself), because plaintext JWTs are not
-themselves encrypted, only [signed](https://jwt.io/introduction/). Forged or intercepted
-JWTs could compromise your
-service mesh. In this section, we're building on the mutual TLS authentication already configured for the
-default namespace.
-
-First, we'll create an Istio `Policy` to enforce JWT authentication for inbound requests
+First, we'll create an Istio policy to [enforce JWT authentication](https://istio.io/docs/tasks/security/authorization/authz-jwt/) for inbound requests
 to the `frontend` service.
 
-1. **Open** the resource in  `./manifests/jwt-frontend.yaml`.
-
-🔎 This `Policy` uses Istio's
-test JSON Web Key Set (`jwksUri`), the public key used to verify incoming JWTs.
-When we apply this `Policy`, Istio's Pilot component will [pass down](https://istio.io/docs/concepts/security/#authentication-architecture) this public key to
-the frontend's sidecar proxy, which will allow it to accept or deny requests.
-
-Also note that this resource updates the existing `frontend-authn` `Policy` we created in
-the last section; this is because Istio [only allows one](https://istio.io/docs/concepts/security/#target-selectors) service-matching Policy to exist
-at a time.
-
-2. **Apply** the updated frontend Policy:
+1. **Open** the policy in  `./manifests/jwt-frontend-request.yaml`. The Istio policy we'll use is called a [`RequestAuthentication`](https://istio.io/docs/reference/config/security/request_authentication/) resource.
 
 ```
-kubectl apply -f ./manifests/jwt-frontend.yaml
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+ name: frontend
+ namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  jwtRules:
+  - issuer: "testing@secure.istio.io"
+    jwksUri: "https://raw.githubusercontent.com/istio/istio/release-1.5/security/tools/jwt/samples/jwks.json"
 ```
 
-3. **Set a local `TOKEN` variable.** We'll use this TOKEN on the client-side
+🔎 This policy uses Istio's
+test JSON Web Key Set (`jwksUri`), the public key used to validate incoming JWTs.
+
+
+2. **Apply** the `RequestAuthentication` resource.
+
+```
+kubectl apply -f ./manifests/jwt-frontend-request.yaml
+```
+
+3. **Set a local `TOKEN` variable.** We'll use this token on the client-side
    to make requests to the frontend.
 
 ```
 TOKEN=$(curl -k https://raw.githubusercontent.com/istio/istio/release-1.4/security/tools/jwt/samples/demo.jwt -s); echo $TOKEN
 ```
 
-4. First try to reach the frontend with TLS keys/certs but **without** a JWT.
+4. Curl the frontend with a valid JWT.
 
 ```
 kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items..metadata.name}) -c istio-proxy \
--- curl  https://frontend:80/ -o /dev/null -s -w '%{http_code}\n' \
---key /etc/certs/key.pem --cert /etc/certs/cert-chain.pem --cacert /etc/certs/root-cert.pem -k
+-- curl  http://frontend:80/ -o /dev/null --header "Authorization: Bearer $TOKEN" -s -w '%{http_code}\n'
 ```
 
-You should see a `401 - Unauthorized`  response code.
-
-5. Now try to reach the frontend service, with TLS key/certs **and** a JWT:
+5. Now, try to reach the frontend **without** a JWT.
 
 ```
 kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items..metadata.name}) -c istio-proxy \
--- curl --header "Authorization: Bearer $TOKEN" https://frontend:80/ -o /dev/null -s -w '%{http_code}\n' \
---key /etc/certs/key.pem --cert /etc/certs/cert-chain.pem --cacert /etc/certs/root-cert.pem -k
+-- curl  http://frontend:80/ -o /dev/null -s -w '%{http_code}\n'
+
+200
 ```
+
+You should see a `200` code. Why is this? Because starting in Istio 1.5, the Istio `RequestAuthentication` (JWT) policy [is only responsible for *validating*](https://istio.io/docs/tasks/security/authorization/authz-jwt/#allow-requests-with-valid-jwt-and-list-typed-claims) tokens. If we pass an invalid token, we should see a "401: Unauthorized" response:
+
+```
+kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items..metadata.name}) -c istio-proxy \
+-- curl  http://frontend:80/ -o /dev/null --header "Authorization: Bearer helloworld" -s -w '%{http_code}\n'
+
+401
+```
+
+But if we pass no token at all, the `RequestAuthentication` policy is not invoked. Therefore, in addition to this authentication policy, we need an **authorization policy** that requires a JWT on all requests.
+
+6. View the `AuthorizationPolicy` resource - open `manifests/jwt-frontend-authz.yaml`. This policy declares that all requests to the `frontend` workload must have a JWT.
+
+```
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: require-jwt
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+       requestPrincipals: ["testing@secure.istio.io/testing@secure.istio.io"]
+```
+
+7. Apply the `AuthorizationPolicy`.
+
+```
+kubectl apply -f manifests/jwt-frontend-authz.yaml
+```
+
+
+8. Curl the frontend again, without a JWT. You should now see `403 - Forbidden`. This is the `AuthorizationPolicy` taking effect-- that all frontend requests must have a JWT.
+
+```
+kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items..metadata.name}) -c istio-proxy \
+-- curl  http://frontend:80/ -o /dev/null -s -w '%{http_code}\n'
+```
+
 
 ✅ You should see a `200` response code.
 
-🎉 Well done! You just secured the `frontend` service with both transport and origin authentication.
+🎉 Well done! You just secured the `frontend` service with a JWT policy and an authorization policy.
 
+9. Clean up:
+
+```
+kubectl delete -f manifests/jwt-frontend-authz.yaml
+kubectl delete -f manifests/jwt-frontend-request.yaml
+```
 
 ## Authorization
+
+We just saw a preview of how to enforce access control using Istio `AuthorizationPolicies`. Let's go deeper into how these policies work.
 
 Unlike authentication, which refers to the "who," **authorization** refers to the "what", or: what is this service or user allowed to do?
 
 By default, requests between Istio services (and between end-users and services) are [allowed by default](https://istio.io/docs/concepts/security/#implicit-enablement). You can then enforce authorization for one or many services using an [`AuthorizationPolicy`](https://istio.io/docs/reference/config/security/authorization-policy/) custom resource.
 
-Let's put this into action, by only allowing requests to the `frontend` that have a specific HTTP header.
+Let's put this into action, by only allowing requests to the `frontend` that have a specific HTTP header (`hello`:`world`):
 
-### Enable authorization (RBAC) for the frontend
+```
+apiVersion: "security.istio.io/v1beta1"
+kind: "AuthorizationPolicy"
+metadata:
+  name: "frontend"
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  rules:
+  - when:
+    - key: request.headers[hello]
+      values: ["world"]
+```
 
 1. **Apply the AuthorizationPolicy** for the frontend service:
 
@@ -263,37 +358,27 @@ Let's put this into action, by only allowing requests to the `frontend` that hav
 kubectl apply -f ./manifests/authz-frontend.yaml
 ```
 
-2. Run the same `GET` request to the frontend as we did in the last section  (with TLS
-   key/cert and JWT).
+2. Curl the frontend without the `hello` header. You should see a `403: Forbidden` response.
 
 ```
 kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items..metadata.name}) -c istio-proxy \
--- curl  --header "Authorization: Bearer $TOKEN" https://frontend:80/ -o /dev/null -s -w '%{http_code}\n' \
---key /etc/certs/key.pem --cert /etc/certs/cert-chain.pem --cacert /etc/certs/root-cert.pem -k
+-- curl http://frontend:80/ -o /dev/null -s -w '%{http_code}\n'
+
+403
 ```
 
-You should receive a `403- Forbidden` error. This is expected, because we just locked down the
-frontend service to only whitelisted subjects.
-
-
-3. Make another request from `productcatalogservice` to the `frontend`. This time, **pass
-   the `hello:world` request header.**
+3. Curl the frontend with the `hello`:`world` header. You should now see a `200` response code.
 
 ```
 kubectl exec $(kubectl get pod -l app=productcatalogservice -o jsonpath={.items..metadata.name}) -c istio-proxy \
--- curl --header "Authorization: Bearer $TOKEN" --header "hello:world"  \
-   https://frontend:80/ -o /dev/null -s -w '%{http_code}\n' \
-  --key /etc/certs/key.pem --cert /etc/certs/cert-chain.pem --cacert /etc/certs/root-cert.pem -k
+-- curl --header "hello:world" http://frontend:80 -o /dev/null -s -w '%{http_code}\n'
+
+200
 ```
 
-✅ You should now see a `200` response code.
-
-🔎 From here, if you wanted to expand authorization to the entire default namespace, you
-can apply similar resources.
-
-🎉 Nice job! You just configured a fine-grained Istio access control policy for one
+✅ You just configured a fine-grained Istio access control policy for one
 service. We hope this section demonstrated how Istio can support specific, service-level
-authorization policies using a set of familiar, Kubernetes-based RBAC resources.
+authorization policies using a set of familiar, Kubernetes-based resources.
 
 ## Cleanup
 

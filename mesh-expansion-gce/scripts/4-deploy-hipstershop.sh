@@ -17,7 +17,6 @@
 set -euo pipefail
 log() { echo "$1" >&2; }
 
-# set vars
 PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
 ZONE="us-central1-b"
 CLUSTER_NAME="mesh-exp-gke"
@@ -34,3 +33,5 @@ kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microserv
 
 # remove the cluster-based productcatalog - we'll deploy this on the VM
 kubectl delete svc productcatalogservice; kubectl delete deployment productcatalogservice
+kubectl delete serviceentry whitelist-egress-google-metadata
+kubectl delete serviceentry whitelist-egress-googleapis

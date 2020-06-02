@@ -13,30 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START istio_security_intro_manifests_authorizationpolicy_frontend]
-apiVersion: security.istio.io/v1beta1
-kind: AuthorizationPolicy
+# [START istio_security_intro_manifests_authorization_policy_frontend]
+apiVersion: "security.istio.io/v1beta1"
+kind: "AuthorizationPolicy"
 metadata:
-  name: frontend
+  name: "frontend"
   namespace: default
 spec:
-  rules:
-  - from:
-    - source:
-        principals:
-        - '*'
-    to:
-    - operation:
-        methods:
-        - GET
-        paths:
-        - /*
-    when:
-    - key: request.headers[hello]
-      values:
-      - world
   selector:
     matchLabels:
       app: frontend
-# [END istio_security_intro_manifests_authorizationpolicy_frontend]
----
+  rules:
+  - when:
+    - key: request.headers[hello]
+      values: ["world"]
+# [END istio_security_intro_manifests_authorization_policy_frontend]

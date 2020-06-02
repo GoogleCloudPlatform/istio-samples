@@ -6,6 +6,8 @@
   - [Install Istio](#install-istio)
   - [Deploy the Sample App](#deploy-the-sample-app)
   - [Configure Multicluster Ingress](#configure-multicluster-ingress)
+  - [Standardize NodePort numbers](#standardize-nodeport-numbers)
+  - [Create multicluster ingress](#create-multicluster-ingress)
   - [Verify Multicluster Ingress](#verify-multicluster-ingress)
   - [Test Geo-Aware Load Balancing](#test-geo-aware-load-balancing)
   - [Cleanup](#cleanup)
@@ -67,7 +69,7 @@ cluster1  us-west2-a      1.14.8-gke.12   <IP>  n1-standard-4  1.14.8-gke.12  3 
 
 ## Install Istio
 
-Install the Istio control plane on all three clusters.
+Install the Istio control plane on all three clusters. *Note* - this script may take 5-10 minutes to complete.
 
 ```
 ./2-install-istio.sh
@@ -105,17 +107,31 @@ You should see HTML output for each cluster, including reports from three separa
 
 ## Configure Multicluster Ingress
 
-Now we're ready to put a global IP in front of each Istio IngressGateway, to enable geo-aware anycast routing.
+Now we're ready to put a global IP in front of all threy Istio IngressGateways, to enable geo-aware anycast routing.
 
 ```
-./5-create-ingress.sh
+./5-prep-mci.sh
 ```
 
 This script does the following:
 1. Creates a VirtualService on all three clusters, to set up health checking for the IngressGateway. [This is needed](https://cloud.google.com/kubernetes-engine/docs/concepts/ingress#health_checks) for GCP load balancer health checking. Because the IngressGateway already exposes a `/healthz` endpoint on port `15020`, we just have to do a URL rewrite for requests from the `GoogleHC` user-agent.
 2. Updates the Service type on the Istio IngressGateway on all three clusters, from `LoadBalancer` to `NodePort`. A NodePort service is needed to configure Ingress.
-3. Reserves a global static IP in your project, named `zoneprinter-ip`.
-4. Installs [`kubemci`](https://github.com/GoogleCloudPlatform/k8s-multicluster-ingress), then uses it to provision a multicluster Ingress, mapping to the three clusters. The `kubemci create` command takes in the following Kubernetes Ingress resource (see `manifests/ingress.yaml`):
+
+## Standardize NodePort numbers
+
+kubemci requires that all the NodePorts used for the multicluster ingress be the same. Navigate to Cloud Console > Kubernetes Engine > Services & Ingress, and for the service `istio-ingressgateway` on all three services, click "Edit" and update the `http2` nodeport to be `30981`:
+
+![nodeport update](screenshots/nodeport.png)
+
+## Create multicluster ingress
+
+```
+./6-mci.sh
+```
+
+This script does the following:
+1. Reserves a global static IP in your project, named `zoneprinter-ip`.
+2. Installs [`kubemci`](https://github.com/GoogleCloudPlatform/k8s-multicluster-ingress), then uses it to provision a multicluster Ingress, mapping to the three clusters. The `kubemci create` command takes in the following Kubernetes Ingress resource (see `manifests/ingress.yaml`):
 
 
 ```YAML
@@ -227,7 +243,7 @@ mokeefe@oregon-client:~$  curl 34.102.158.9
 To delete the resources used in this sample (ingress, static IP, GKE clusters):
 
 ```
-./6-cleanup.sh
+./7-cleanup.sh
 ```
 
 ## Learn More

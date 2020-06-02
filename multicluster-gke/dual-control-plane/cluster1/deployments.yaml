@@ -12,8 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-# [START istio_dual_control_plane_cluster1_deployment_emailservice]
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -28,7 +26,7 @@ spec:
         app: emailservice
     spec:
       containers:
-      - image: gcr.io/google-samples/microservices-demo/emailservice:v0.1.3
+      - image: gcr.io/google-samples/microservices-demo/emailservice:v0.2.0
         livenessProbe:
           exec:
             command:
@@ -71,18 +69,18 @@ spec:
       containers:
       - env:
         - name: PRODUCT_CATALOG_SERVICE_ADDR
-          value: productcatalogservice.hipster2.global:3550
+          value: productcatalogservice.default.global:3550
         - name: SHIPPING_SERVICE_ADDR
-          value: shippingservice.hipster1.svc.cluster.local:50051
+          value: shippingservice.default.svc.cluster.local:50051
         - name: PAYMENT_SERVICE_ADDR
-          value: paymentservice.hipster1.svc.cluster.local:50051
+          value: paymentservice.default.svc.cluster.local:50051
         - name: EMAIL_SERVICE_ADDR
-          value: emailservice.hipster1.svc.cluster.local:5000
+          value: emailservice.default.svc.cluster.local:5000
         - name: CURRENCY_SERVICE_ADDR
-          value: currencyservice.hipster1.svc.cluster.local:7000
+          value: currencyservice.default.svc.cluster.local:7000
         - name: CART_SERVICE_ADDR
-          value: cartservice.hipster2.global:7070
-        image: gcr.io/google-samples/microservices-demo/checkoutservice:v0.1.3
+          value: cartservice.default.global:7070
+        image: gcr.io/google-samples/microservices-demo/checkoutservice:v0.2.0
         livenessProbe:
           exec:
             command:
@@ -123,7 +121,7 @@ spec:
       - env:
         - name: PORT
           value: '50051'
-        image: gcr.io/google-samples/microservices-demo/paymentservice:v0.1.3
+        image: gcr.io/google-samples/microservices-demo/paymentservice:v0.2.0
         livenessProbe:
           exec:
             command:
@@ -165,7 +163,7 @@ spec:
       - env:
         - name: PORT
           value: '7000'
-        image: gcr.io/google-samples/microservices-demo/currencyservice:v0.1.3
+        image: gcr.io/google-samples/microservices-demo/currencyservice:v0.2.0
         livenessProbe:
           exec:
             command:
@@ -205,7 +203,7 @@ spec:
         app: shippingservice
     spec:
       containers:
-      - image: gcr.io/google-samples/microservices-demo/shippingservice:v0.1.3
+      - image: gcr.io/google-samples/microservices-demo/shippingservice:v0.2.0
         livenessProbe:
           exec:
             command:
@@ -247,7 +245,7 @@ spec:
       - env:
         - name: PORT
           value: '9555'
-        image: gcr.io/google-samples/microservices-demo/adservice:v0.1.3
+        image: gcr.io/google-samples/microservices-demo/adservice:v0.2.0
         livenessProbe:
           exec:
             command:

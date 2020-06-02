@@ -17,37 +17,21 @@
 set -euo pipefail
 source ./scripts/env.sh
 
-install_istio () {
-    cd istio-${ISTIO_VERSION}/
-
-    kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user="$(gcloud config get-value core/account)"
-    kubectl create namespace istio-system
-
-    kubectl create secret generic cacerts -n istio-system \
-    --from-file=samples/certs/ca-cert.pem \
-    --from-file=samples/certs/ca-key.pem \
-    --from-file=samples/certs/root-cert.pem \
-    --from-file=samples/certs/cert-chain.pem
-
-    ./bin/istioctl manifest apply -f install/kubernetes/operator/examples/multicluster/values-istio-multicluster-gateways.yaml
-    cd ../
-}
-
-log "Downloading Istio ${ISTIO_VERSION}..."
-curl -L https://git.io/getLatestIstio | ISTIO_VERSION=$ISTIO_VERSION sh -
+DUAL_PROFILE="../multicluster-gke/dual-control-plane/scripts/install.yaml"
+cd ../../common
 
 # Cluster 1
-log "Setting up Cluster 1..."
+log "Installing Istio on Cluster 1..."
 gcloud config set project $PROJECT_1
 gcloud container clusters get-credentials $CLUSTER_1 --zone $ZONE
 kubectl config use-context $CTX_1
-install_istio
-log "...done with cluster 1."
+INSTALL_YAML=${DUAL_PROFILE} ./install_istio.sh
+
 
 # Cluster 2
-log "Setting up Cluster 2..."
+log "Installing Istio on Cluster 2..."
 gcloud config set project $PROJECT_2
 gcloud container clusters get-credentials $CLUSTER_2 --zone $ZONE
 kubectl config use-context $CTX_2
-install_istio
-log "...done with cluster 2."
+INSTALL_YAML=${DUAL_PROFILE} ./install_istio.sh
+

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productcatalogservice-gke
+spec:
+  selector:
+    matchLabels:
+      app: productcatalogservice-gke
+  template:
+    metadata:
+      labels:
+        app: productcatalogservice-gke
+    spec:
+      containers:
+      - image: gcr.io/google-samples/microservices-demo/productcatalogservice:v0.2.0
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:3550
+        name: server
+        ports:
+        - containerPort: 3550
+        readinessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:3550
+        resources:
+          limits:
+            cpu: 200m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 64Mi
+      terminationGracePeriodSeconds: 5

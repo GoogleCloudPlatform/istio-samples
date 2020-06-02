@@ -17,31 +17,17 @@
 set -euo pipefail
 source ./scripts/env.sh
 
-# Create templated manifests using Cluster 1's Control Plane info, for deployment into
-# Cluster 2
-kubectl config use-context $ctx1
+export ISTIOD_REMOTE_EP=$(kubectl --context=${ctx1} -n istio-system get svc istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+log "ISTIOD_REMOTE_EP is ${ISTIOD_REMOTE_EP}"
 
-kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user="$(gcloud config get-value core/account)"
-
-export PILOT_POD_IP=$(kubectl -n istio-system get pod -l istio=pilot -o jsonpath='{.items[0].status.podIP}')
-export POLICY_POD_IP=$(kubectl -n istio-system get pod -l istio=mixer -o jsonpath='{.items[0].status.podIP}')
-export TELEMETRY_POD_IP=$(kubectl -n istio-system get pod -l istio-mixer-type=telemetry -o jsonpath='{.items[0].status.podIP}')
-
-log "Pilot: $PILOT_POD_IP"
-log "Istio-Policy (mixer): $POLICY_POD_IP"
-log "Istio-Telemetry (mixer): $TELEMETRY_POD_IP"
-
-HELM_DIR="istio-${ISTIO_VERSION}/install/kubernetes/helm/istio"
- helm template $HELM_DIR \
-  --namespace istio-system --name istio-remote \
-  --values $HELM_DIR/values-istio-remote.yaml \
-  --set global.remotePilotAddress=${PILOT_POD_IP} \
-  --set global.remotePolicyAddress=${POLICY_POD_IP} \
-  --set global.remoteTelemetryAddress=${TELEMETRY_POD_IP} > istio-remote.yaml
-
-# Deploy the templated Istio components onto cluster-2
 kubectl config use-context $ctx2
-kubectl create namespace istio-system
-kubectl apply -f istio-remote.yaml
-kubectl label namespace default istio-injection=enabled
+
+# configure cluster2 with "remote pilot" to get its config (istiod running in cluster1)
+pattern='ISTIOD_REMOTE_EP'
+replace="${ISTIOD_REMOTE_EP}"
+gsed -r -i "s|$pattern|$replace|g" scripts/cluster2.yaml
+
+# install the istio sidecar injector (istiod), prometheus in cluster2
+cd ../../common
+INSTALL_YAML="../multicluster-gke/single-control-plane/scripts/cluster2.yaml" ./install_istio.sh
 
