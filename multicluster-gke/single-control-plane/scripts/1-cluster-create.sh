@@ -28,6 +28,8 @@ log "Creating cluster1..."
 "https://www.googleapis.com/auth/trace.append" \
 --num-nodes "2" --network "default" --enable-cloud-logging --enable-cloud-monitoring --enable-ip-alias --async
 
+sleep 20
+
 log "Creating cluster2..."
   gcloud container clusters create cluster-2 --zone $cluster2zone --username "admin" \
   --machine-type "n1-standard-4" --image-type "COS" --disk-size "100" \
