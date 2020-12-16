@@ -58,7 +58,7 @@ gcloud container clusters get-credentials istio-ilb --zone us-central1-c --proje
 ```
       k8s:
         serviceAnnotations:
-          cloud.google.com/load-balancer-type: "internal"
+          cloud.google.com/load-balancer-type: "Internal"
 ```
 
 Here, instead of provisioning this second Istio gateway with a public load balancer, we are telling GKE to instead provision an internal [GCP internal load balancer](https://cloud.google.com/load-balancing/docs/internal). This means that this gateway will only be accessible from inside the GCP virtual private cloud (VPC) - for instance, from a Google Compute Engine instance in the same GCP project.

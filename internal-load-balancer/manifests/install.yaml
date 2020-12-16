@@ -100,7 +100,7 @@ spec:
       enabled: true
       k8s:
         serviceAnnotations:
-          cloud.google.com/load-balancer-type: "internal"
+          cloud.google.com/load-balancer-type: "Internal"
         hpaSpec:
           maxReplicas: 5
           metrics:
