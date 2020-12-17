@@ -1,4 +1,4 @@
-FROM python:3-slim as base
+FROM python:3.9-slim as base
 FROM base as builder
 RUN apt-get -qq update \
     && apt-get install -y --no-install-recommends \
@@ -16,7 +16,7 @@ RUN apt-get -qq update \
 WORKDIR /helloserver
 
 # Grab packages from builder
-COPY --from=builder /usr/local/lib/python3.8/ /usr/local/lib/python3.8/
+COPY --from=builder /usr/local/lib/python3.9/ /usr/local/lib/python3.9/
 
 # Add the application
 COPY . .
