@@ -78,8 +78,8 @@ prometheus-558b665bb7-5v647            2/2     Running   0          5m23s
 ```
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/istio-manifests.yaml
-kubectl delete serviceentry whitelist-egress-google-metadata
-kubectl delete serviceentry whitelist-egress-googleapis
+kubectl delete serviceentry allow-egress-google-metadata
+kubectl delete serviceentry allow-egress-googleapis
 kubectl patch deployments/productcatalogservice -p '{"spec":{"template":{"metadata":{"labels":{"version":"v1"}}}}}'
 ```
 

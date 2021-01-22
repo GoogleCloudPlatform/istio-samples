@@ -33,5 +33,5 @@ kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microserv
 
 # remove the cluster-based productcatalog - we'll deploy this on the VM
 kubectl delete svc productcatalogservice; kubectl delete deployment productcatalogservice
-kubectl delete serviceentry whitelist-egress-google-metadata
-kubectl delete serviceentry whitelist-egress-googleapis
+kubectl delete serviceentry allow-egress-google-metadata
+kubectl delete serviceentry allow-egress-googleapis
