@@ -1,7 +1,7 @@
 /*
  *
  * Original work Copyright 2015 gRPC authors
- * Modified work Copyright 2020 Google LLC
+ * Modified work Copyright 2021 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@
 /*
  * Changes:
  * 2019-06-24: SayHello returns hostname in response header
+ * 2021-04-15: Add UnimplementedGreeterServer as required for forward compatibility
  */
 
 //go:generate protoc -I ../helloworld --go_out=plugins=grpc:../helloworld ../helloworld/helloworld.proto
@@ -42,7 +43,9 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type greeterServer struct{}
+type greeterServer struct {
+	pb.UnimplementedGreeterServer
+}
 
 // SayHello implements helloworld.GreeterServer
 func (s *greeterServer) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {

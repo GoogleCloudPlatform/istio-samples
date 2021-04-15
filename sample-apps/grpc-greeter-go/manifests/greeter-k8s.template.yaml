@@ -1,5 +1,5 @@
 
-# Copyright 2020 Google LLC
+# Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -33,12 +33,6 @@ spec:
         - --address=127.0.0.1:8080
         image: gcr.io/$GOOGLE_CLOUD_PROJECT/grpc-greeter-go-server
         imagePullPolicy: Always
-        livenessProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:8080
-          initialDelaySeconds: 2
         name: greeter
         ports:
         - containerPort: 8080

@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2021 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 
 module github.com/GoogleCloudPlatform/istio-samples/sample-apps/grpc-greeter-go/client
 
-go 1.13
+go 1.14
 
 require (
-	golang.org/x/net v0.0.0-20191126235420-ef20fe5d7933 // indirect
-	google.golang.org/grpc v1.25.1
+	google.golang.org/grpc v1.37.0
+	google.golang.org/grpc/examples v0.0.0-20210413231917-87eb5b750249
 )
