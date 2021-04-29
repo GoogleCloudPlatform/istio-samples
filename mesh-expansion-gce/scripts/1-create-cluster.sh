@@ -27,5 +27,4 @@ CTX="gke_${PROJECT_ID}_${ZONE}_${CLUSTER_NAME}"
 gcloud config set project $PROJECT_ID
 
  gcloud container clusters create $CLUSTER_NAME --zone $ZONE --username "admin" \
-  --machine-type "n1-standard-2" --image-type "COS" --disk-size "100" \
---num-nodes "4" --network "default" --enable-stackdriver-kubernetes --enable-ip-alias --async
+   --num-nodes "4" --network "default" --enable-stackdriver-kubernetes --enable-ip-alias --async
