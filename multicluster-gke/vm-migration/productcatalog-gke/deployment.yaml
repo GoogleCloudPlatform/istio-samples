@@ -12,7 +12,7 @@ spec:
         app: productcatalogservice-gke
     spec:
       containers:
-      - image: gcr.io/google-samples/microservices-demo/productcatalogservice:v0.2.0
+      - image: gcr.io/google-samples/microservices-demo/productcatalogservice:v0.3.4
         livenessProbe:
           exec:
             command:

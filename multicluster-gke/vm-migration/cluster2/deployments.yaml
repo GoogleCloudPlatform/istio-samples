@@ -32,7 +32,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: main
-        image: gcr.io/google-samples/microservices-demo/loadgenerator:v0.2.0
+        image: gcr.io/google-samples/microservices-demo/loadgenerator:v0.3.4
         env:
         - name: FRONTEND_ADDR
           value: "frontend:80"
@@ -76,7 +76,7 @@ spec:
           value: checkoutservice.default.global:5050
         - name: AD_SERVICE_ADDR
           value: adservice.default.global:9555
-        image: gcr.io/google-samples/microservices-demo/frontend:v0.2.0
+        image: gcr.io/google-samples/microservices-demo/frontend:v0.3.4
         livenessProbe:
           httpGet:
             httpHeaders:
@@ -167,7 +167,7 @@ spec:
           value: '7070'
         - name: LISTEN_ADDR
           value: 0.0.0.0
-        image: gcr.io/google-samples/microservices-demo/cartservice:v0.2.0
+        image: gcr.io/google-samples/microservices-demo/cartservice:v0.3.4
         livenessProbe:
           exec:
             command:
