@@ -21,5 +21,5 @@ sudo apt-get update;
 sudo apt-get install -y docker-ce;
 
 # run productcatalog
-sudo docker run -d -p 3550:3550 gcr.io/google-samples/microservices-demo/productcatalogservice:v0.2.0
+sudo docker run -d -p 3550:3550 gcr.io/google-samples/microservices-demo/productcatalogservice:v0.3.4
 
