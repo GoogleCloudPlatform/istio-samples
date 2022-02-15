@@ -35,7 +35,7 @@ PROJECT_ID=<your-project-id>
 
 ```
 gcloud container clusters create istio-ilb --project $PROJECT_ID --zone us-central1-c \
---machine-type "n1-standard-2" --image-type "COS" --disk-size "100" \
+--machine-type "n1-standard-2" --disk-size "100" \
 --num-nodes "4" --network "default" --async
 ```
 
