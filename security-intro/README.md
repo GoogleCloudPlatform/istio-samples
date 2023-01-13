@@ -10,16 +10,17 @@ We'll use the [Hipstershop](https://github.com/GoogleCloudPlatform/microservices
 
 ### Contents
 
+- [Demo: Introduction to Istio Security](#demo-introduction-to-istio-security)
+    - [Contents](#contents)
   - [Setup](#setup)
     - [Create a GKE Cluster](#create-a-gke-cluster)
-    - [Deploy the Sample Application](#deploy-the-sample-application)
+    - [Deploy the sample application](#deploy-the-sample-application)
   - [Authentication](#authentication)
-    - [Enable mTLS for the frontend service](#enable-mtls-for-the-frontend-service)
+    - [Explore default mTLS behavior.](#explore-default-mtls-behavior)
+    - [Enforce strict mTLS for the frontend service](#enforce-strict-mtls-for-the-frontend-service)
     - [Enable mTLS for the default namespace](#enable-mtls-for-the-default-namespace)
     - [Add End-User JWT Authentication](#add-end-user-jwt-authentication)
   - [Authorization](#authorization)
-    - [Enable authorization (RBAC) for the frontend](#enable-authorization-(rbac)-for-the-frontend)
-    - [Control access to the frontend](#control-access-to-the-frontend)
   - [Cleanup](#cleanup)
   - [What's next?](#whats-next)
 
@@ -39,13 +40,19 @@ cd security-intro
 
 ### Create a GKE Cluster
 
-1. From Cloud Shell, **enable the Kubernetes Engine API**.
+1. Ensure that you have a Google Cloud Project selected.
+
+```
+gcloud config set project <YOUR_PROJECT_ID>
+```
+
+2. From Cloud Shell, **enable the Kubernetes Engine API**.
 
 ```
 gcloud services enable container.googleapis.com
 ```
 
-2. **Create a GKE cluster**.
+3. **Create a GKE cluster**.
 
 ```
 gcloud beta container clusters create istio-security-demo \
@@ -54,14 +61,14 @@ gcloud beta container clusters create istio-security-demo \
     --num-nodes=4
 ```
 
-3. **Install Istio** on the cluster.
+4. **Install Istio** on the cluster.
 
 ```
 cd common/
 ./install_istio.sh
 ```
 
-4. Wait for all Istio pods to be `Running` or `Completed`.
+5. Wait for all Istio pods to be `Running` or `Completed`.
 ```
 kubectl get pods -n istio-system
 ```
