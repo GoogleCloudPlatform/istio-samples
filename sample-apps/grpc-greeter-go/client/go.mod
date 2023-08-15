@@ -19,6 +19,6 @@ module github.com/GoogleCloudPlatform/istio-samples/sample-apps/grpc-greeter-go/
 go 1.14
 
 require (
-	google.golang.org/grpc v1.37.0
+	google.golang.org/grpc v1.53.0
 	google.golang.org/grpc/examples v0.0.0-20210413231917-87eb5b750249
 )
